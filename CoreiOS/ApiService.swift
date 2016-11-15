@@ -10,6 +10,7 @@ import Foundation
 
 class ApiService:ApiServiceProtocol{
     
+    
     let api = Http.sharedInstance
     
     /**
