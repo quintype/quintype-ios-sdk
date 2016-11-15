@@ -8,12 +8,34 @@
 
 /* Begin PBXBuildFile section */
 		6150064C1DD5BA61000E20B3 /* CoreiOS.h in Headers */ = {isa = PBXBuildFile; fileRef = 6150064A1DD5BA61000E20B3 /* CoreiOS.h */; settings = {ATTRIBUTES = (Public, ); }; };
+		615006531DD5BA92000E20B3 /* ApiServiceProtocol.swift in Sources */ = {isa = PBXBuildFile; fileRef = 615006521DD5BA92000E20B3 /* ApiServiceProtocol.swift */; };
+		615006551DD5BB69000E20B3 /* CardStoryElement.swift in Sources */ = {isa = PBXBuildFile; fileRef = 615006541DD5BB69000E20B3 /* CardStoryElement.swift */; };
+		615006591DD5BCD3000E20B3 /* CardStoryElementSubTypeMetaData.swift in Sources */ = {isa = PBXBuildFile; fileRef = 615006581DD5BCD3000E20B3 /* CardStoryElementSubTypeMetaData.swift */; };
+		6150065B1DD5C266000E20B3 /* ImageMetaData.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6150065A1DD5C266000E20B3 /* ImageMetaData.swift */; };
+		6150065D1DD5C2DF000E20B3 /* constants.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6150065C1DD5C2DF000E20B3 /* constants.swift */; };
+		6150065F1DD5C38B000E20B3 /* Story.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6150065E1DD5C38B000E20B3 /* Story.swift */; };
+		615006611DD5C49F000E20B3 /* Tag.swift in Sources */ = {isa = PBXBuildFile; fileRef = 615006601DD5C49F000E20B3 /* Tag.swift */; };
+		615006631DD5C501000E20B3 /* Section.swift in Sources */ = {isa = PBXBuildFile; fileRef = 615006621DD5C501000E20B3 /* Section.swift */; };
+		615006651DD5C54F000E20B3 /* Card.swift in Sources */ = {isa = PBXBuildFile; fileRef = 615006641DD5C54F000E20B3 /* Card.swift */; };
+		615006681DD5C715000E20B3 /* http.swift in Sources */ = {isa = PBXBuildFile; fileRef = 615006671DD5C715000E20B3 /* http.swift */; };
+		6150066B1DD5D394000E20B3 /* ApiService.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6150066A1DD5D394000E20B3 /* ApiService.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
 		615006471DD5BA61000E20B3 /* CoreiOS.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = CoreiOS.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		6150064A1DD5BA61000E20B3 /* CoreiOS.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = CoreiOS.h; sourceTree = "<group>"; };
 		6150064B1DD5BA61000E20B3 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
+		615006521DD5BA92000E20B3 /* ApiServiceProtocol.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ApiServiceProtocol.swift; sourceTree = "<group>"; };
+		615006541DD5BB69000E20B3 /* CardStoryElement.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = CardStoryElement.swift; sourceTree = "<group>"; };
+		615006581DD5BCD3000E20B3 /* CardStoryElementSubTypeMetaData.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = CardStoryElementSubTypeMetaData.swift; sourceTree = "<group>"; };
+		6150065A1DD5C266000E20B3 /* ImageMetaData.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ImageMetaData.swift; sourceTree = "<group>"; };
+		6150065C1DD5C2DF000E20B3 /* constants.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = constants.swift; sourceTree = "<group>"; };
+		6150065E1DD5C38B000E20B3 /* Story.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Story.swift; sourceTree = "<group>"; };
+		615006601DD5C49F000E20B3 /* Tag.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Tag.swift; sourceTree = "<group>"; };
+		615006621DD5C501000E20B3 /* Section.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Section.swift; sourceTree = "<group>"; };
+		615006641DD5C54F000E20B3 /* Card.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Card.swift; sourceTree = "<group>"; };
+		615006671DD5C715000E20B3 /* http.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = http.swift; sourceTree = "<group>"; };
+		6150066A1DD5D394000E20B3 /* ApiService.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ApiService.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -46,10 +68,53 @@
 		615006491DD5BA61000E20B3 /* CoreiOS */ = {
 			isa = PBXGroup;
 			children = (
+				615006691DD5D36F000E20B3 /* Api */,
+				615006661DD5C6F2000E20B3 /* Constants */,
+				615006571DD5BC4A000E20B3 /* Protocols */,
+				615006561DD5BC3A000E20B3 /* Model */,
 				6150064A1DD5BA61000E20B3 /* CoreiOS.h */,
 				6150064B1DD5BA61000E20B3 /* Info.plist */,
+				615006671DD5C715000E20B3 /* http.swift */,
 			);
 			path = CoreiOS;
+			sourceTree = "<group>";
+		};
+		615006561DD5BC3A000E20B3 /* Model */ = {
+			isa = PBXGroup;
+			children = (
+				615006541DD5BB69000E20B3 /* CardStoryElement.swift */,
+				615006581DD5BCD3000E20B3 /* CardStoryElementSubTypeMetaData.swift */,
+				6150065A1DD5C266000E20B3 /* ImageMetaData.swift */,
+				6150065E1DD5C38B000E20B3 /* Story.swift */,
+				615006601DD5C49F000E20B3 /* Tag.swift */,
+				615006621DD5C501000E20B3 /* Section.swift */,
+				615006641DD5C54F000E20B3 /* Card.swift */,
+			);
+			name = Model;
+			sourceTree = "<group>";
+		};
+		615006571DD5BC4A000E20B3 /* Protocols */ = {
+			isa = PBXGroup;
+			children = (
+				615006521DD5BA92000E20B3 /* ApiServiceProtocol.swift */,
+			);
+			name = Protocols;
+			sourceTree = "<group>";
+		};
+		615006661DD5C6F2000E20B3 /* Constants */ = {
+			isa = PBXGroup;
+			children = (
+				6150065C1DD5C2DF000E20B3 /* constants.swift */,
+			);
+			name = Constants;
+			sourceTree = "<group>";
+		};
+		615006691DD5D36F000E20B3 /* Api */ = {
+			isa = PBXGroup;
+			children = (
+				6150066A1DD5D394000E20B3 /* ApiService.swift */,
+			);
+			name = Api;
 			sourceTree = "<group>";
 		};
 /* End PBXGroup section */
@@ -96,6 +161,7 @@
 					615006461DD5BA61000E20B3 = {
 						CreatedOnToolsVersion = 8.1;
 						DevelopmentTeam = 8AG3F685RU;
+						LastSwiftMigration = 0810;
 						ProvisioningStyle = Automatic;
 					};
 				};
@@ -132,6 +198,17 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				615006531DD5BA92000E20B3 /* ApiServiceProtocol.swift in Sources */,
+				615006681DD5C715000E20B3 /* http.swift in Sources */,
+				615006651DD5C54F000E20B3 /* Card.swift in Sources */,
+				6150065F1DD5C38B000E20B3 /* Story.swift in Sources */,
+				6150065B1DD5C266000E20B3 /* ImageMetaData.swift in Sources */,
+				615006611DD5C49F000E20B3 /* Tag.swift in Sources */,
+				6150066B1DD5D394000E20B3 /* ApiService.swift in Sources */,
+				6150065D1DD5C2DF000E20B3 /* constants.swift in Sources */,
+				615006631DD5C501000E20B3 /* Section.swift in Sources */,
+				615006591DD5BCD3000E20B3 /* CardStoryElementSubTypeMetaData.swift in Sources */,
+				615006551DD5BB69000E20B3 /* CardStoryElement.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -240,6 +317,7 @@
 		615006501DD5BA61000E20B3 /* Debug */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
+				CLANG_ENABLE_MODULES = YES;
 				CODE_SIGN_IDENTITY = "";
 				DEFINES_MODULE = YES;
 				DEVELOPMENT_TEAM = 8AG3F685RU;
@@ -252,6 +330,7 @@
 				PRODUCT_BUNDLE_IDENTIFIER = creation.CoreiOS;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SKIP_INSTALL = YES;
+				SWIFT_OPTIMIZATION_LEVEL = "-Onone";
 				SWIFT_VERSION = 3.0;
 			};
 			name = Debug;
@@ -259,6 +338,7 @@
 		615006511DD5BA61000E20B3 /* Release */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
+				CLANG_ENABLE_MODULES = YES;
 				CODE_SIGN_IDENTITY = "";
 				DEFINES_MODULE = YES;
 				DEVELOPMENT_TEAM = 8AG3F685RU;
@@ -294,6 +374,7 @@
 				615006511DD5BA61000E20B3 /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
 		};
 /* End XCConfigurationList section */
 	};
