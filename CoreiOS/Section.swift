@@ -8,14 +8,17 @@
 
 import Foundation
 
-public struct Section {
+public class Section:SafeJsonObject {
     
     public var name: String?
-    public var id: Int?
-    public var trendingStories: [String]?
-    public var featuredStories: [String]?
-    public var updatedAtTimeStamp: Int?
-    public var stories: [String]?
-    public var publisherId: String?
+    public var id: NSNumber?
+    public var trending_stories_story_order: [String]?
+    public var featured_stories_story_order: [String]?
+    public var updated_at: NSNumber?
+    public var story_order: [String]?
+    public var publisher_id: String?
+    
 
 }
+
+

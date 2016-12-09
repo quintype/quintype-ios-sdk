@@ -24,49 +24,63 @@ let baseURL:String = mainURL + "/api"
 
 struct Constants{
     
-    struct HttpError{
-        
-    }
+    //    struct HttpError{
+    //
+    //    }
+    //
+    //    struct FileError{
+    //
+    //    }
     
-    struct FileError{
+    struct urlConfig{
         
-    }
-    
-    struct Config{
+        static let getStories = "/api/v1/stories"
+        static let configUrl = "/api/v1/config"
+        static let search = "/api/v1/search"
+        static let getStoryFromSlug = "/api/v1/stories-by-slug"
+        static let breakingNews = "/api/v1/breaking-news"
+        static let facebookLogin = "/session/facebook"
+        static let postComment = "/api/v1/comments"
+        static let getCurrentUser = "/api/v1/members/me"
+        static let GetAuthor =  "/api/v1/authors"
         
-         var storiesUrl = NSURL(string:  baseURL + "/stories")// good param(single item) sections||sectionid||tag||sort-order(id same as stack) (fields(parmas||default values),offset limit)
+        static func relatedStories(storyId:String) -> String{return getStories + "/" + storyId + "/related-stories"}
+        static func getComments(storyId:String) -> String{return getStories + "/" + storyId + "/comments"}
+
+
+        // good param(single item) sections||sectionid||tag||sort-order(id same as stack) (fields(parmas||default values),offset limit)
+        
+        
+        
+        
         var storiesBySlug = NSURL(string:  baseURL + "/stories-by-slug")//good for deep linking,
-        var storiesByTemplateUrl = NSURL(string:  baseURL + "/stories")// good param (template) ||
+        
+        
+        
         var configUrl = NSURL(string:  baseURL + "/config") //good
-         var searchUrl = NSURL(string:  baseURL + "/search")//good ?q=,from,size
+        var searchUrl = NSURL(string:  baseURL + "/search")//good ?q=,from,size
         var relatedStoriesUrl = NSURL(string:  baseURL + "/related-stories")//id of opened story, fields(parmas||default values),offset limit)
         
         var commentsAndVotesUrl = NSURL(string:  baseURL + "/comments-and-votes")//good -> medium story id
-        
-        
         var postCommentUrl = NSURL(string:  baseURL + "/comment")//good post , check docs
         
         //returns tokens send to server returns token as header
-        var facebookLoginUrl = NSURL(string:  baseURL + "/login/facebook")
-        var googleLoginUrl = NSURL(string:  baseURL + "/login/google")
-        var twitterLoginUrl = NSURL(string:  baseURL + "/login/twitter")
+        var facebookLoginUrl = NSURL(string:  baseURL + "https://thequint-web.staging.quintype.io/session/facebook")
         
-
+        
+        
         var lastestAppVersionUrl = NSURL(string:  baseURL + "/check-latest-ios-version") // normal update screen
-
+        
         
         /** "api/follow" - post storyline feild
-        get gives list of user to follow
- 
-        **/
+         get gives list of user to follow
+         
+         **/
         
     }
-
-}
-
-
-enum GenerateURL{
-
     
 }
+
+
+
 

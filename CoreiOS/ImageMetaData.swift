@@ -8,10 +8,10 @@
 
 import Foundation
 
-public struct ImageMetaData {
+public class ImageMetaData:SafeJsonObject {
     
-    var width: Int?
-    var height: Int?
-    var focusPoints: [Int]?
+    public var width: NSNumber?
+    public var height: NSNumber?
+    public var focus_points: [NSNumber]?
 
 }

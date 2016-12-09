@@ -8,36 +8,60 @@
 
 import Foundation
 
-public class CardStoryElement {
+public class CardStoryElement:SafeJsonObject {
     
     //Common data
     public var id: String?
     public var title: String?
-    public var description: String?
+    public var Description: String?
     public var text: String?
     public var type: String?
-    //Sub types
-    public var subType: String?
-    public var subTypeMeta: CardStoryElementSubTypeMetaData?
-    //Image related data
-    public var imageS3Key: String?
-    public var imageMeta: ImageMetaData?
-    //Url related data
-    public var embedUrl: String?
-    public var url: String?
-    public var pageUrl: String?
-    //JS related data
-    public var embedJs: String?
-    public var decodedJsEmbed: String?
-    //Video related data
-    public var videoId:String?
-    //Twitter related data
-    public var tweetId: Int?
-    public var isTypeJsEmbedWithTwitter: Bool?
-    //Polltype related data
-    public var polltypeId: Int?
+    public var page_url: String?
+    public var subtype: String?
+    public var polltype_id: NSNumber?
     
-    //collection of story element
-    public var storyElements: [CardStoryElement] = []
+    
+    
+    
+    
+    //Image related data
+    public var hero_image_s3_key: String?
+    
+    //js related data
+    public var embed_js: String?
+    public var embed_url: String?
+    public var url: String?
+    
+    //TODO:- find why again story_element is called here
+    //    public var story_elements: [CardStoryElement] = []
+    //    public var decodedJsEmbed: String?
+    //    public var videoId:String?
+    //    public var tweetId: NSNumber?
+    
+    
+    public var hero_image_metadata: ImageMetaData?
+    public var metadata: CardStoryElementSubTypeMetaData?
+    
+    
+    override public func setValue(_ value: Any?, forKey key: String) {
+        if key == "hero_image_metadata" {
+            hero_image_metadata = ImageMetaData()
+            hero_image_metadata?.setValuesForKeys(value as! [String: AnyObject])
+        }
+        else if key == "metadata" {
+            metadata = CardStoryElementSubTypeMetaData()
+            Converter.jsonKeyConverter(dictionaryArray: value as? [String : AnyObject], completion: { (data) in
+            self.metadata?.setValuesForKeys(data as! [String: AnyObject])
+            })
+        }
+        else {
+            super.setValue(value, forKey: key)
+        }
+    }
+    
     
 }
+
+
+
+

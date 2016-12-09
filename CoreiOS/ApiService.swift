@@ -8,233 +8,373 @@
 
 import Foundation
 
-class ApiService:ApiServiceProtocol{
+// This is where API is defined
+public class ApiService:ApiServiceProtocol{
     
+    //collection, //login //TODO:- On hold -
+    
+    
+    
+    // details
+    
+    
+    
+    public init(){}
     
     let api = Http.sharedInstance
+    public let baseURL = "https://thequint-web.staging.quintype.io"
     
-    /**
-     get stories from api service
-     
-     - parameter offset:      offset value
-     - parameter limit:       limit value
-     - parameter sectionName: name of the section
-     - parameter fields:      fields needed in json
-     - parameter tagName:     name of the tag
-     - parameter storyGroup:  story group
-     
-     */
     
+    //MARK:- Get stories API call -
+    
+    public func getStories(options:storiesOption,fields: [String]?,offset: Int?,limit: Int?,storyGroup: String?,completion:@escaping (String?,[Story]?)->() ) {
+        
+        let stringURLFields = fields?.joined(separator: ",").replacingOccurrences(of: ",", with: "%2C")
+        
+        
+        var param:[String:Any?] = [
+            
+            "fields":stringURLFields,
+            "offset":offset,
+            "limit":limit,
+            "story-group":storyGroup
+        ]
+        
+        if let opt = options.value{
+            
+            if opt.isEmpty{
+                
+                param[opt.first!.key] = opt.first!.value
+                
+            }
+        }
+        
+        api.call(method: "get", urlString: baseURL + Constants.urlConfig.getStories, parameter: param as [String : AnyObject]?) { (status,error, data) in
+            if !status{
+                if let errorMessage = error{
+                    completion(errorMessage,nil)
+                }
+            }else{
+                ApiParser.StoriesParser(data: data, completion: { (storiesObject) in
+                    
+                    DispatchQueue.main.async {
+                        
+                        completion(nil,storiesObject)
+                        
+                    }
+                })
+            }
+            
+            
+        }
+        
+    }
+    
+    
+    
+    
+    //MARK:- Get story by id
+    public func getStoryFromId(storyId: String,completion:@escaping (String?,Story?)->()) {
+        // api/v1/stories/{story-id}
+        
+        api.call(method: "get", urlString: baseURL + Constants.urlConfig.getStories + "/" + storyId, parameter: nil) { (status,error,data) in
+            
+            if !status{
+                if let errorMessage = error{
+                    completion(errorMessage,nil)
+                }
+            }else{
+                ApiParser.storyParser(data: data, completion: { (storyObject) in
+                    
+                    completion(nil, storyObject)
+                    
+                })
+                
+            }
+            
+        }
+        
+    }
+    
+    
+    
+    
+    public func getPublisherConfig(completion:@escaping (String?,Config?)->()) {
+        
+        api.call(method: "get", urlString: baseURL + Constants.urlConfig.configUrl, parameter: nil) { (status,error,data) in
+            
+            if !status{
+                if let errorMessage = error{
+                    completion(errorMessage,nil)
+                }
+            }else{
+                
+                ApiParser.configParser(data: data, completion: { (configObject) in
+                    
+                    completion(nil, configObject)
+                    
+                })
+                
+            }
+            
+        }
+    }
+    
+    
+    public func search(searchBy:searchOption,fields: [String]?,offset:Int?,limit:Int?,completion:@escaping (String?,Search?)->()) {
+        
+        
+        let stringURLFields = fields?.joined(separator: ",").replacingOccurrences(of: ",", with: "%2C")
+        
+        var param:[String:Any?] = [
+            
+            "fields":stringURLFields,
+            "offset":offset,
+            "limit":limit,
+            ]
+        
+        if let opt = searchBy.value{
+            
+            if opt.isEmpty{
+                
+                param[opt.first!.key] = opt.first!.value
+                
+            }
+        }
+        
+        
+        api.call(method: "get", urlString: baseURL + Constants.urlConfig.search, parameter: param as [String : AnyObject]?){ (status,error,data) in
+            
+            if !status{
+                if let errorMessage = error{
+                    completion(errorMessage,nil)
+                }
+            }else{
+                
+                
+                ApiParser.searchParser(data: data, completion: { (searchObject) in
+                    
+                    completion(nil, searchObject)
+                    
+                })
+                
+            }
+            
+        }
+        
+        
+    }
+    
+    
+    
+    public func getRelatedStories(storyId: String,SectionId:String?,fields: [String]?,completion:@escaping (String?,[Story]?)->()) {
+        
+        
+        let stringURLFields = fields?.joined(separator: ",").replacingOccurrences(of: ",", with: "%2C")
+        
+        var param:[String:Any?] = [
+            
+            "fields":stringURLFields,
+            "section-id":SectionId
+            
+        ]
+        
+        api.call(method: "get", urlString: baseURL + Constants.urlConfig.relatedStories(storyId: storyId), parameter: param as [String : AnyObject]?){ (status,error,data) in
+            print(data)
+            if !status{
+                if let errorMessage = error{
+                    completion(errorMessage,nil)
+                }
+            }else{
+                ApiParser.StoriesParser(data: data,parseKey:"related-stories",completion: { (storiesObject) in
+                    
+                    DispatchQueue.main.async {
+                        
+                        completion(nil,storiesObject)
+                        
+                    }
+                })
+            }
+            
+            
+        }
+        
+    }
+    
+    public func getCommentsForStory(storyId:String,completion:@escaping (String?,[Comment]?)->()) {
+        
+        
+        api.call(method: "get", urlString: baseURL + Constants.urlConfig.getComments(storyId: storyId), parameter: nil){ (status,error,data) in
+            
+            if !status{
+                if let errorMessage = error{
+                    completion(errorMessage,nil)
+                }
+            }else{
+                ApiParser.commentsParser(data: data,completion: { (commentObject) in
+                    
+                    DispatchQueue.main.async {
+                        
+                        completion(nil,commentObject)
+                        
+                    }
+                })
+            }
+            
+            
+        }
+    }
+    
+    
+    public func getStoryFromSlug(slug: String,completion:@escaping (String?,Story?)->()) {
+        
+        let urlSlug = slug.addingPercentEncoding(withAllowedCharacters: .urlHostAllowed)
+        
+        var param:[String:Any?] = [
+            
+            "slug":urlSlug,
+            ]
+        
+        print(urlSlug)
+        api.call(method: "get", urlString: baseURL + Constants.urlConfig.getStoryFromSlug, parameter: param as [String : AnyObject]?){ (status,error,data) in
+            if !status{
+                if let errorMessage = error{
+                    completion(errorMessage,nil)
+                }
+            }else{
+                ApiParser.storyParser(data: data,completion: { (storyObject) in
+                    
+                    DispatchQueue.main.async {
+                        
+                        completion(nil,storyObject)
+                        
+                    }
+                })
+            }
+            
+            
+            
+            
+        }
+    }
+    
+    public func getBreakingNews(fields:[String]?,limit:Int?,offset:Int?,completion:@escaping (String?,[Story]?)->()) {
+        
+        
+        let stringURLFields = fields?.joined(separator: ",").replacingOccurrences(of: ",", with: "%2C")
+        
+        var param:[String:Any?] = [
+            
+            "fields":stringURLFields,
+            "offset":offset,
+            "limit":limit,
+            ]
+        
+        api.call(method: "get", urlString: baseURL + Constants.urlConfig.breakingNews, parameter: param as [String : AnyObject]?){ (status,error,data) in
+            
+            if !status{
+                if let errorMessage = error{
+                    completion(errorMessage,nil)
+                }
+            }else{
+                ApiParser.StoriesParser(data: data, completion: { (storiesObject) in
+                    
+                    DispatchQueue.main.async {
+                        
+                        completion(nil,storiesObject)
+                        
+                    }
+                })
+            }
+            
+            
+        }
+    }
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    public func postComment(comment:String?,storyId:Int){
+        
+        var param:[String:Any?] = [
+            
+            "story-content-id":storyId,
+            "text":comment,
+            
+            ]
+        
+        api.call(method: "post", urlString: Constants.urlConfig.postComment, parameter: param as [String : AnyObject]?){ (status,error,data) in
+            
+        }
+    }
+    
+    public func getCurrentUser(storyId:Int){
 
+        api.call(method: "get", urlString: Constants.urlConfig.getCurrentUser, parameter: nil){ (status,error,data) in
+            
+            print(data)
+            
+            
+        }
+    }
     
-    func getStories(sectionName: String,
-                    tagName: String,
-                    fields: String,
-                    offset: String,
-                    limit: String,
-                    storyGroup: String,
-                                    completion:([Story])->()) {
+    public func getAuthor(autherId:Int){
         
+
         
+        api.call(method: "get", urlString: Constants.urlConfig.GetAuthor + "/\(autherId)", parameter: nil){ (status,error,data) in
+            
+            print(data)
+            
+        }
+    }
+    
+    
+    
+    func facebookLogin(complete:(UIWebView)->()){
+        
+        let screenSize: CGRect = UIScreen.main.applicationFrame
+        let webView = UIWebView(frame: CGRect(x: 0, y: 0, width: screenSize.width, height:
+            screenSize.height))
+        
+        //                if let url = URL(string: "http://apple.com") {
+        //                    let request = URLRequest(url: url)
+        //                    webView.loadRequest(request)
+        //                }
+        
+        webView.loadRequest(URLRequest(url: URL(string:baseURL + Constants.urlConfig.facebookLogin)!))
+        complete(webView)
         
     }
     
     
-    /**
-     Get stories from given ids of story order
-     
-     - parameter storyOrder: comma separated ids of stories
-     - parameter fields:     fields interested
-     
-     
-     */
-    func getStoryFromId(storyOrder: String, fields: String){
-        
-    }
-    
-    /**
-     Get stories for a particular story group
-     
-     - parameter storyGroup: relevant story group
-     
-     
-     */
-    func getStoriesInStoryGroup(storyGroup: String){
-        
-    }
     
     
-    func getStoriesInStoryGroupInSectionStacks(storyGroup: String, section: String){
-        
-    }
-    
-    /**
-     Get publisher config from api service
-     
-     
-     */
-    func getPublisherConfig(){
-        
-    }
-    
-    /**
-     Get search results for given search term
-     
-     - parameter term: the search term
-     - parameter from: the offset to fetch results from
-     
-     
-     */
-    func getSearchResults(term: String, from: Int){
-        
-    }
-    
-    /**
-     Get stories of a particular template
-     
-     - parameter template: name of the template
-     - parameter limit: number of stories to fetch
-     
-     
-     */
-    func getStoriesByTemplate(template: String, limit: Int){
-        
-    }
-    
-    /**
-     Get paginated stories for the home page
-     
-     - parameter limit: number of stories to fetch
-     - parameter offset: number of stories to fetch from
-     
-     
-     */
-    func getTopStories(limit: Int, offset: Int){
-        
-    }
-    
-    /**
-     Get paginated stories for a tag page
-     
-     - parameter limit: number of stories to fetch
-     - parameter offset: number of stories to fetch from
-     - parameter tag: tag to fetch stories from
-     
-     
-     */
-    func getStoriesByTag(limit: Int, offset: Int, tag: String){
-        
-    }
-    
-    /**
-     Get paginated stories for a section page
-     
-     - parameter limit: number of stories to fetch
-     - parameter offset: number of stories to fetch from
-     - parameter section: section to fetch stories from
-     
-     
-     */
-    func getStoriesBySection(limit: Int, offset: Int, section: String){
-        
-    }
-    
-    /**
-     Get a story given an id
-     
-     - parameter id: id of the story
-     
-     */
-    func getStoryFromId(id: String){
-        
-    }
-    
-    /**
-     Get related stories for a specified story
-     
-     - parameter id:     story content id
-     - parameter fields: story fields required in response
-     
-     */
-    func getRelatedStories(id: String, fields: String)
-        
-    {}
-    
-    /**
-     Get user engagements of a story
-     
-     - parameter id: story content id
-     
-     
-     */
-    func getUserEngagments(id: String){
-        
-    }
-    
-    // TODO- Comment api -- Need clarification -
-    /** -------------------------------------------------------------
-     Post a comment to a card or a story.
-     
-     - parameter text: comment text
-     - parameter storyContentId: story content id
-     - parameter cardContentId: card content id
-     
-     func postComment(text: String, user: User, storyContentId: String, cardContentId: String?)
-     -----------------------------------------------------------------*/
     
     
-    /**
-     Get imgix meta data of given story element
-     
-     - parameter elem: story element
-     
-     - returns: imgix meta instance
-     */
+    
+    
+    
+    
+    
+    
     
     func getImgixMeta(elem: CardStoryElement){
         
     }
     
-    /**
-     Get tweet count of a story
-     
-     - parameter story: story
-     
-     - returns: A wrapper with the number of tweets
-     */
-    
-    func getTweetCount(story: Story){
-        
-    }
-    /**
-     Get google plus share count of a story
-     
-     - parameter story: story
-     
-     - returns: a wrapper with number of plus ones
-     */
-    func getGooglePlusCount(story: Story){
-    }
-    /**
-     Get stories by slug
-     
-     :param: stories by particular slug
-     */
-    func getStoryFromSlug(slug: String){
-        
-    }
-    /**
-     Get app version
-     
-     :param:
-     */
     
     func getLatestAppVersion(version: Int, publisherName: String){
         
     }
-    
-    
-    
-    
     
 }

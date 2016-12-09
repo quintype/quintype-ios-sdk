@@ -8,17 +8,27 @@
 
 import Foundation
 
-public struct CardStoryElementSubTypeMetaData {
+public class CardStoryElementSubTypeMetaData:SafeJsonObject {
     
     //Twitter meta
-    public var tweetUrl: String?
-    public var tweetId: String?
+    public var tweet_url: String?
+    public var tweet_id: String?
+     //Instagram meta
+//    public var instagram_url:String?
+//    public var instagram_id:String?
     //Quote meta
     public var attribution: String?
     public var content: String?
     //Video Meta
-    public var videoId:String?
-    public var videoThubnailUrl:String?
+    public var video_id:String?
+    public var thumbnail_url:String?
+    public var player_id:String?
+    public var video_url:String?
+    public var player_url:String?
+    public var embed_code:String?
+    //Q&A
+    public var question:String?
+    public var answer:String?
 
 }
     
