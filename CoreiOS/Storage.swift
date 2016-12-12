@@ -10,13 +10,15 @@ import Foundation
 
 open class Storage{
     
-    var baseUrl:String
+    
     
     // MARK: Shared instance
-    open static var sharedStorage: Storage!
+    open static let sharedStorage =  Storage()
+    
+    var baseUrl:String
     
     
-   public init(baseURL:String) {
+    public init(baseURL:String) {
         baseUrl = baseURL
     }
     

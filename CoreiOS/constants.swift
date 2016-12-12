@@ -22,6 +22,8 @@ import Foundation
 
 struct Constants{
     
+    static let storage = Storage.sharedStorage
+    
     static var baseUrl:String?
     
     //    struct HttpError{
@@ -49,7 +51,7 @@ struct Constants{
         
         static func getBaseUrl() -> String{
             
-            return Storage.getBaseUrl()
+            return storage.getBaseUrl()
             
         }
 
