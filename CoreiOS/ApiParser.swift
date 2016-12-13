@@ -97,7 +97,6 @@ class ApiParser{
                     configDetails.removeValue(forKey: key)
                     configDetails[newKey] = value
                     
-                    
                 }
                 
             }
@@ -124,7 +123,6 @@ class ApiParser{
                     let newKey = key.replacingOccurrences(of: "-", with: "_").replacingOccurrences(of: "?", with: "_")
                     searchDictionary.removeValue(forKey: key)
                     searchDictionary[newKey] = value
-                    
                     
                 }
                 

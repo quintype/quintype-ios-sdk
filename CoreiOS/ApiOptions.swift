@@ -8,31 +8,7 @@
 
 import Foundation
 
-//For post option
-
-//public enum storiesOption {
-//    
-//    case section(sectionName:String)
-//    
-//    
-//    
-//    
-//    var value: [String:String] {
-//        
-//        switch self {
-//            
-//        case .section(let sectionName):
-//            return ["section": sectionName]
-//        
-//            
-//            
-//        }
-//        
-//    }
-//}
-
-
-  //,template,section+story-group
+//MARK: - API options for paramenter
 
 public enum storiesOption {
     
@@ -42,12 +18,12 @@ public enum storiesOption {
     case template(templateName:String)
     case storyGroup(storyGroupName:String)
     case storyGroupInSection(storyGroupName:String,sectionName:String)
-
-
+    
+    
     var value: [String:String]? {
-
+        
         switch self {
-
+            
         case .topStories:
             return nil
         case .section(let sectionName):
@@ -61,9 +37,7 @@ public enum storiesOption {
         case .storyGroupInSection(let storyGroupName,let sectionName):
             return ["story-group": storyGroupName,"section": sectionName]
             
-
         }
-
     }
 }
 
@@ -73,8 +47,6 @@ public enum searchOption {
     case authorName(authorName:String)
     case authorId(authorId:String)
     case key(string:String)
-    
-    
     
     var value: [String:String]? {
         
@@ -88,7 +60,6 @@ public enum searchOption {
             return ["q": string]
             
         }
-        
     }
 }
 

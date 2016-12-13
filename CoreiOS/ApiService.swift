@@ -6,26 +6,33 @@
 //  Copyright © 2016 Albin CR. All rights reserved.
 //
 
+//TODO:- On hold -
+//collection, //login, // details
+
+
+
+
 import Foundation
 
 // This is where API is defined
-public class ApiService:ApiServiceProtocol{
+public class ApiService{
     
-    //collection, //login //TODO:- On hold -
+    //MARK: - Calling Http shared inatance
+    let api = Http.sharedInstance
     
+    //MARK: - Accesing base url from Constants file
+    private var baseUrl:String {
+        get {
+            return Constants.urlConfig.getBaseUrl()
+        }
+    }
     
-    
-    // details
-    
-    
-    
+    //MARK: - Default initilizer
     public init(){}
     
-    let api = Http.sharedInstance
-    public let baseURL = "https://thequint-web.staging.quintype.io"
     
     
-    //MARK:- Get stories API call -
+    //MARK:- Get stories -
     
     public func getStories(options:storiesOption,fields: [String]?,offset: Int?,limit: Int?,storyGroup: String?,completion:@escaping (String?,[Story]?)->() ) {
         
@@ -49,7 +56,7 @@ public class ApiService:ApiServiceProtocol{
             }
         }
         
-        api.call(method: "get", urlString: baseURL + Constants.urlConfig.getStories, parameter: param as [String : AnyObject]?) { (status,error, data) in
+        api.call(method: "get", urlString: baseUrl + Constants.urlConfig.getStories, parameter: param as [String : AnyObject]?) { (status,error, data) in
             if !status{
                 if let errorMessage = error{
                     completion(errorMessage,nil)
@@ -77,7 +84,7 @@ public class ApiService:ApiServiceProtocol{
     public func getStoryFromId(storyId: String,completion:@escaping (String?,Story?)->()) {
         // api/v1/stories/{story-id}
         
-        api.call(method: "get", urlString: baseURL + Constants.urlConfig.getStories + "/" + storyId, parameter: nil) { (status,error,data) in
+        api.call(method: "get", urlString: baseUrl + Constants.urlConfig.getStories + "/" + storyId, parameter: nil) { (status,error,data) in
             
             if !status{
                 if let errorMessage = error{
@@ -98,10 +105,10 @@ public class ApiService:ApiServiceProtocol{
     
     
     
-    
+    //MARK:- Get publisher details -
     public func getPublisherConfig(completion:@escaping (String?,Config?)->()) {
         
-        api.call(method: "get", urlString: baseURL + Constants.urlConfig.configUrl, parameter: nil) { (status,error,data) in
+        api.call(method: "get", urlString: baseUrl + Constants.urlConfig.configUrl, parameter: nil) { (status,error,data) in
             
             if !status{
                 if let errorMessage = error{
@@ -120,7 +127,7 @@ public class ApiService:ApiServiceProtocol{
         }
     }
     
-    
+    //MARK:- Search
     public func search(searchBy:searchOption,fields: [String]?,offset:Int?,limit:Int?,completion:@escaping (String?,Search?)->()) {
         
         
@@ -143,7 +150,7 @@ public class ApiService:ApiServiceProtocol{
         }
         
         
-        api.call(method: "get", urlString: baseURL + Constants.urlConfig.search, parameter: param as [String : AnyObject]?){ (status,error,data) in
+        api.call(method: "get", urlString: baseUrl + Constants.urlConfig.search, parameter: param as [String : AnyObject]?){ (status,error,data) in
             
             if !status{
                 if let errorMessage = error{
@@ -166,7 +173,7 @@ public class ApiService:ApiServiceProtocol{
     }
     
     
-    
+    //MARK:- Get realted story
     public func getRelatedStories(storyId: String,SectionId:String?,fields: [String]?,completion:@escaping (String?,[Story]?)->()) {
         
         
@@ -179,7 +186,7 @@ public class ApiService:ApiServiceProtocol{
             
         ]
         
-        api.call(method: "get", urlString: baseURL + Constants.urlConfig.relatedStories(storyId: storyId), parameter: param as [String : AnyObject]?){ (status,error,data) in
+        api.call(method: "get", urlString: baseUrl + Constants.urlConfig.relatedStories(storyId: storyId), parameter: param as [String : AnyObject]?){ (status,error,data) in
             print(data)
             if !status{
                 if let errorMessage = error{
@@ -201,10 +208,11 @@ public class ApiService:ApiServiceProtocol{
         
     }
     
+    //MARK:- Get comments of a particular story
     public func getCommentsForStory(storyId:String,completion:@escaping (String?,[Comment]?)->()) {
         
         
-        api.call(method: "get", urlString: baseURL + Constants.urlConfig.getComments(storyId: storyId), parameter: nil){ (status,error,data) in
+        api.call(method: "get", urlString: baseUrl + Constants.urlConfig.getComments(storyId: storyId), parameter: nil){ (status,error,data) in
             
             if !status{
                 if let errorMessage = error{
@@ -225,7 +233,7 @@ public class ApiService:ApiServiceProtocol{
         }
     }
     
-    
+    //MARK:- Get story form slug
     public func getStoryFromSlug(slug: String,completion:@escaping (String?,Story?)->()) {
         
         let urlSlug = slug.addingPercentEncoding(withAllowedCharacters: .urlHostAllowed)
@@ -236,7 +244,7 @@ public class ApiService:ApiServiceProtocol{
             ]
         
         print(urlSlug)
-        api.call(method: "get", urlString: baseURL + Constants.urlConfig.getStoryFromSlug, parameter: param as [String : AnyObject]?){ (status,error,data) in
+        api.call(method: "get", urlString: baseUrl + Constants.urlConfig.getStoryFromSlug, parameter: param as [String : AnyObject]?){ (status,error,data) in
             if !status{
                 if let errorMessage = error{
                     completion(errorMessage,nil)
@@ -258,6 +266,7 @@ public class ApiService:ApiServiceProtocol{
         }
     }
     
+    //MARK:- Get breaking news
     public func getBreakingNews(fields:[String]?,limit:Int?,offset:Int?,completion:@escaping (String?,[Story]?)->()) {
         
         
@@ -270,7 +279,7 @@ public class ApiService:ApiServiceProtocol{
             "limit":limit,
             ]
         
-        api.call(method: "get", urlString: baseURL + Constants.urlConfig.breakingNews, parameter: param as [String : AnyObject]?){ (status,error,data) in
+        api.call(method: "get", urlString: baseUrl + Constants.urlConfig.breakingNews, parameter: param as [String : AnyObject]?){ (status,error,data) in
             
             if !status{
                 if let errorMessage = error{
@@ -318,7 +327,7 @@ public class ApiService:ApiServiceProtocol{
     }
     
     public func getCurrentUser(storyId:Int){
-
+        
         api.call(method: "get", urlString: Constants.urlConfig.getCurrentUser, parameter: nil){ (status,error,data) in
             
             print(data)
@@ -329,7 +338,7 @@ public class ApiService:ApiServiceProtocol{
     
     public func getAuthor(autherId:Int){
         
-
+        
         
         api.call(method: "get", urlString: Constants.urlConfig.GetAuthor + "/\(autherId)", parameter: nil){ (status,error,data) in
             
@@ -351,7 +360,7 @@ public class ApiService:ApiServiceProtocol{
         //                    webView.loadRequest(request)
         //                }
         
-        webView.loadRequest(URLRequest(url: URL(string:baseURL + Constants.urlConfig.facebookLogin)!))
+        webView.loadRequest(URLRequest(url: URL(string:baseUrl + Constants.urlConfig.facebookLogin)!))
         complete(webView)
         
     }

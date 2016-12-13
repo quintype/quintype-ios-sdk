@@ -8,7 +8,7 @@
 
 import Foundation
 
- class Http{
+class Http{
     
     static let sharedInstance = Http()
     
@@ -51,6 +51,7 @@ import Foundation
             }
         }
         
+        
         URLSession.shared.dataTask(with: url as URLRequest) { (data, response, error) in
             
             print("error0",data?.description,response,error)
@@ -67,17 +68,15 @@ import Foundation
                 
                 do {
                     
-                    
                     if let data = data,let json = try? JSONSerialization.jsonObject(with: data, options: []) as? [String: AnyObject] {
                         
-                    
                         let httpResponse = response as? HTTPURLResponse
                         let status = httpResponse?.statusCode
                         if status == 200 || status == 201{
-                        DispatchQueue.main.async {
-                            print("Api call successfull")
-                            completion(true,nil,json as [String : AnyObject]?)
-                        }
+                            DispatchQueue.main.async {
+                                print("Api call successfull")
+                                completion(true,nil,json as [String : AnyObject]?)
+                            }
                         }else{
                             
                             if let errorMessage = json?["error"]{
@@ -88,15 +87,13 @@ import Foundation
                                     }
                                 }
                             }
-                            
-                            
-                            
                         }
                         
+                    }else{
+                        let message = "Unable to get data"
+                        print("Unable to get data")
+                        completion(false,message,nil)
                     }
-                    
-                    
-                    
                     
                 } catch let jsonError {
                     print("entered json parsing error")
@@ -108,7 +105,9 @@ import Foundation
                     
                 }
             }
+            
             }.resume()
+        
         
     }
     

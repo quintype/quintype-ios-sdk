@@ -7,6 +7,7 @@
 //
 
 import UIKit
+import CoreiOS
 
 @UIApplicationMain
 class AppDelegate: UIResponder, UIApplicationDelegate {
@@ -16,6 +17,12 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
 
     func application(_ application: UIApplication, didFinishLaunchingWithOptions launchOptions: [UIApplicationLaunchOptionsKey: Any]?) -> Bool {
         // Override point for customization after application launch.
+        Quintype.initWithBaseUrl(baseURL: "https://thequint-web.staging.quintype.io")
+      Quintype.api.getPublisherConfig { (erro, data) in
+        
+        
+        print(data)
+        }
         return true
     }
 

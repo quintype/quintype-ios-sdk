@@ -20,11 +20,11 @@ import Foundation
 
 
 
-struct Constants{
+public struct Constants{
     
     static let storage = Storage.sharedStorage
     
-    static var baseUrl:String?
+    private static var baseUrl:String?
     
     //    struct HttpError{
     //
@@ -34,7 +34,7 @@ struct Constants{
     //
     //    }
     
-    struct urlConfig{
+  public  struct urlConfig{
         
         static let getStories = "/api/v1/stories"
         static let configUrl = "/api/v1/config"
@@ -51,7 +51,7 @@ struct Constants{
         
         static func getBaseUrl() -> String{
             
-            return storage.getBaseUrl()
+            return storage.getBaseUrl()!
             
         }
 
