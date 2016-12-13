@@ -13,9 +13,9 @@ public class CardStoryElementSubTypeMetaData:SafeJsonObject {
     //Twitter meta
     public var tweet_url: String?
     public var tweet_id: String?
-     //Instagram meta
-//    public var instagram_url:String?
-//    public var instagram_id:String?
+    //Instagram meta
+    //    public var instagram_url:String?
+    //    public var instagram_id:String?
     //Quote meta
     public var attribution: String?
     public var content: String?
@@ -29,6 +29,6 @@ public class CardStoryElementSubTypeMetaData:SafeJsonObject {
     //Q&A
     public var question:String?
     public var answer:String?
-
-}
     
+}
+

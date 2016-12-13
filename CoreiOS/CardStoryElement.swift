@@ -20,10 +20,6 @@ public class CardStoryElement:SafeJsonObject {
     public var subtype: String?
     public var polltype_id: NSNumber?
     
-    
-    
-    
-    
     //Image related data
     public var hero_image_s3_key: String?
     
@@ -51,7 +47,7 @@ public class CardStoryElement:SafeJsonObject {
         else if key == "metadata" {
             metadata = CardStoryElementSubTypeMetaData()
             Converter.jsonKeyConverter(dictionaryArray: value as? [String : AnyObject], completion: { (data) in
-            self.metadata?.setValuesForKeys(data as! [String: AnyObject])
+                self.metadata?.setValuesForKeys(data as! [String: AnyObject])
             })
         }
         else {

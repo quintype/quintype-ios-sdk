@@ -10,5 +10,6 @@ import Foundation
 
 public class Facebook:SafeJsonObject{
     
-   public var app_id:String?
+    public var app_id:String?
+    
 }

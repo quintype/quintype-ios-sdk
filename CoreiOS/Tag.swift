@@ -12,5 +12,5 @@ public class Tag:SafeJsonObject {
     
     public var name: String?
     public var id: NSNumber?
-
+    
 }

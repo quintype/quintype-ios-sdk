@@ -13,5 +13,5 @@ public class ImageMetaData:SafeJsonObject {
     public var width: NSNumber?
     public var height: NSNumber?
     public var focus_points: [NSNumber]?
-
+    
 }

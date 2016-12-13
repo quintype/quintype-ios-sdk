@@ -45,7 +45,7 @@ public class Config:SafeJsonObject{
                 Converter.jsonKeyConverter(dictionaryArray: section, completion: { (data) in
                     singleSectionMeta.setValuesForKeys(data)
                     self.sections.append(singleSectionMeta)
-    
+                    
                 })
             }
             
@@ -67,7 +67,7 @@ public class Config:SafeJsonObject{
             Converter.jsonKeyConverter(dictionaryArray: value as? [String : AnyObject], completion: { (data) in
                 self.facebook?.setValuesForKeys(data as! [String: AnyObject])
                 print(self.facebook)
-
+                
             })
             
             
@@ -75,15 +75,15 @@ public class Config:SafeJsonObject{
             
             social_links = SocialLinks()
             Converter.jsonKeyConverter(dictionaryArray: value as? [String : AnyObject], completion: { (data) in
-            self.social_links?.setValuesForKeys(data as! [String: AnyObject])
+                self.social_links?.setValuesForKeys(data as! [String: AnyObject])
             })
             
         }
         else if key == "layout"{
             
             layout = Layout()
-             Converter.jsonKeyConverter(dictionaryArray: value as? [String : AnyObject], completion: { (data) in
-            self.layout?.setValuesForKeys(value as! [String: AnyObject])
+            Converter.jsonKeyConverter(dictionaryArray: value as? [String : AnyObject], completion: { (data) in
+                self.layout?.setValuesForKeys(value as! [String: AnyObject])
             })
             
         }
@@ -91,7 +91,7 @@ public class Config:SafeJsonObject{
             super.setValue(value, forKey: key)
         }
     }
-
+    
     
     
 }

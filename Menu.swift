@@ -23,17 +23,17 @@ public class Menu:SafeJsonObject{
     public var created_at:NSNumber?
     public var section_name:String?
     public var data:MenuMeta?
-
+    
     override public func setValue(_ value: Any?, forKey key: String) {
         
-         if key == "data"{
+        if key == "data"{
             
             data = MenuMeta()
             Converter.jsonKeyConverter(dictionaryArray: value as? [String : AnyObject], completion: { (data) in
                 self.data?.setValuesForKeys(value as! [String: AnyObject])
-
+                
             })
-                    }
+        }
         else {
             super.setValue(value, forKey: key)
         }

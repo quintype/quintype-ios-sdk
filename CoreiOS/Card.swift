@@ -9,7 +9,7 @@
 import Foundation
 
 public class Card:SafeJsonObject  {
-
+    
     public var id: String?
     public var content_id: String?
     public var status: String?
@@ -44,7 +44,7 @@ public class Card:SafeJsonObject  {
             super.setValue(value, forKey: key)
         }
     }
-
+    
     
 }
 

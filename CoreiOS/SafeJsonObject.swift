@@ -8,6 +8,8 @@
 
 import Foundation
 
+// MARK: Json parser classs for safely paring json 
+
 public class SafeJsonObject: NSObject {
    
     override public func setValue(_ value: Any?, forKey key: String) {
@@ -20,47 +22,3 @@ public class SafeJsonObject: NSObject {
     }
     
 }
-
-
-
-//do {
-//    
-//    let data = try(Data(contentsOf: URL(fileURLWithPath: path), options: NSData.ReadingOptions.mappedIfSafe))
-//    
-//    let jsonDictionary = try(JSONSerialization.jsonObject(with: data, options: .mutableContainers)) as? [String: AnyObject]
-//    
-//    if let postsArray = jsonDictionary?["posts"] as? [[String: AnyObject]] {
-//        
-//        self.posts = [Post]()
-//        
-//        for var postDictionary in postsArray {
-//            let post = Post()
-//            print(postDictionary)
-//            for (_,postDetail) in postDictionary.enumerated(){
-//                
-//                let key = postDetail.key
-//                let value = postDetail.value
-//                
-//                print(postDictionary)
-//                
-//                let letters = CharacterSet.alphanumerics
-//                if (key.trimmingCharacters(in: letters) != "") {
-//                    print(key)
-//                    let newKey = key.replacingOccurrences(of: "-", with: "_")
-//                    postDictionary.removeValue(forKey: key)
-//                    postDictionary[newKey] = value
-//                    print(postDictionary[newKey]!)
-//                    
-//                    
-//                }
-//                
-//            }
-//            post.setValuesForKeys(postDictionary)
-//            self.posts.append(post)
-//        }
-//        
-//    }
-//    
-//} catch let err {
-//    print(err)
-//}

@@ -18,7 +18,7 @@ public class Section:SafeJsonObject {
     public var story_order: [String]?
     public var publisher_id: String?
     
-
+    
 }
 
 
