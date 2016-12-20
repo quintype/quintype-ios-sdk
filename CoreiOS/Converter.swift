@@ -9,8 +9,7 @@
 import Foundation
 
 public class Converter{
-    
-    
+
     // MARK: - Convert incomming json in readable format by replacing "- or ?" by "_" -
     public class func jsonKeyConverter(dictionaryArray:[String:AnyObject]?,completion:@escaping ([String:AnyObject]) -> ()){
         

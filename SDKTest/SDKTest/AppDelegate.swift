@@ -19,12 +19,7 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
         // Override point for customization after application launch.
         Quintype.initWithBaseUrl(baseURL: "https://thequint-web.staging.quintype.io")
         
-        Quintype.api.getPublisherConfig { (err, data) in
-            
-
-        }
-        
-        
+    
       
         return true
     }

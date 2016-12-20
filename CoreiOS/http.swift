@@ -17,7 +17,7 @@ class Http{
         
         var urlString = urlString
         var url = NSMutableURLRequest(url: URL(string: urlString)!)
-        print(url)
+        ////print(url)
         
         url.httpMethod = method.capitalized
         
@@ -54,13 +54,13 @@ class Http{
         
         URLSession.shared.dataTask(with: url as URLRequest) { (data, response, error) in
             
-            print("error0",data?.description,response,error)
+            ////print("error0",data?.description,response,error)
             let response = response
             
             if error != nil {
-                print(error as Any)
+                ////print(error as Any)
                 DispatchQueue.main.async {
-                    print("api call failled")
+                    ////print("api call failled")
                     completion(false,"Unknown error occured",nil)
                 }
                 return
@@ -74,7 +74,7 @@ class Http{
                         let status = httpResponse?.statusCode
                         if status == 200 || status == 201{
                             DispatchQueue.main.async {
-                                print("Api call successfull")
+                                ////print("Api call successfull")
                                 completion(true,nil,json as [String : AnyObject]?)
                             }
                         }else{
@@ -82,7 +82,7 @@ class Http{
                             if let errorMessage = json?["error"]{
                                 if let message =  errorMessage["message"] as? String{
                                     DispatchQueue.main.async {
-                                        print("Unable to get data")
+                                        ////print("Unable to get data")
                                         completion(false,message,nil)
                                     }
                                 }
@@ -91,15 +91,15 @@ class Http{
                         
                     }else{
                         let message = "Unable to get data"
-                        print("Unable to get data")
+                        ////print("Unable to get data")
                         completion(false,message,nil)
                     }
                     
                 } catch let jsonError {
-                    print("entered json parsing error")
-                    print(jsonError)
+                    ////print("entered json parsing error")
+                    ////print(jsonError)
                     DispatchQueue.main.async {
-                        print("Api call successfull but cannot parse")
+                        ////print("Api call successfull but cannot parse")
                         completion(false,"Cannot parse the data",nil)
                     }
                     

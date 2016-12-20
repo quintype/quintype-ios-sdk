@@ -16,4 +16,6 @@ public class SectionMeta:SafeJsonObject{
     public var slug:String?
     public var parent_id:NSNumber?
     
+    
+
 }

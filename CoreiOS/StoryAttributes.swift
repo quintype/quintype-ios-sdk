@@ -16,7 +16,6 @@ public class StoryAttributes:SafeJsonObject{
     public var display_name:String?
     public var values:[String]?
     
-    
 }
 
 

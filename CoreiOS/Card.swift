@@ -35,7 +35,7 @@ public class Card:SafeJsonObject  {
                 Converter.jsonKeyConverter(dictionaryArray: CardStoryElement, completion: { (data) in
                     singleCardStoryElement.setValuesForKeys(data as! [String: AnyObject])
                     self.story_elements.append(singleCardStoryElement)
-                    print(self.story_elements)
+                    //print(self.story_elements)
                 })
             }
             

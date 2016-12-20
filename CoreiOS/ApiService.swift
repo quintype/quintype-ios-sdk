@@ -31,286 +31,13 @@ public class ApiService{
     public init(){}
     
     
+    var saveToDisk:Bool = false
+    var cacheTime:Int?
+    var cacheStatus:Bool = true
+    var replaceWithNewData = false
     
-    //MARK:- Get stories -
-    
-    public func getStories(options:storiesOption,fields: [String]?,offset: Int?,limit: Int?,storyGroup: String?,completion:@escaping (String?,[Story]?)->() ) {
-        
-        let stringURLFields = fields?.joined(separator: ",").replacingOccurrences(of: ",", with: "%2C")
-        
-        
-        var param:[String:Any?] = [
-            
-            "fields":stringURLFields,
-            "offset":offset,
-            "limit":limit,
-            "story-group":storyGroup
-        ]
-        
-        if let opt = options.value{
-            
-            if opt.isEmpty{
-                
-                param[opt.first!.key] = opt.first!.value
-                
-            }
-        }
-        
-        api.call(method: "get", urlString: baseUrl + Constants.urlConfig.getStories, parameter: param as [String : AnyObject]?) { (status,error, data) in
-            if !status{
-                if let errorMessage = error{
-                    completion(errorMessage,nil)
-                }
-            }else{
-                ApiParser.StoriesParser(data: data, completion: { (storiesObject) in
-                    
-                    DispatchQueue.main.async {
-                        
-                        completion(nil,storiesObject)
-                        
-                    }
-                })
-            }
-            
-            
-        }
-        
-    }
-    
-    
-    
-    
-    //MARK:- Get story by id
-    public func getStoryFromId(storyId: String,completion:@escaping (String?,Story?)->()) {
-        // api/v1/stories/{story-id}
-        
-        api.call(method: "get", urlString: baseUrl + Constants.urlConfig.getStories + "/" + storyId, parameter: nil) { (status,error,data) in
-            
-            if !status{
-                if let errorMessage = error{
-                    completion(errorMessage,nil)
-                }
-            }else{
-                ApiParser.storyParser(data: data, completion: { (storyObject) in
-                    
-                    completion(nil, storyObject)
-                    
-                })
-                
-            }
-            
-        }
-        
-    }
-    
-    
-    
-    //MARK:- Get publisher details -
-    public func getPublisherConfig(completion:@escaping (String?,Config?)->()) {
-        
-        api.call(method: "get", urlString: baseUrl + Constants.urlConfig.configUrl, parameter: nil) { (status,error,data) in
-            
-            if !status{
-                if let errorMessage = error{
-                    completion(errorMessage,nil)
-                }
-            }else{
-                
-                ApiParser.configParser(data: data, completion: { (configObject) in
-                    
-                    completion(nil, configObject)
-                    
-                })
-                
-            }
-            
-        }
-    }
-    
-    //MARK:- Search
-    public func search(searchBy:searchOption,fields: [String]?,offset:Int?,limit:Int?,completion:@escaping (String?,Search?)->()) {
-        
-        
-        let stringURLFields = fields?.joined(separator: ",").replacingOccurrences(of: ",", with: "%2C")
-        
-        var param:[String:Any?] = [
-            
-            "fields":stringURLFields,
-            "offset":offset,
-            "limit":limit,
-            ]
-        
-        if let opt = searchBy.value{
-            
-            if opt.isEmpty{
-                
-                param[opt.first!.key] = opt.first!.value
-                
-            }
-        }
-        
-        
-        api.call(method: "get", urlString: baseUrl + Constants.urlConfig.search, parameter: param as [String : AnyObject]?){ (status,error,data) in
-            
-            if !status{
-                if let errorMessage = error{
-                    completion(errorMessage,nil)
-                }
-            }else{
-                
-                
-                ApiParser.searchParser(data: data, completion: { (searchObject) in
-                    
-                    completion(nil, searchObject)
-                    
-                })
-                
-            }
-            
-        }
-        
-        
-    }
-    
-    
-    //MARK:- Get realted story
-    public func getRelatedStories(storyId: String,SectionId:String?,fields: [String]?,completion:@escaping (String?,[Story]?)->()) {
-        
-        
-        let stringURLFields = fields?.joined(separator: ",").replacingOccurrences(of: ",", with: "%2C")
-        
-        var param:[String:Any?] = [
-            
-            "fields":stringURLFields,
-            "section-id":SectionId
-            
-        ]
-        
-        api.call(method: "get", urlString: baseUrl + Constants.urlConfig.relatedStories(storyId: storyId), parameter: param as [String : AnyObject]?){ (status,error,data) in
-            print(data)
-            if !status{
-                if let errorMessage = error{
-                    completion(errorMessage,nil)
-                }
-            }else{
-                ApiParser.StoriesParser(data: data,parseKey:"related-stories",completion: { (storiesObject) in
-                    
-                    DispatchQueue.main.async {
-                        
-                        completion(nil,storiesObject)
-                        
-                    }
-                })
-            }
-            
-            
-        }
-        
-    }
-    
-    //MARK:- Get comments of a particular story
-    public func getCommentsForStory(storyId:String,completion:@escaping (String?,[Comment]?)->()) {
-        
-        
-        api.call(method: "get", urlString: baseUrl + Constants.urlConfig.getComments(storyId: storyId), parameter: nil){ (status,error,data) in
-            
-            if !status{
-                if let errorMessage = error{
-                    completion(errorMessage,nil)
-                }
-            }else{
-                ApiParser.commentsParser(data: data,completion: { (commentObject) in
-                    
-                    DispatchQueue.main.async {
-                        
-                        completion(nil,commentObject)
-                        
-                    }
-                })
-            }
-            
-            
-        }
-    }
-    
-    //MARK:- Get story form slug
-    public func getStoryFromSlug(slug: String,completion:@escaping (String?,Story?)->()) {
-        
-        let urlSlug = slug.addingPercentEncoding(withAllowedCharacters: .urlHostAllowed)
-        
-        var param:[String:Any?] = [
-            
-            "slug":urlSlug,
-            ]
-        
-        print(urlSlug)
-        api.call(method: "get", urlString: baseUrl + Constants.urlConfig.getStoryFromSlug, parameter: param as [String : AnyObject]?){ (status,error,data) in
-            if !status{
-                if let errorMessage = error{
-                    completion(errorMessage,nil)
-                }
-            }else{
-                ApiParser.storyParser(data: data,completion: { (storyObject) in
-                    
-                    DispatchQueue.main.async {
-                        
-                        completion(nil,storyObject)
-                        
-                    }
-                })
-            }
-            
-            
-            
-            
-        }
-    }
-    
-    //MARK:- Get breaking news
-    public func getBreakingNews(fields:[String]?,limit:Int?,offset:Int?,completion:@escaping (String?,[Story]?)->()) {
-        
-        
-        let stringURLFields = fields?.joined(separator: ",").replacingOccurrences(of: ",", with: "%2C")
-        
-        var param:[String:Any?] = [
-            
-            "fields":stringURLFields,
-            "offset":offset,
-            "limit":limit,
-            ]
-        
-        api.call(method: "get", urlString: baseUrl + Constants.urlConfig.breakingNews, parameter: param as [String : AnyObject]?){ (status,error,data) in
-            
-            if !status{
-                if let errorMessage = error{
-                    completion(errorMessage,nil)
-                }
-            }else{
-                ApiParser.StoriesParser(data: data, completion: { (storiesObject) in
-                    
-                    DispatchQueue.main.async {
-                        
-                        completion(nil,storiesObject)
-                        
-                    }
-                })
-            }
-            
-            
-        }
-    }
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
+    //MARK: -POST calls
+    //TODO: -Need testing
     
     public func postComment(comment:String?,storyId:Int){
         
@@ -330,7 +57,7 @@ public class ApiService{
         
         api.call(method: "get", urlString: Constants.urlConfig.getCurrentUser, parameter: nil){ (status,error,data) in
             
-            print(data)
+            ////print(data)
             
             
         }
@@ -342,7 +69,7 @@ public class ApiService{
         
         api.call(method: "get", urlString: Constants.urlConfig.GetAuthor + "/\(autherId)", parameter: nil){ (status,error,data) in
             
-            print(data)
+            ////print(data)
             
         }
     }
@@ -366,17 +93,6 @@ public class ApiService{
     }
     
     
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
     func getImgixMeta(elem: CardStoryElement){
         
     }
@@ -384,6 +100,610 @@ public class ApiService{
     
     func getLatestAppVersion(version: Int, publisherName: String){
         
+    }
+    
+    
+    
+    
+    //MARK: - Api calling wrapper for reuseing the call (Common Call for all get Calls)
+    func apiCall(apiCallName:String,method:String,url:String,parameter:[String:AnyObject]?,cacheStatus:Bool,cacheTime:Int,saveToDisk:Bool,retuenData:Bool = true,completion:@escaping (String?,Any?)->()) {
+        api.call(method: method, urlString: url, parameter: parameter) { (status,error,data) in
+            if !status{
+                if let errorMessage = error{
+                    completion(errorMessage,nil)
+                }
+            }else{
+                
+                if cacheStatus{
+                    Cache.cacheData(data: data, key: apiCallName, cacheTimeInMinute: cacheTime,saveToDisk:saveToDisk)
+                    completion(nil,data)
+                }else{
+                    completion(nil,data)
+                }
+                
+            }
+        }
+    }
+    
+    
+    
+    
+    
+    //MARK:- Get publisher details -
+    public func getPublisherConfig(cache:cacheOption,completion:@escaping (String?,Config?)->()) {
+        
+        let apiCallName = "\(#function)".components(separatedBy: "(")[0]
+        print(apiCallName)
+        
+        if let opt = cache.value{
+            if opt.keys.first == Constants.cache.cacheToMemoryWithTime{
+                saveToDisk = false
+                cacheTime = opt.values.first
+            }else if opt.keys.first == Constants.cache.cacheToMemoryAndDiskWithTime{
+                saveToDisk = true
+                cacheTime = opt.values.first
+            }else if opt.keys.first == Constants.cache.loadOldCacheAndReplaceWithNew{
+                replaceWithNewData = true
+                cacheTime = opt.values.first
+                saveToDisk = true
+            }
+            
+        }else{
+            cacheStatus = false
+        }
+        
+        let url = baseUrl + Constants.urlConfig.configUrl
+        
+        func requestCall(retuenData:Bool = true){
+            
+            self.apiCall(apiCallName:apiCallName,method:"get",url: url, parameter: nil, cacheStatus: cacheStatus, cacheTime: cacheTime!, saveToDisk: saveToDisk, completion: { (error, data) in
+                
+                ApiParser.configParser(data: data as! [String : AnyObject]?, completion: { (configObject) in
+                    if retuenData{
+                        DispatchQueue.main.async {
+                            completion(nil, configObject)
+                        }
+                    }
+                })
+                
+            })
+            
+        }
+        
+        Cache.retriveCacheData(keyName: apiCallName, completion: { (data) in
+            
+            if data != nil {
+                ApiParser.configParser(data: data as! [String : AnyObject]?, completion: { (configObject) in
+                    DispatchQueue.main.async {
+                        completion(nil, configObject)
+                    }
+                    
+                    if self.replaceWithNewData{
+                        requestCall(retuenData: false)
+                    }
+                })
+                
+            }else{
+                requestCall()
+            }
+        })
+    }
+    
+    //MARK: - Get stories -
+    public func getStories(options:storiesOption,fields: [String]?,offset: Int?,limit: Int?,storyGroup: String?,cache:cacheOption,completion:@escaping (String?,[Story]?)->()) {
+        
+        let stringURLFields = fields?.joined(separator: ",").replacingOccurrences(of: ",", with: "%2C")
+        
+        
+        var param:[String:Any?] = [
+            
+            "fields":stringURLFields,
+            "offset":offset,
+            "limit":limit,
+            "story-group":storyGroup
+        ]
+        
+        if let opt = options.value{
+            
+            if !opt.isEmpty{
+                
+                for (index,options) in opt{
+                    param[index] = options
+                }
+                
+            }
+        }
+        
+        let apiCallName = "\(#function)".components(separatedBy: "(")[0] + param.description.replacingOccurrences(of: "-", with: "_")
+        ////print(apiCallName)
+        
+        if let opt = cache.value{
+            if opt.keys.first == Constants.cache.cacheToMemoryWithTime{
+                saveToDisk = false
+                cacheTime = opt.values.first
+            }else if opt.keys.first == Constants.cache.cacheToMemoryAndDiskWithTime{
+                saveToDisk = true
+                cacheTime = opt.values.first
+            }else if opt.keys.first == Constants.cache.loadOldCacheAndReplaceWithNew{
+                replaceWithNewData = true
+                cacheTime = opt.values.first
+                saveToDisk = true
+            }
+            
+        }else{
+            cacheStatus = false
+        }
+        
+        let url = baseUrl + Constants.urlConfig.getStories
+        
+        func requestCall(retuenData:Bool = true){
+            
+            self.apiCall(apiCallName:apiCallName,method:"get",url: url, parameter: param as [String : AnyObject]?, cacheStatus: cacheStatus, cacheTime: cacheTime!, saveToDisk: saveToDisk, completion: { (error, data) in
+                
+                ApiParser.StoriesParser(data: data as! [String : AnyObject]?, completion: { (storiesObject) in
+                    if retuenData{
+                        DispatchQueue.main.async {
+                            completion(nil,storiesObject)
+                        }
+                    }else{
+                        ////print("data not returned")
+                    }
+                })
+                
+            })
+            
+        }
+        
+        Cache.retriveCacheData(keyName: apiCallName, completion: { (data) in
+            
+            if data != nil {
+                ApiParser.StoriesParser(data: data as! [String : AnyObject]?, completion: { (storiesObject) in
+                    
+                    DispatchQueue.main.async {
+                        completion(nil,storiesObject)
+                    }
+                    
+                    if self.replaceWithNewData{
+                        requestCall(retuenData: false)
+                    }
+                })
+                
+            }else{
+                requestCall()
+            }
+        })
+    }
+    
+    
+    //MARK:- Get story by id
+    public func getStoryFromId(storyId: String,cache:cacheOption,completion:@escaping (String?,Story?)->()) {
+        
+        let apiCallName = "\(#function)".components(separatedBy: "(")[0] + storyId
+        ////print(apiCallName)
+        
+        if let opt = cache.value{
+            if opt.keys.first == Constants.cache.cacheToMemoryWithTime{
+                saveToDisk = false
+                cacheTime = opt.values.first
+            }else if opt.keys.first == Constants.cache.cacheToMemoryAndDiskWithTime{
+                saveToDisk = true
+                cacheTime = opt.values.first
+            }else if opt.keys.first == Constants.cache.loadOldCacheAndReplaceWithNew{
+                replaceWithNewData = true
+                cacheTime = opt.values.first
+                saveToDisk = true
+            }
+            
+        }else{
+            cacheStatus = false
+        }
+        
+        let url = baseUrl + Constants.urlConfig.getStories + "/" + storyId
+        
+        func requestCall(retuenData:Bool = true){
+            
+            self.apiCall(apiCallName:apiCallName,method:"get",url: url, parameter: nil, cacheStatus: cacheStatus, cacheTime: cacheTime!, saveToDisk: saveToDisk, completion: { (error, data) in
+                
+                ApiParser.storyParser(data: data as! [String : AnyObject]?, completion: { (storyObject) in
+                    if retuenData{
+                        DispatchQueue.main.async {
+                            completion(nil,storyObject)
+                        }
+                    }else{
+                        ////print("data not returned")
+                    }
+                })
+                
+            })
+            
+        }
+        
+        Cache.retriveCacheData(keyName: apiCallName, completion: { (data) in
+            
+            if data != nil {
+                ApiParser.storyParser(data: data as! [String : AnyObject]?, completion: { (storyObject) in
+                    
+                    DispatchQueue.main.async {
+                        completion(nil,storyObject)
+                    }
+                    
+                    if self.replaceWithNewData{
+                        requestCall(retuenData: false)
+                    }
+                })
+                
+            }else{
+                requestCall()
+            }
+        })
+        
+        
+    }
+    
+    //MARK:- Get realted story
+    public func getRelatedStories(storyId: String,SectionId:String?,fields: [String]?,cache:cacheOption,completion:@escaping (String?,[Story]?)->()) {
+        
+        
+        let stringURLFields = fields?.joined(separator: ",").replacingOccurrences(of: ",", with: "%2C")
+        
+        var param:[String:Any?] = [
+            
+            "fields":stringURLFields,
+            "section-id":SectionId
+            
+        ]
+        
+        
+        let apiCallName = "\(#function)".components(separatedBy: "(")[0] + storyId + param.description.replacingOccurrences(of: "-", with: "_")
+        ////print(apiCallName)
+        
+        if let opt = cache.value{
+            if opt.keys.first == Constants.cache.cacheToMemoryWithTime{
+                saveToDisk = false
+                cacheTime = opt.values.first
+            }else if opt.keys.first == Constants.cache.cacheToMemoryAndDiskWithTime{
+                saveToDisk = true
+                cacheTime = opt.values.first
+            }else if opt.keys.first == Constants.cache.loadOldCacheAndReplaceWithNew{
+                replaceWithNewData = true
+                cacheTime = opt.values.first
+                saveToDisk = true
+            }
+            
+        }else{
+            cacheStatus = false
+        }
+        
+        let url = baseUrl + Constants.urlConfig.relatedStories(storyId: storyId)
+        
+        func requestCall(retuenData:Bool = true){
+            
+            self.apiCall(apiCallName:apiCallName,method:"get",url: url, parameter: param as [String : AnyObject]?, cacheStatus: cacheStatus, cacheTime: cacheTime!, saveToDisk: saveToDisk, completion: { (error, data) in
+                
+                ApiParser.StoriesParser(data: data as! [String : AnyObject]?,parseKey:"related-stories",completion: { (storiesObject) in
+                    if retuenData{
+                        DispatchQueue.main.async {
+                            completion(nil,storiesObject)
+                        }
+                    }else{
+                        ////print("data not returned")
+                    }
+                })
+                
+            })
+            
+        }
+        
+        Cache.retriveCacheData(keyName: apiCallName, completion: { (data) in
+            
+            if data != nil {
+                ApiParser.StoriesParser(data: data as! [String : AnyObject]?,parseKey:"related-stories",completion: { (storiesObject) in
+                    
+                    DispatchQueue.main.async {
+                        completion(nil,storiesObject)
+                    }
+                    
+                    if self.replaceWithNewData{
+                        requestCall(retuenData: false)
+                    }
+                })
+                
+            }else{
+                requestCall()
+            }
+        })
+        
+    }
+    
+    //MARK:- Search
+    public func search(searchBy:searchOption,fields: [String]?,offset:Int?,limit:Int?,cache:cacheOption,completion:@escaping (String?,Search?)->()) {
+        
+        
+        let stringURLFields = fields?.joined(separator: ",").replacingOccurrences(of: ",", with: "%2C")
+        var searchKey:String = ""
+        
+        var param:[String:Any?] = [
+            
+            "fields":stringURLFields,
+            "offset":offset,
+            "limit":limit,
+            ]
+        
+        if let opt = searchBy.value{
+            
+            if opt.isEmpty{
+                
+                param[opt.first!.key] = opt.first!.value
+                searchKey = opt.first!.value
+                
+            }
+        }
+        
+        
+        let apiCallName = "\(#function)".components(separatedBy: "(")[0] + searchKey + param.description.replacingOccurrences(of: "-", with: "_")
+        ////print(apiCallName)
+        
+        if let opt = cache.value{
+            if opt.keys.first == Constants.cache.cacheToMemoryWithTime{
+                saveToDisk = false
+                cacheTime = opt.values.first
+            }else if opt.keys.first == Constants.cache.cacheToMemoryAndDiskWithTime{
+                saveToDisk = true
+                cacheTime = opt.values.first
+            }else if opt.keys.first == Constants.cache.loadOldCacheAndReplaceWithNew{
+                replaceWithNewData = true
+                cacheTime = opt.values.first
+                saveToDisk = true
+            }
+            
+        }else{
+            cacheStatus = false
+        }
+        
+        let url = baseUrl + Constants.urlConfig.search
+        
+        func requestCall(retuenData:Bool = true){
+            
+            self.apiCall(apiCallName:apiCallName,method:"get",url: url, parameter: nil, cacheStatus: cacheStatus, cacheTime: cacheTime!, saveToDisk: saveToDisk, completion: { (error, data) in
+                
+                ApiParser.searchParser(data: data as! [String : AnyObject]?, completion: { (searchObject) in
+                    
+                    if retuenData{
+                        DispatchQueue.main.async {
+                            completion(nil,searchObject)
+                        }
+                    }else{
+                        ////print("data not returned")
+                    }
+                })
+                
+            })
+            
+        }
+        
+        Cache.retriveCacheData(keyName: apiCallName, completion: { (data) in
+            
+            if data != nil {
+                ApiParser.searchParser(data: data as! [String : AnyObject]?, completion: { (searchObject) in
+                    
+                    
+                    DispatchQueue.main.async {
+                        completion(nil,searchObject)
+                    }
+                    
+                    if self.replaceWithNewData{
+                        requestCall(retuenData: false)
+                    }
+                })
+                
+            }else{
+                requestCall()
+            }
+        })
+        
+    }
+    
+    //MARK:- Get comments of a particular story
+    public func getCommentsForStory(storyId:String,cache:cacheOption,completion:@escaping (String?,[Comment]?)->()) {
+        
+        let apiCallName = "\(#function)".components(separatedBy: "(")[0] + storyId
+        if let opt = cache.value{
+            if opt.keys.first == Constants.cache.cacheToMemoryWithTime{
+                saveToDisk = false
+                cacheTime = opt.values.first
+            }else if opt.keys.first == Constants.cache.cacheToMemoryAndDiskWithTime{
+                saveToDisk = true
+                cacheTime = opt.values.first
+            }else if opt.keys.first == Constants.cache.loadOldCacheAndReplaceWithNew{
+                replaceWithNewData = true
+                cacheTime = opt.values.first
+                saveToDisk = true
+            }
+            
+        }else{
+            cacheStatus = false
+        }
+        
+        let url = baseUrl + Constants.urlConfig.getComments(storyId: storyId)
+        
+        func requestCall(retuenData:Bool = true){
+            
+            self.apiCall(apiCallName:apiCallName,method:"get",url: url, parameter: nil, cacheStatus: cacheStatus, cacheTime: cacheTime!, saveToDisk: saveToDisk, completion: { (error, data) in
+                
+                ApiParser.commentsParser(data: data as! [String : AnyObject]?,completion: { (commentObject) in
+                    
+                    
+                    if retuenData{
+                        DispatchQueue.main.async {
+                            completion(nil,commentObject)
+                        }
+                    }else{
+                        ////print("data not returned")
+                    }
+                })
+                
+            })
+            
+        }
+        
+        Cache.retriveCacheData(keyName: apiCallName, completion: { (data) in
+            
+            if data != nil {
+                ApiParser.commentsParser(data: data as! [String : AnyObject]?,completion: { (commentObject) in
+                    
+                    DispatchQueue.main.async {
+                        completion(nil,commentObject)
+                    }
+                    
+                    if self.replaceWithNewData{
+                        requestCall(retuenData: false)
+                    }
+                })
+                
+            }else{
+                requestCall()
+            }
+        })
+    }
+    
+    //MARK:- Get story form slug
+    public func getStoryFromSlug(slug: String,cache:cacheOption,completion:@escaping (String?,Story?)->()) {
+        
+        let urlSlug = slug.addingPercentEncoding(withAllowedCharacters: .urlHostAllowed)
+        
+        var param:[String:Any?] = ["slug":urlSlug]
+        
+        let apiCallName = "\(#function)".components(separatedBy: "(")[0] + slug
+        if let opt = cache.value{
+            if opt.keys.first == Constants.cache.cacheToMemoryWithTime{
+                saveToDisk = false
+                cacheTime = opt.values.first
+            }else if opt.keys.first == Constants.cache.cacheToMemoryAndDiskWithTime{
+                saveToDisk = true
+                cacheTime = opt.values.first
+            }else if opt.keys.first == Constants.cache.loadOldCacheAndReplaceWithNew{
+                replaceWithNewData = true
+                cacheTime = opt.values.first
+                saveToDisk = true
+            }
+            
+        }else{
+            cacheStatus = false
+        }
+        
+        let url = baseUrl + Constants.urlConfig.getStoryFromSlug
+        
+        func requestCall(retuenData:Bool = true){
+            
+            self.apiCall(apiCallName:apiCallName,method:"get",url: url, parameter: param as [String : AnyObject]?, cacheStatus: cacheStatus, cacheTime: cacheTime!, saveToDisk: saveToDisk, completion: { (error, data) in
+                
+                ApiParser.storyParser(data: data as! [String : AnyObject]?,completion: { (storyObject) in
+                    
+                    if retuenData{
+                        DispatchQueue.main.async {
+                            completion(nil,storyObject)
+                        }
+                    }else{
+                        ////print("data not returned")
+                    }
+                })
+                
+            })
+            
+        }
+        
+        Cache.retriveCacheData(keyName: apiCallName, completion: { (data) in
+            
+            if data != nil {
+                ApiParser.storyParser(data: data as! [String : AnyObject]?,completion: { (storyObject) in
+                    
+                    
+                    DispatchQueue.main.async {
+                        completion(nil,storyObject)
+                    }
+                    
+                    if self.replaceWithNewData{
+                        requestCall(retuenData: false)
+                    }
+                })
+                
+            }else{
+                requestCall()
+            }
+        })
+    }
+    
+    //MARK:- Get breaking news
+    public func getBreakingNews(fields:[String]?,limit:Int?,offset:Int?,cache:cacheOption,completion:@escaping (String?,[Story]?)->()) {
+        
+        
+        let stringURLFields = fields?.joined(separator: ",").replacingOccurrences(of: ",", with: "%2C")
+        
+        var param:[String:Any?] = [
+            
+            "fields":stringURLFields,
+            "offset":offset,
+            "limit":limit,
+            ]
+        
+        let apiCallName = "\(#function)".components(separatedBy: "(")[0] + param.description.replacingOccurrences(of: "-", with: "_")
+        if let opt = cache.value{
+            if opt.keys.first == Constants.cache.cacheToMemoryWithTime{
+                saveToDisk = false
+                cacheTime = opt.values.first
+            }else if opt.keys.first == Constants.cache.cacheToMemoryAndDiskWithTime{
+                saveToDisk = true
+                cacheTime = opt.values.first
+            }else if opt.keys.first == Constants.cache.loadOldCacheAndReplaceWithNew{
+                replaceWithNewData = true
+                cacheTime = opt.values.first
+                saveToDisk = true
+            }
+            
+        }else{
+            cacheStatus = false
+        }
+        
+        let url = baseUrl + Constants.urlConfig.breakingNews
+        
+        func requestCall(retuenData:Bool = true){
+            
+            self.apiCall(apiCallName:apiCallName,method:"get",url: url, parameter: param as [String : AnyObject]?, cacheStatus: cacheStatus, cacheTime: cacheTime!, saveToDisk: saveToDisk, completion: { (error, data) in
+                
+                ApiParser.StoriesParser(data: data as! [String : AnyObject]?, completion: { (storiesObject) in
+                    
+                    if retuenData{
+                        DispatchQueue.main.async {
+                            completion(nil,storiesObject)
+                        }
+                    }else{
+                        ////print("data not returned")
+                    }
+                })
+                
+            })
+            
+        }
+        
+        Cache.retriveCacheData(keyName: apiCallName, completion: { (data) in
+            
+            if data != nil {
+                ApiParser.StoriesParser(data: data as! [String : AnyObject]?, completion: { (storiesObject) in
+                    
+                    
+                    DispatchQueue.main.async {
+                        completion(nil,storiesObject)
+                    }
+                    
+                    if self.replaceWithNewData{
+                        requestCall(retuenData: false)
+                    }
+                })
+                
+            }else{
+                requestCall()
+            }
+        })
     }
     
 }

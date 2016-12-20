@@ -23,11 +23,11 @@ class ApiParser{
                 let value = storyDetail.value
                 let letters = CharacterSet.alphanumerics
                 if (key.trimmingCharacters(in: letters) != "") {
-                    print(key)
+                    ////print(key)
                     let newKey = key.replacingOccurrences(of: "-", with: "_").replacingOccurrences(of: "?", with: "_")
                     storyDictionary.removeValue(forKey: key)
                     storyDictionary[newKey] = value
-                    print(storyDictionary[newKey]!)
+                    ////print(storyDictionary[newKey]!)
                     
                 }
                 
@@ -59,9 +59,9 @@ class ApiParser{
                         
                         let newKey = key.replacingOccurrences(of: "-", with: "_").replacingOccurrences(of: "?", with: "_")
                         storyDictionary.removeValue(forKey: key)
-                        print(newKey)
+                        ////print(newKey)
                         storyDictionary[newKey] = value
-                        print(storyDictionary[newKey]!)
+                        ////print(storyDictionary[newKey]!)
                         
                         
                     }
@@ -81,9 +81,6 @@ class ApiParser{
     
     //MARK:- Config parser -
     class func configParser(data:[String:AnyObject]?,completion:@escaping (Config) -> () ){
-        
-        print(data)
-        
         let config = Config()
         if var configDetails = data{
             for (_,singleConfigDetails) in configDetails.enumerated(){
@@ -92,7 +89,7 @@ class ApiParser{
                 let value = singleConfigDetails.value
                 let letters = CharacterSet.alphanumerics
                 if (key.trimmingCharacters(in: letters) != "") {
-                    print(key)
+                    ////print(key)
                     let newKey = key.replacingOccurrences(of: "-", with: "_").replacingOccurrences(of: "?", with: "_")
                     configDetails.removeValue(forKey: key)
                     configDetails[newKey] = value
@@ -119,7 +116,7 @@ class ApiParser{
                 let value = searchDetail.value
                 let letters = CharacterSet.alphanumerics
                 if (key.trimmingCharacters(in: letters) != "") {
-                    print(key)
+                    ////print(key)
                     let newKey = key.replacingOccurrences(of: "-", with: "_").replacingOccurrences(of: "?", with: "_")
                     searchDictionary.removeValue(forKey: key)
                     searchDictionary[newKey] = value
@@ -155,7 +152,7 @@ class ApiParser{
                         
                         let newKey = key.replacingOccurrences(of: "-", with: "_").replacingOccurrences(of: "?", with: "_")
                         commentDictionary.removeValue(forKey: key)
-                        print(newKey)
+                        ////print(newKey)
                         commentDictionary[newKey] = value
                         
                     }

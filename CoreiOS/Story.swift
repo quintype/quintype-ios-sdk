@@ -63,7 +63,7 @@ public class Story:SafeJsonObject {
                 Converter.jsonKeyConverter(dictionaryArray: section, completion: { (data) in
                     singleSection.setValuesForKeys(data as! [String: AnyObject])
                     self.sections.append(singleSection)
-                    print(self.sections)
+                    //print(self.sections)
                 })
             }
             
@@ -83,7 +83,7 @@ public class Story:SafeJsonObject {
                 Converter.jsonKeyConverter(dictionaryArray: tag, completion: { (data) in
                     singleTag.setValuesForKeys(data as! [String: AnyObject])
                     self.tags.append(singleTag)
-                    print(self.tags)
+                    //print(self.tags)
                 })
   
             }
@@ -98,7 +98,7 @@ public class Story:SafeJsonObject {
                 Converter.jsonKeyConverter(dictionaryArray: card, completion: { (data) in
                     singleCards.setValuesForKeys(data as! [String: AnyObject])
                     self.cards.append(singleCards)
-                    print(self.cards)
+                    //print(self.cards)
                 })
                 
             }

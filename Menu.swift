@@ -24,6 +24,10 @@ public class Menu:SafeJsonObject{
     public var section_name:String?
     public var data:MenuMeta?
     
+    
+ 
+    
+    
     override public func setValue(_ value: Any?, forKey key: String) {
         
         if key == "data"{

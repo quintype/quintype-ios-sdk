@@ -27,15 +27,15 @@ public enum storiesOption {
         case .topStories:
             return nil
         case .section(let sectionName):
-            return ["section": sectionName]
+            return [Constants.story.section: sectionName]
         case .tag(let tagName):
-            return ["tag": tagName]
+            return [Constants.story.tag: tagName]
         case .template(let templateName):
-            return ["template": templateName]
+            return [Constants.story.template: templateName]
         case .storyGroup(let storyGroupName):
-            return ["story-group": storyGroupName]
+            return [Constants.story.storyGroup: storyGroupName]
         case .storyGroupInSection(let storyGroupName,let sectionName):
-            return ["story-group": storyGroupName,"section": sectionName]
+            return [Constants.story.storyGroup: storyGroupName,Constants.story.section: sectionName]
             
         }
     }
@@ -59,6 +59,25 @@ public enum searchOption {
         case .key(let string):
             return ["q": string]
             
+        }
+    }
+}
+
+public enum publisherOption {
+    
+    case all
+    case key(keyName:String)
+  
+    
+    var value: [String:String]? {
+        
+        switch self {
+            
+        case .all:
+            return nil
+        case .key(let keyName):
+            return ["key": keyName]
+
         }
     }
 }

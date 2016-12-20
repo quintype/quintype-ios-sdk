@@ -26,7 +26,7 @@ public class Search:SafeJsonObject{
                 Converter.jsonKeyConverter(dictionaryArray: section, completion: { (data) in
                     singleStory.setValuesForKeys(data as! [String: AnyObject])
                     self.stories.append(singleStory)
-                    print(self.stories)
+                    //print(self.stories)
                 })
             }
             

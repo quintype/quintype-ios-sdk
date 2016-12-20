@@ -12,4 +12,7 @@ public class Facebook:SafeJsonObject{
     
     public var app_id:String?
     
+
+    
 }
+
