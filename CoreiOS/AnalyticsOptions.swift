@@ -8,13 +8,22 @@
 
 import Foundation
 
-public enum analyticsOptions:String{
+public enum eventType:String{
     
     case session = "session"
-    case pageView = "page-view"
-    case stoyView = "story-view"
+    case viewPage = "page-view"
+    case viewStory = "story-view"
     case storyElementView = "story-element-view"
     case storyElementAction = "story-element-action"
     case contentShare = "content-share"
+
+}
+
+public enum pageType:String{
+    
+    case home = "home"
+    case story = "story"
+    case section = "section"
+    case searchResults = "story-search-results"
     
 }

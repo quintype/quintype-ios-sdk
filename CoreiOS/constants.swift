@@ -24,9 +24,10 @@ public struct Constants{
     
     static let storage = Storage.sharedStorage
     
+    
     public struct urlConfig{
         
-        //MARK: - Direct Constants
+        //MARK: - urlConfig -
         static let getStories = "/api/v1/stories"
         static let configUrl = "/api/v1/config"
         static let search = "/api/v1/search"
@@ -37,7 +38,7 @@ public struct Constants{
         static let getCurrentUser = "/api/v1/members/me"
         static let GetAuthor =  "/api/v1/authors"
         
-        //Mark: - Function that return string
+        //Function that return string
         static func relatedStories(storyId:String) -> String {return getStories + "/" + storyId + "/related-stories"}
         static func getComments(storyId:String) -> String {return getStories + "/" + storyId + "/comments"}
         static func getBaseUrl() -> String {return storage.getBaseUrl()!}
@@ -46,25 +47,48 @@ public struct Constants{
     
     public struct analyticConfig{
         
-        //MARK: - Direct Constants
-        static let analyticUrl = "/api/event"
+        //MARK: - analyticConfig -
+
+        static let analyticKey = "analyticKey"
+        static let analyticEvent = "/api/event"
         
-        //Mark: - Function that return string
-        static func getBaseUrl() ->String? {return nil}
+        //Function that return string
+        
         
     }
     
     public struct publisherConfig{
         
-        static let publisherKey = "getPublisherConfig"
+        //MARK: - publisherConfig -
+        static let publisherCacheKey = "getPublisherConfig"
+        static let publisherKey = "publisherId"
+        static let appNameKey = "appName"
         
-
+        //Constants from user default storage
+        static let publisherId = UserDefaults.standard.integer(forKey: Constants.publisherConfig.publisherKey)
+        static let appName = UserDefaults.standard.string(forKey: Constants.publisherConfig.appNameKey)
+        static let analyticBaseUrl = UserDefaults.standard.string(forKey: Constants.analyticConfig.analyticKey)
+        
+        
+        
+        
+    }
+    public struct user{
+        
+        //MARK: - User detaisl -
+        static let memberkey = "memberId"
+        static let memberName = "memberName"
+        
+        //Constants from user default storage
+        static let memberId = UserDefaults.standard.integer(forKey: Constants.user.memberkey)
+        
         
         
     }
     
     public struct cache{
         
+        //MARK: - cache detaisl -
         static let cacheToMemoryWithTime = "cacheToMemoryWithTime"
         static let cacheToMemoryAndDiskWithTime = "cacheToMemoryAndDiskWithTime"
         static let loadOldCacheAndReplaceWithNew = "loadOldCacheAndReplaceWithNew"
@@ -72,6 +96,7 @@ public struct Constants{
     }
     public struct story{
         
+        //MARK: - Story detaisl -
         static let section = "section"
         static let tag = "tag"
         static let template = "template"
@@ -84,7 +109,7 @@ public struct Constants{
     //    struct HttpError{
     //
     //    }
-    //
+
     //    struct FileError{
     //
     //    }

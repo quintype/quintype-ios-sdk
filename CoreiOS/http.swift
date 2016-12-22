@@ -46,16 +46,29 @@ class Http{
                 })
                 
             }else{
+               
+                do {
+                    url.httpBody = try JSONSerialization.data(withJSONObject: parameter, options: .prettyPrinted) // pass dictionary to nsdata object and set it as request body
+                    print(url.httpBody)
+                    
+                } catch let error {
+                    print(error.localizedDescription)
+                }
                 url.addValue("application/json", forHTTPHeaderField: "Content-Type")
-                url.httpBody = try! JSONSerialization.data(withJSONObject: parameter, options:[])
+                //                url.addValue("application/json", forHTTPHeaderField: "Accept")
+
             }
         }
         
         
         URLSession.shared.dataTask(with: url as URLRequest) { (data, response, error) in
             
-            ////print("error0",data?.description,response,error)
+            print("error0",data?.description,response,error)
             let response = response
+             if let data = data,let json = try? JSONSerialization.jsonObject(with: data, options: []) as? [String: AnyObject] {
+             
+                print(json)
+            }
             
             if error != nil {
                 ////print(error as Any)
@@ -91,7 +104,11 @@ class Http{
                         
                     }else{
                         let message = "Unable to get data"
-                        ////print("Unable to get data")
+                        #if DEBUG
+                        if let analyticsCount = data?.count{
+                              print("analytic recived ..")
+                        }
+                        #endif
                         completion(false,message,nil)
                     }
                     

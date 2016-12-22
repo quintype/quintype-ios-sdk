@@ -6,6 +6,11 @@
 //  Copyright © 2016 Albin CR. All rights reserved.
 //
 
+protocol Completion{
+   func finished()
+}
+
+
 import Foundation
 
 open class Quintype{
@@ -13,17 +18,18 @@ open class Quintype{
     
     public init() {}
     
+    var delegate: Completion?
+    
     
     //MARK: - SharedInatance for Quintype
-    private static let sharedInstance:Quintype = Quintype()
+    public static let sharedInstance:Quintype = Quintype()
     
     //MARK: - Private internal variable -
     private var _api:ApiService?
     
-    
-    
-    
-    //MARK: - Open variable for direct access -
+    private var _analytics:Analytics?
+
+    //MARK: - Open variable for direct access - Api Services
     open static var api:ApiService{
         get{
             if Quintype.sharedInstance._api == nil{
@@ -33,11 +39,19 @@ open class Quintype{
         }
     }
     
-   
-    
+    //MARK: - Open variable for direct access - Analytic
+    open static var analytics:Analytics{
+        get{
+            if Quintype.sharedInstance._analytics == nil{
+                Quintype.sharedInstance._analytics = Analytics()
+            }
+            return Quintype.sharedInstance._analytics!
+        }
+    }
+
     //MARK: - SDK init to obtain base url
     open static func initWithBaseUrl(baseURL: String!) {
-        
+        let defaults = UserDefaults.standard
         let storage = Storage.sharedStorage
         let regExp = "((https|http)://)((\\w|-)+)(([.]|[/])((\\w|-)+))+"
         let predicate = NSPredicate(format:"SELF MATCHES %@", argumentArray:[regExp])
@@ -46,17 +60,26 @@ open class Quintype{
         precondition(status, "               The Entered URL Is Not Correct.               ")
         
         storage.storageBaseURL(baseURL: baseURL)
-        defer {
-            api.getPublisherConfig(cache: cacheOption.loadOldCacheAndReplaceWithNew) { (error, data) in
-              
-            }
-        }
         
+        api.getPublisherConfig(cache: cacheOption.loadOldCacheAndReplaceWithNew) { (error, data) in
+            
+            //Set publisher id
+            defaults.set(data?.publisher_id, forKey: Constants.publisherConfig.publisherKey)
+            defaults.set(data?.shrubbery_host, forKey: Constants.analyticConfig.analyticKey)
+            defaults.set(data?.publisher_name, forKey: Constants.publisherConfig.appNameKey)
+            
+            if error == nil{
+                if let delegate = Quintype.sharedInstance.delegate{
+                    delegate.finished()
+                }
+            }
+            
+        }
         
     }
     
     //MARK - publisherConfig linking to Quintype
-
+    
     
     open static func getPublisherConfig(options:publisherOption,success:@escaping (Any?)->()){
         
