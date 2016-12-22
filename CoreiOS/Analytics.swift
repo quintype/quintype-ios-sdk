@@ -34,7 +34,7 @@ public class Analytics:Completion{
     }
     
     func finished() {
-        print("Finished initlizing")
+       //print("Finished initlizing")
         sessionId = NSUUID().uuidString
         deviceId = UIDevice.current.identifierForVendor?.description
         publisherId = Constants.publisherConfig.publisherId
@@ -44,10 +44,10 @@ public class Analytics:Completion{
         storyVisitPageViewEventId = NSUUID().uuidString
         
         parameter = [
-            "session-event-id":sessionId,
+            "session-event-id":sessionId as Any,
             "id":UUID().uuidString,
-            "device-tracker-id":deviceId,
-            "publisher-id":publisherId,
+            "device-tracker-id":deviceId as Any,
+            "publisher-id":publisherId as Any,
             "referrer":"",
         ]
         if Constants.user.memberId != 0{
@@ -186,29 +186,6 @@ public class Analytics:Completion{
         Track(eventName: eventType.viewStory.rawValue, parameter: parameter as [String : AnyObject])
     }
     
-    //MARK: - Main tracker function - 😍
-    public func Track(eventName:String,parameter:[String:AnyObject]){
-        
-        if let baseUrl = Constants.publisherConfig.analyticBaseUrl{
-            
-            var param:[String:Any] = [
-                "event":parameter,
-                "event-type":"page-view"
-            ]
-            
-            api.call(method: "post", urlString: baseUrl + Constants.analyticConfig.analyticEvent, parameter: param as [String : AnyObject]?) { (status, error, data) in
-                
-                if error != nil{
-                    print(error)
-                }else{
-                    print(data)
-                }
-                
-            }
-            
-        }
-    }
-    
     //MARK: - Find same card inside story's cards - 🌸
     private func cardForStoryElement(story: Story, storyElement: CardStoryElement) -> Card? {
         for card in story.cards {
@@ -219,6 +196,24 @@ public class Analytics:Completion{
             }
         }
         return nil
+    }
+    
+    //MARK: - Main tracker function - 😍
+    public func Track(eventName:String,parameter:[String:AnyObject]){
+        
+        if let baseUrl = Constants.publisherConfig.analyticBaseUrl{
+            
+            let param:[String:Any] = [
+                "event":parameter,
+                "event-type":"page-view"
+            ]
+            
+            api.call(method: "post", urlString: baseUrl + Constants.analyticConfig.analyticEvent, parameter: param as [String : AnyObject]?) { (status, error, data) in
+                
+                
+            }
+            
+        }
     }
     
 }

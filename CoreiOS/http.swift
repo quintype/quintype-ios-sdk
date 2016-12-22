@@ -46,29 +46,31 @@ class Http{
                 })
                 
             }else{
-               
+                
                 do {
                     url.httpBody = try JSONSerialization.data(withJSONObject: parameter, options: .prettyPrinted) // pass dictionary to nsdata object and set it as request body
-                    print(url.httpBody)
+                   //print(url.httpBody as Any)
                     
                 } catch let error {
-                    print(error.localizedDescription)
+                   //print(error.localizedDescription)
                 }
                 url.addValue("application/json", forHTTPHeaderField: "Content-Type")
                 //                url.addValue("application/json", forHTTPHeaderField: "Accept")
-
+                
             }
         }
         
         
         URLSession.shared.dataTask(with: url as URLRequest) { (data, response, error) in
             
-            print("error0",data?.description,response,error)
-            let response = response
-             if let data = data,let json = try? JSONSerialization.jsonObject(with: data, options: []) as? [String: AnyObject] {
-             
-                print(json)
-            }
+           //print("error0",data?.description as Any,response as Any,error as Any)
+
+            #if DEBUG
+                if let data = data,let json = try? JSONSerialization.jsonObject(with: data, options: []) as? [String: AnyObject] {
+                    
+                   //print(json as Any)
+                }
+            #endif
             
             if error != nil {
                 ////print(error as Any)
@@ -102,19 +104,22 @@ class Http{
                             }
                         }
                         
-                    }else{
+                    }
+                    else{
                         let message = "Unable to get data"
                         #if DEBUG
-                        if let analyticsCount = data?.count{
-                              print("analytic recived ..")
-                        }
+                            if let analyticsCount = data?.count{
+                               print("analytic recived ..",analyticsCount)
+                            }
                         #endif
+                        DispatchQueue.main.async {
                         completion(false,message,nil)
+                        }
                     }
                     
-                } catch let jsonError {
+                } catch let error {
                     ////print("entered json parsing error")
-                    ////print(jsonError)
+                   //print(error)
                     DispatchQueue.main.async {
                         ////print("Api call successfull but cannot parse")
                         completion(false,"Cannot parse the data",nil)

@@ -38,7 +38,7 @@ class ViewController: UIViewController{
         //        }
         
         //       Quintype.getPublisherConfig(options: publisherOption.all) { (data) in
-        //                print(data)
+        //               //print(data)
         //        }
         
 

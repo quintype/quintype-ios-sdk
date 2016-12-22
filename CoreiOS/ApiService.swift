@@ -41,7 +41,7 @@ public class ApiService{
     
     public func postComment(comment:String?,storyId:Int){
         
-        var param:[String:Any?] = [
+        let param:[String:Any?] = [
             
             "story-content-id":storyId,
             "text":comment,
@@ -78,7 +78,7 @@ public class ApiService{
     
     func facebookLogin(complete:(UIWebView)->()){
         
-        let screenSize: CGRect = UIScreen.main.applicationFrame
+        let screenSize: CGRect = UIScreen.main.bounds
         let webView = UIWebView(frame: CGRect(x: 0, y: 0, width: screenSize.width, height:
             screenSize.height))
         
@@ -115,7 +115,7 @@ public class ApiService{
             }else{
                 
                 if cacheStatus{
-                    Cache.cacheData(data: data, key: apiCallName, cacheTimeInMinute: cacheTime,saveToDisk:saveToDisk)
+                    Cache.cacheData(data: data as Any, key: apiCallName, cacheTimeInMinute: cacheTime,saveToDisk:saveToDisk)
                     completion(nil,data)
                 }else{
                     completion(nil,data)
@@ -133,7 +133,7 @@ public class ApiService{
     public func getPublisherConfig(cache:cacheOption,completion:@escaping (String?,Config?)->()) {
         
         let apiCallName = "\(#function)".components(separatedBy: "(")[0]
-        print(apiCallName)
+       //print(apiCallName)
         
         if let opt = cache.value{
             if opt.keys.first == Constants.cache.cacheToMemoryWithTime{

@@ -20,7 +20,6 @@ open class Quintype{
     
     var delegate: Completion?
     
-    
     //MARK: - SharedInatance for Quintype
     public static let sharedInstance:Quintype = Quintype()
     
@@ -84,12 +83,12 @@ open class Quintype{
     open static func getPublisherConfig(options:publisherOption,success:@escaping (Any?)->()){
         
         Cache.retriveCacheData(keyName: Constants.publisherConfig.publisherKey) { (data) in
-            print(data)
+           //print(data as Any)
             
             if data == nil{
-                print("asdas")
+               //print("asdas")
             }else{
-                print("got data")
+               //print("got data")
                 ApiParser.configParser(data: data as! [String : AnyObject]?, completion: { (configData) in
                     
                     if let opt = options.value{

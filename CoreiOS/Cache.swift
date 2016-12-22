@@ -105,7 +105,7 @@ open class Cache{
     
     //MARK: - Store data to disk -
     private class func storeToDisk(data:AnyObject,finalKey:String){
-        var userDefaults = UserDefaults.standard
+        let userDefaults = UserDefaults.standard
         let encodedData: Data = NSKeyedArchiver.archivedData(withRootObject: data)
         userDefaults.set(encodedData, forKey: finalKey)
         userDefaults.synchronize()
@@ -113,13 +113,13 @@ open class Cache{
     
     //
     private class func retriveFromDisk(key:String,error:()->(),success:(Any)->()){
-        var userDefaults = UserDefaults.standard
+        let userDefaults = UserDefaults.standard
         let decoded  = userDefaults.object(forKey:key) as! Data
-        var data = NSKeyedUnarchiver.unarchiveObject(with: decoded)
+        let data = NSKeyedUnarchiver.unarchiveObject(with: decoded)
         if data == nil{
             error()
         }else{
-            success(data)
+            success(data as Any)
         }
     }
     
@@ -135,7 +135,7 @@ open class Cache{
         if data == nil{
             error()
         }else{
-            success(data)
+            success(data as Any)
         }
     }
     

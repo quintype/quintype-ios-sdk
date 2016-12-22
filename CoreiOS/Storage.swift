@@ -22,6 +22,7 @@ open class Storage{
     public func getBaseUrl() -> String?{
         
         if baseUrl == nil{
+            
             precondition(false, "               SDK Is Not Initialized In AppDelegate Base URL not found.               ")
         }
         
@@ -30,6 +31,7 @@ open class Storage{
     
     // MARK: - Store base url -
     public func storageBaseURL(baseURL:String){
+        
         self.baseUrl = baseURL
     }
     
