@@ -31,44 +31,7 @@ public class ApiService{
     //MARK: - Default initilizer
     public init(){}
     
-    //MARK: Facebook Token Sender
-    
-    public func facebookTokenLogin(facebookToken:String,complete:@escaping (Bool)->()){
-        
-        let parameter: [String: Any] = [
-            "token": [
-                "access-token": facebookToken
-            ]
-        ]
-        print(parameter)
-        let url = baseUrl + Constants.urlConfig.facebookLogin
-
-        
-        api.call(method: "post", urlString: url, parameter: parameter as [String : AnyObject]?) { (status, error, data) in
-            
-            print(status, error, data)
-            
-            if !status{
-                if let errorMessage = error{
-                     complete(false)
-                }
-            }else{
-                complete(true)
-                
-            }
-            
-        }
-        
-        
-    }
-    //MARK: - Facebook logout -
-    public func logoutFacebook(){
-        
-        defaults.remove(Constants.login.auth)
-        
-    }
-    
-    
+ 
     
     
     var saveToDisk:Bool = false
@@ -76,63 +39,7 @@ public class ApiService{
     var cacheStatus:Bool = true
     var replaceWithNewData = false
     
-    //MARK: -POST calls
-    //TODO: -Need testing
-    
-    public func postComment(comment:String?,storyId:Int){
-        
-        let param:[String:Any?] = [
-            
-            "story-content-id":storyId,
-            "text":comment,
-            
-            ]
-        
-        api.call(method: "post", urlString: Constants.urlConfig.postComment, parameter: param as [String : AnyObject]?){ (status,error,data) in
-            
-        }
-    }
-    
-    public func getCurrentUser(storyId:Int){
-        
-        api.call(method: "get", urlString: Constants.urlConfig.getCurrentUser, parameter: nil){ (status,error,data) in
-            
-            ////print(data)
-            
-            
-        }
-    }
-    
-//    public func getAuthor(facebookToken:String,complete:(Bool)->()){
-//        
-//        
-//        api.call(method: "get", urlString: Constants.urlConfig.GetAuthor + "/\(autherId)", parameter: nil){ (status,error,data) in
-//            
-//            ////print(data)
-//
-//        }
-//
-//    }
-    
-    
-    
-    
-    
-    
-    //   public  func getImgixMeta(elem: CardStoryElement){
-    //
-    //    }
-    //
-    //
-    //    public func  getLatestAppVersion(version: Int, publisherName: String){
-    //
-    //    }
-    
-    
-    
-    
-    
-    
+
     
     //MARK: - Api calling wrapper for reuseing the call (Common Call for all get Calls)
     func apiCall(apiCallName:String,method:String,url:String,parameter:[String:AnyObject]?,cacheStatus:Bool,cacheTime:Int,saveToDisk:Bool,retuenData:Bool = true,completion:@escaping (String?,Any?)->()) {
@@ -733,6 +640,86 @@ public class ApiService{
                 requestCall()
             }
         })
+    }
+    
+    //MARK: Facebook Token Sender
+    
+    public func facebookTokenLogin(facebookToken:String,complete:@escaping (Bool)->()){
+        
+        let parameter: [String: Any] = [
+            "token": [
+                "access-token": facebookToken
+            ]
+        ]
+        print(parameter)
+        let url = baseUrl + Constants.urlConfig.facebookLogin
+        
+        
+        api.call(method: "post", urlString: url, parameter: parameter as [String : AnyObject]?) { (status, error, data) in
+            
+            print(status, error, data)
+            
+            if !status{
+                if let errorMessage = error{
+                    complete(false)
+                }
+            }else{
+                complete(true)
+                
+            }
+            
+        }
+        
+        
+    }
+    //MARK: - Facebook logout -
+    public func logoutFacebook(){
+        
+        defaults.remove(Constants.login.auth)
+        
+    }
+    
+    
+    //MARK: -POST Commants
+    //TODO: -Need testing
+    
+    public func postComment(comment:String?,storyId:Int){
+        
+        let param:[String:Any?] = [
+            
+            "story-content-id":storyId,
+            "text":comment,
+            
+            ]
+        
+        api.call(method: "post", urlString: Constants.urlConfig.postComment, parameter: param as [String : AnyObject]?){ (status,error,data) in
+            
+            print(data)
+            
+        }
+    }
+    
+    public func getCurrentUser(storyId:Int,complete:(Bool)->()){
+        
+        api.call(method: "get", urlString: Constants.urlConfig.getCurrentUser, parameter: nil){ (status,error,data) in
+            
+            print(data)
+            complete(true)
+            
+            
+        }
+    }
+    
+    public func getAuthor(autherId:String,complete:(Bool)->()){
+        
+        
+        api.call(method: "get", urlString: Constants.urlConfig.GetAuthor + "/\(autherId)", parameter: nil){ (status,error,data) in
+            
+            print(data)
+            complete(true)
+            
+        }
+        
     }
     
     
