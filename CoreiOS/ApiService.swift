@@ -699,7 +699,7 @@ public class ApiService{
         }
     }
     
-    public func getCurrentUser(storyId:Int,complete:(Bool)->()){
+    public func getCurrentUser(storyId:Int,complete:@escaping (Bool)->()){
         
         api.call(method: "get", urlString: Constants.urlConfig.getCurrentUser, parameter: nil){ (status,error,data) in
             
@@ -710,7 +710,7 @@ public class ApiService{
         }
     }
     
-    public func getAuthor(autherId:String,complete:(Bool)->()){
+    public func getAuthor(autherId:String,complete:@escaping (Bool)->()){
         
         
         api.call(method: "get", urlString: Constants.urlConfig.GetAuthor + "/\(autherId)", parameter: nil){ (status,error,data) in
