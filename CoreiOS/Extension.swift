@@ -10,16 +10,16 @@ import Foundation
 
 
 //MARK: Random CGFloat values
-extension CGFloat {
-    static func random() -> CGFloat {
+public extension CGFloat {
+    public static func random() -> CGFloat {
         return CGFloat(arc4random()) / CGFloat(UInt32.max)
     }
 }
 
 
 //MARK: - Random light UIcolours
-extension UIColor {
-    static func randomColor() -> UIColor {
+public extension UIColor {
+    public static func randomColor() -> UIColor {
         let r = CGFloat.random()
         let g = CGFloat.random()
         let b = CGFloat.random()
@@ -32,7 +32,7 @@ extension UIColor {
 
 
 //MARK: - Setting padding for TextField
-extension UITextField {
+public extension UITextField {
     @IBInspectable public var leftSpacer:CGFloat {
         get {
             if let l = leftView {
@@ -61,8 +61,8 @@ public extension UIButton {
 }
 
 //MARK: - Setting padding for UILabel
-extension UILabel{
-    func addTextSpacing(spacing: CGFloat){
+public extension UILabel{
+    public func addTextSpacing(spacing: CGFloat){
         let attributedString = NSMutableAttributedString(string: self.text!)
         attributedString.addAttribute(NSKernAttributeName, value: spacing, range: NSRange(location: 0, length: self.text!.characters.count))
         self.attributedText = attributedString
@@ -71,13 +71,13 @@ extension UILabel{
 
 
 //MARK: - FadeIn and FadeOut Animation for UIView
-extension UIView {
-    func fadeIn(duration: TimeInterval = 1.0, delay: TimeInterval = 0.0, completion: @escaping ((Bool) -> Void) = {(finished: Bool) -> Void in}) {
+public extension UIView {
+    public func fadeIn(duration: TimeInterval = 1.0, delay: TimeInterval = 0.0, completion: @escaping ((Bool) -> Void) = {(finished: Bool) -> Void in}) {
         UIView.animate(withDuration: duration, delay: delay, options: UIViewAnimationOptions.curveEaseIn, animations: {
             self.alpha = 1.0
         }, completion: completion)  }
     
-    func fadeOut(duration: TimeInterval = 1.0, delay: TimeInterval = 0.0, completion: @escaping (Bool) -> Void = {(finished: Bool) -> Void in}) {
+    public func fadeOut(duration: TimeInterval = 1.0, delay: TimeInterval = 0.0, completion: @escaping (Bool) -> Void = {(finished: Bool) -> Void in}) {
         UIView.animate(withDuration: duration, delay: delay, options: UIViewAnimationOptions.curveEaseIn, animations: {
             self.alpha = 0.0
         }, completion: completion)
@@ -85,8 +85,8 @@ extension UIView {
 }
 
 //MARK: - Get top most controller
-extension UIViewController {
-    func topMostViewController() -> UIViewController {
+public extension UIViewController {
+    public func topMostViewController() -> UIViewController {
         // Handling Modal views
         if let presentedViewController = self.presentedViewController {
             return presentedViewController.topMostViewController()
@@ -108,9 +108,9 @@ extension UIViewController {
     }
 }
 
-extension UITableView
+public extension UITableView
 {
-    func reloadDataAnimatedKeepingOffset()
+    public func reloadDataAnimatedKeepingOffset()
     {
         let offset = contentOffset
         UIView.setAnimationsEnabled(false)
@@ -125,12 +125,12 @@ extension UITableView
 //extension Dictionary {
 //    func nullKeyRemoval() -> Dictionary {
 //        var dict = self
-//        
+//
 //        var keysToRemove = dict.keys.array(dict.values).filter { dict[$0] is NSNull }
 //        for key in keysToRemove {
 //            dict.removeValue(forKey: key)
 //        }
-//        
+//
 //        return dict
 //    }
 //}

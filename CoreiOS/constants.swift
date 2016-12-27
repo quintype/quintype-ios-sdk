@@ -33,11 +33,11 @@ public struct Constants{
         static let search = "/api/v1/search"
         static let getStoryFromSlug = "/api/v1/stories-by-slug"
         static let breakingNews = "/api/v1/breaking-news"
-        static let facebookLogin = "/session/facebook"
+        static let facebookLogin = "/api/login/facebook"
         static let postComment = "/api/v1/comments"
         static let getCurrentUser = "/api/v1/members/me"
         static let GetAuthor =  "/api/v1/authors"
-        
+
         //Function that return string
         static func relatedStories(storyId:String) -> String {return getStories + "/" + storyId + "/related-stories"}
         static func getComments(storyId:String) -> String {return getStories + "/" + storyId + "/comments"}
@@ -62,14 +62,35 @@ public struct Constants{
         //MARK: - publisherConfig -
         static let publisherCacheKey = "getPublisherConfig"
         static let publisherKey = "publisherId"
+        static let cdnNameKey = "cdn_name"
         static let appNameKey = "appName"
+        static let cdnImageKey = "cdn_image"
+        static let sketchesHostKey = "sketches_host"
+        static let noOfStoriesPerPageKey = "initial_stories_per_page"
+        static let noOfStoriesOnTopKey = "num_headlines"
+        static let typekitKey = "typekit_id"
+        static let storySlugFormatKey = "story_slug_format"
+        static let nudgeHostKey = "nudge_host"
+        static let moreStoryCountKey = "num_more_stories"
+        static let polltypeHostKey = "polltype_host"
+        static let razorpayKey = "razorpay_gateway_key"
         
         //Constants from user default storage
         static let publisherId = UserDefaults.standard.integer(forKey: Constants.publisherConfig.publisherKey)
         static let appName = UserDefaults.standard.string(forKey: Constants.publisherConfig.appNameKey)
         static let analyticBaseUrl = UserDefaults.standard.string(forKey: Constants.analyticConfig.analyticKey)
-        
-        
+        static let stripId = UserDefaults.standard.string(forKey: Constants.payment.stripeKey)
+        static let cdnLink = UserDefaults.standard.string(forKey: Constants.publisherConfig.cdnNameKey)
+        static let cdnImage = UserDefaults.standard.string(forKey: Constants.publisherConfig.cdnImageKey)
+        static let sketchesHost = UserDefaults.standard.string(forKey: Constants.publisherConfig.sketchesHostKey)
+        static let noOfStoriesPerPage = UserDefaults.standard.integer(forKey: Constants.publisherConfig.noOfStoriesPerPageKey)
+        static let noOfStoriesOnTop = UserDefaults.standard.integer(forKey:Constants.publisherConfig.noOfStoriesOnTopKey)
+        static let typekitId = UserDefaults.standard.string(forKey: Constants.publisherConfig.typekitKey)
+        static let storySlugFormat = UserDefaults.standard.string(forKey: Constants.publisherConfig.storySlugFormatKey)
+        static let nudgeHost = UserDefaults.standard.string(forKey: Constants.publisherConfig.nudgeHostKey)
+        static let moreStoryCount = UserDefaults.standard.string(forKey: Constants.publisherConfig.moreStoryCountKey)
+        static let polltypeHost = UserDefaults.standard.stringArray(forKey: Constants.publisherConfig.polltypeHostKey)
+        static let razorpayId = UserDefaults.standard.string(forKey: Constants.publisherConfig.razorpayKey)
         
         
     }
@@ -103,8 +124,18 @@ public struct Constants{
         static let storyGroup = "story-group"
         
     }
+    public struct payment{
+        
+        static let stripeKey = "stripe_publishable_key"
+        
+    }
     
-    
+    public struct login{
+     
+        static let auth = "x-qt-auth"
+        
+        
+    }
     
     //    struct HttpError{
     //

@@ -34,7 +34,7 @@ public class Analytics:Completion{
     }
     
     func finished() {
-       //print("Finished initlizing")
+        //print("Finished initlizing")
         sessionId = NSUUID().uuidString
         deviceId = UIDevice.current.identifierForVendor?.description
         publisherId = Constants.publisherConfig.publisherId
@@ -67,7 +67,7 @@ public class Analytics:Completion{
     
     //MARK: - - Trackhome page visit -
     
-    func trackPageViewHomeVisit(){//2
+    open func trackPageViewHomeVisit(){//2
         
         parameter["page-type"] = pageType.home.rawValue
         parameter["url"] = Constants.storage.getBaseUrl()
@@ -78,7 +78,7 @@ public class Analytics:Completion{
     
     //MARK: - Tracksearch results page view -
     
-    func trackPageViewSearchResults(){//3
+    open func trackPageViewSearchResults(){//3
         parameter["page-type"] = pageType.searchResults.rawValue
         parameter["url"] = ""
         
@@ -91,7 +91,7 @@ public class Analytics:Completion{
      - parameter story: story instance that is visited
      */
     
-    func trackPageViewStoryVisit(story: Story){//4
+    open func trackPageViewStoryVisit(story: Story){//4
         
         
         parameter["page-type"] = pageType.story.rawValue
@@ -109,7 +109,7 @@ public class Analytics:Completion{
      - parameter story: story that has been visited
      */
     
-    func trackStoryVisit(story: Story){//5
+    open func trackStoryVisit(story: Story){//5
         parameter["page-type"] = pageType.story.rawValue
         parameter["url"] = story.slug
         parameter["page-view-event-id"] = storyVisitPageViewEventId
@@ -125,7 +125,7 @@ public class Analytics:Completion{
      - parameter storyElement: story element that is visited
      */
     
-    func trackStoryElementVisit(story: Story, cardStoryElement: CardStoryElement){//6
+    open func trackStoryElementVisit(story: Story, cardStoryElement: CardStoryElement){//6
         
         let card = cardForStoryElement(story: story, storyElement: cardStoryElement)
         
@@ -150,7 +150,7 @@ public class Analytics:Completion{
      - parameter action:       action on story element
      */
     
-    func trackStoryElementAction(story: Story, cardStoryElement: CardStoryElement, actionTimestamp: Float, action: String){//7
+    open func trackStoryElementAction(story: Story, cardStoryElement: CardStoryElement, actionTimestamp: Float, action: String){//7
         
         let card = cardForStoryElement(story: story, storyElement: cardStoryElement)
         
@@ -175,7 +175,7 @@ public class Analytics:Completion{
      - parameter provider: provider to which content is share
      */
     
-    func trackShare(story: Story, provider: String){//10
+    open func trackShare(story: Story, provider: String){//10
         parameter["page-view-event-id"] = storyVisitPageViewEventId
         parameter["social-media-type"] = provider
         parameter["story-content-id"] = story.story_content_id

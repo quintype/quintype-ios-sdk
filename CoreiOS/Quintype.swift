@@ -66,6 +66,21 @@ open class Quintype{
             defaults.set(data?.publisher_id, forKey: Constants.publisherConfig.publisherKey)
             defaults.set(data?.shrubbery_host, forKey: Constants.analyticConfig.analyticKey)
             defaults.set(data?.publisher_name, forKey: Constants.publisherConfig.appNameKey)
+            defaults.set(data?.stripe_publishable_key, forKey: Constants.payment.stripeKey)
+            defaults.set(data?.cdn_name, forKey: Constants.publisherConfig.cdnNameKey)
+            defaults.set(data?.cdn_image, forKey: Constants.publisherConfig.cdnImageKey)
+            defaults.set(data?.sketches_host, forKey: Constants.publisherConfig.sketchesHostKey)
+            defaults.set(data?.num_headlines, forKey: Constants.publisherConfig.noOfStoriesOnTopKey)
+            defaults.set(data?.initial_stories_per_page, forKey: Constants.publisherConfig.noOfStoriesPerPageKey)
+            defaults.set(data?.typekit_id, forKey: Constants.publisherConfig.typekitKey)
+            defaults.set(data?.story_slug_format, forKey: Constants.publisherConfig.storySlugFormatKey)
+            defaults.set(data?.nudge_host, forKey:Constants.publisherConfig.nudgeHostKey)
+            defaults.set(data?.polltype_host, forKey: Constants.publisherConfig.polltypeHostKey)
+            defaults.set(data?.razorpay_gateway_key, forKey: Constants.publisherConfig.razorpayKey)
+            
+            //calling analytic installation
+            let _ =  Quintype.analytics
+      
             
             if error == nil{
                 if let delegate = Quintype.sharedInstance.delegate{

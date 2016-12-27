@@ -19,6 +19,7 @@ public class ApiService{
     
     //MARK: - Calling Http shared inatance
     let api = Http.sharedInstance
+    let defaults = UserDefaults.standard
     
     //MARK: - Accesing base url from Constants file
     private var baseUrl:String {
@@ -29,6 +30,45 @@ public class ApiService{
     
     //MARK: - Default initilizer
     public init(){}
+    
+    //MARK: Facebook Token Sender
+    
+    public func facebookTokenLogin(facebookToken:String,complete:@escaping (Bool)->()){
+        
+        let parameter: [String: Any] = [
+            "token": [
+                "access-token": facebookToken
+            ]
+        ]
+        print(parameter)
+        let url = baseUrl + Constants.urlConfig.facebookLogin
+
+        
+        api.call(method: "post", urlString: url, parameter: parameter as [String : AnyObject]?) { (status, error, data) in
+            
+            print(status, error, data)
+            
+            if !status{
+                if let errorMessage = error{
+                     complete(false)
+                }
+            }else{
+                complete(true)
+                
+            }
+            
+        }
+        
+        
+    }
+    //MARK: - Facebook logout -
+    public func logoutFacebook(){
+        
+        defaults.remove(Constants.login.auth)
+        
+    }
+    
+    
     
     
     var saveToDisk:Bool = false
@@ -63,44 +103,33 @@ public class ApiService{
         }
     }
     
-    public func getAuthor(autherId:Int){
-        
-        
-        
-        api.call(method: "get", urlString: Constants.urlConfig.GetAuthor + "/\(autherId)", parameter: nil){ (status,error,data) in
-            
-            ////print(data)
-            
-        }
-    }
+//    public func getAuthor(facebookToken:String,complete:(Bool)->()){
+//        
+//        
+//        api.call(method: "get", urlString: Constants.urlConfig.GetAuthor + "/\(autherId)", parameter: nil){ (status,error,data) in
+//            
+//            ////print(data)
+//
+//        }
+//
+//    }
     
     
     
-    func facebookLogin(complete:(UIWebView)->()){
-        
-        let screenSize: CGRect = UIScreen.main.bounds
-        let webView = UIWebView(frame: CGRect(x: 0, y: 0, width: screenSize.width, height:
-            screenSize.height))
-        
-        //                if let url = URL(string: "http://apple.com") {
-        //                    let request = URLRequest(url: url)
-        //                    webView.loadRequest(request)
-        //                }
-        
-        webView.loadRequest(URLRequest(url: URL(string:baseUrl + Constants.urlConfig.facebookLogin)!))
-        complete(webView)
-        
-    }
     
     
-    func getImgixMeta(elem: CardStoryElement){
-        
-    }
+    
+    //   public  func getImgixMeta(elem: CardStoryElement){
+    //
+    //    }
+    //
+    //
+    //    public func  getLatestAppVersion(version: Int, publisherName: String){
+    //
+    //    }
     
     
-    func getLatestAppVersion(version: Int, publisherName: String){
-        
-    }
+    
     
     
     
@@ -133,7 +162,7 @@ public class ApiService{
     public func getPublisherConfig(cache:cacheOption,completion:@escaping (String?,Config?)->()) {
         
         let apiCallName = "\(#function)".components(separatedBy: "(")[0]
-       //print(apiCallName)
+        //print(apiCallName)
         
         if let opt = cache.value{
             if opt.keys.first == Constants.cache.cacheToMemoryWithTime{
@@ -705,5 +734,7 @@ public class ApiService{
             }
         })
     }
+    
+    
     
 }
