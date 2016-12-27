@@ -1,20 +1,18 @@
+
+
 Pod::Spec.new do |spec|
   spec.name = "Quintype"
   spec.version = "1.0.0"
-  spec.summary = "Sample framework from blog post, not for real world use.Functional JSON parsing library for Swift."
+  spec.summary = "Sample framework from blog post, not for real world use."
   spec.homepage = "https://github.com/Albinzr/Quintype"
-  spec.license = { :type => 'MIT', :file => 'LICENSE' }
-  spec.authors = {
-    "Jake Craige" => 'james.craige@gmail.com',
-    "thoughtbot" => nil,
-  }
+  spec.license = { type: 'MIT', file: 'LICENSE' }
+  spec.authors = { "Albin CR" => 'your-albinzr@gmail.com' }
   spec.social_media_url = "http://twitter.com/thoughtbot"
 
-  spec.source = { :git => "https://github.com/Albinzr/Quintype.git", :tag => "v#{spec.version}", :submodules => true }
-  spec.source_files  ="CoreiOS/**/*.{h,swift}"
+  spec.platform = :ios, "9.1"
   spec.requires_arc = true
-  spec.platform     = :ios
-  spec.ios.deployment_target = "9.1"
+  spec.source = { :git => "https://github.com/Albinzr/Quintype.git", submodules: true }
+  spec.source_files = "CoreiOS/**/*.{h,swift}"
 
-  spec.dependency "Curry", '~> 1.4.0'
+  spec.dependency "Curry", "~> 1.4.0"
 end
