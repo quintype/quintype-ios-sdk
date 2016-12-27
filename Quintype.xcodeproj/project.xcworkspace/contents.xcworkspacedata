@@ -2,6 +2,6 @@
 <Workspace
    version = "1.0">
    <FileRef
-      location = "self:CoreiOS.xcodeproj">
+      location = "self:/Users/Albi/Desktop/ios-core-sdk/Quintype.xcodeproj">
    </FileRef>
 </Workspace>

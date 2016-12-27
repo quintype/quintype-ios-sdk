@@ -12,7 +12,7 @@
 		6134D6851E07F3B100D304CB /* AnalyticsOptions.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6134D6841E07F3B100D304CB /* AnalyticsOptions.swift */; };
 		6139405B1E00067200427902 /* Extension.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6139405A1E00067200427902 /* Extension.swift */; };
 		6139405E1E01232C00427902 /* NSUserDefaults.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6139405D1E01232C00427902 /* NSUserDefaults.swift */; };
-		6150064C1DD5BA61000E20B3 /* CoreiOS.h in Headers */ = {isa = PBXBuildFile; fileRef = 6150064A1DD5BA61000E20B3 /* CoreiOS.h */; settings = {ATTRIBUTES = (Public, ); }; };
+		6150064C1DD5BA61000E20B3 /* Quintype.h in Headers */ = {isa = PBXBuildFile; fileRef = 6150064A1DD5BA61000E20B3 /* Quintype.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		615006551DD5BB69000E20B3 /* CardStoryElement.swift in Sources */ = {isa = PBXBuildFile; fileRef = 615006541DD5BB69000E20B3 /* CardStoryElement.swift */; };
 		615006591DD5BCD3000E20B3 /* CardStoryElementSubTypeMetaData.swift in Sources */ = {isa = PBXBuildFile; fileRef = 615006581DD5BCD3000E20B3 /* CardStoryElementSubTypeMetaData.swift */; };
 		6150065B1DD5C266000E20B3 /* ImageMetaData.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6150065A1DD5C266000E20B3 /* ImageMetaData.swift */; };
@@ -52,8 +52,8 @@
 		6134D6841E07F3B100D304CB /* AnalyticsOptions.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = AnalyticsOptions.swift; sourceTree = "<group>"; };
 		6139405A1E00067200427902 /* Extension.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Extension.swift; sourceTree = "<group>"; };
 		6139405D1E01232C00427902 /* NSUserDefaults.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = NSUserDefaults.swift; sourceTree = "<group>"; };
-		615006471DD5BA61000E20B3 /* CoreiOS.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = CoreiOS.framework; sourceTree = BUILT_PRODUCTS_DIR; };
-		6150064A1DD5BA61000E20B3 /* CoreiOS.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = CoreiOS.h; sourceTree = "<group>"; };
+		615006471DD5BA61000E20B3 /* Quintype.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Quintype.framework; sourceTree = BUILT_PRODUCTS_DIR; };
+		6150064A1DD5BA61000E20B3 /* Quintype.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = Quintype.h; sourceTree = "<group>"; };
 		6150064B1DD5BA61000E20B3 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		615006541DD5BB69000E20B3 /* CardStoryElement.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = CardStoryElement.swift; sourceTree = "<group>"; };
 		615006581DD5BCD3000E20B3 /* CardStoryElementSubTypeMetaData.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = CardStoryElementSubTypeMetaData.swift; sourceTree = "<group>"; };
@@ -72,6 +72,7 @@
 		6164ACEC1E0A5DBC000284B6 /* AnalyticModel.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = AnalyticModel.swift; sourceTree = "<group>"; };
 		616DFBDF1DF0491F00F72FC9 /* ApiOptions.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ApiOptions.swift; sourceTree = "<group>"; };
 		617C834D1DF53DD800FC4C84 /* SafeJsonObject.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = SafeJsonObject.swift; sourceTree = "<group>"; };
+		617C96671E127D5C0074DA57 /* CoreiOS copy-Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; name = "CoreiOS copy-Info.plist"; path = "/Users/Albi/Desktop/ios-core-sdk/CoreiOS copy-Info.plist"; sourceTree = "<absolute>"; };
 		619EB5891E0BDA3D00184DDD /* Reachablity.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Reachablity.swift; sourceTree = "<group>"; };
 		61B364511DF94E0F00880B73 /* Layout.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Layout.swift; sourceTree = "<group>"; };
 		61B3645B1DF9532D00880B73 /* SectionMeta.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = SectionMeta.swift; sourceTree = "<group>"; };
@@ -113,13 +114,14 @@
 			children = (
 				615006491DD5BA61000E20B3 /* CoreiOS */,
 				615006481DD5BA61000E20B3 /* Products */,
+				617C96671E127D5C0074DA57 /* CoreiOS copy-Info.plist */,
 			);
 			sourceTree = "<group>";
 		};
 		615006481DD5BA61000E20B3 /* Products */ = {
 			isa = PBXGroup;
 			children = (
-				615006471DD5BA61000E20B3 /* CoreiOS.framework */,
+				615006471DD5BA61000E20B3 /* Quintype.framework */,
 			);
 			name = Products;
 			sourceTree = "<group>";
@@ -133,7 +135,7 @@
 				6153BC5C1DFE99A5005EF754 /* Storage */,
 				615006691DD5D36F000E20B3 /* Api */,
 				617C834C1DF53DBB00FC4C84 /* Helper */,
-				6150064A1DD5BA61000E20B3 /* CoreiOS.h */,
+				6150064A1DD5BA61000E20B3 /* Quintype.h */,
 				6150064B1DD5BA61000E20B3 /* Info.plist */,
 				61BFC3E61DFE81F0007C898B /* Quintype.swift */,
 			);
@@ -247,16 +249,16 @@
 			isa = PBXHeadersBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				6150064C1DD5BA61000E20B3 /* CoreiOS.h in Headers */,
+				6150064C1DD5BA61000E20B3 /* Quintype.h in Headers */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
 /* End PBXHeadersBuildPhase section */
 
 /* Begin PBXNativeTarget section */
-		615006461DD5BA61000E20B3 /* CoreiOS */ = {
+		615006461DD5BA61000E20B3 /* Quintype */ = {
 			isa = PBXNativeTarget;
-			buildConfigurationList = 6150064F1DD5BA61000E20B3 /* Build configuration list for PBXNativeTarget "CoreiOS" */;
+			buildConfigurationList = 6150064F1DD5BA61000E20B3 /* Build configuration list for PBXNativeTarget "Quintype" */;
 			buildPhases = (
 				615006421DD5BA61000E20B3 /* Sources */,
 				615006431DD5BA61000E20B3 /* Frameworks */,
@@ -267,9 +269,9 @@
 			);
 			dependencies = (
 			);
-			name = CoreiOS;
+			name = Quintype;
 			productName = CoreiOS;
-			productReference = 615006471DD5BA61000E20B3 /* CoreiOS.framework */;
+			productReference = 615006471DD5BA61000E20B3 /* Quintype.framework */;
 			productType = "com.apple.product-type.framework";
 		};
 /* End PBXNativeTarget section */
@@ -289,7 +291,7 @@
 					};
 				};
 			};
-			buildConfigurationList = 615006411DD5BA61000E20B3 /* Build configuration list for PBXProject "CoreiOS" */;
+			buildConfigurationList = 615006411DD5BA61000E20B3 /* Build configuration list for PBXProject "Quintype" */;
 			compatibilityVersion = "Xcode 3.2";
 			developmentRegion = English;
 			hasScannedForEncodings = 0;
@@ -301,7 +303,7 @@
 			projectDirPath = "";
 			projectRoot = "";
 			targets = (
-				615006461DD5BA61000E20B3 /* CoreiOS */,
+				615006461DD5BA61000E20B3 /* Quintype */,
 			);
 		};
 /* End PBXProject section */
@@ -525,7 +527,7 @@
 /* End XCBuildConfiguration section */
 
 /* Begin XCConfigurationList section */
-		615006411DD5BA61000E20B3 /* Build configuration list for PBXProject "CoreiOS" */ = {
+		615006411DD5BA61000E20B3 /* Build configuration list for PBXProject "Quintype" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (
 				6150064D1DD5BA61000E20B3 /* Debug */,
@@ -534,7 +536,7 @@
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Release;
 		};
-		6150064F1DD5BA61000E20B3 /* Build configuration list for PBXNativeTarget "CoreiOS" */ = {
+		6150064F1DD5BA61000E20B3 /* Build configuration list for PBXNativeTarget "Quintype" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (
 				615006501DD5BA61000E20B3 /* Debug */,
