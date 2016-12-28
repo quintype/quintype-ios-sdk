@@ -91,6 +91,7 @@ Pod::Spec.new do |s|
 
   s.source_files  = "CoreiOS", "CoreiOS/**/*.{h,m}"
   s.exclude_files = "Classes/{swift}"
+  
 
   # s.public_header_files = "Classes/**/*.h"
 
