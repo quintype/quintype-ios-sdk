@@ -20,11 +20,11 @@ public class Search:SafeJsonObject{
         
         if key == "stories"{
             
-            var singleStory = Story()
-            for var section in value as! [[String:AnyObject]]{
+            let singleStory = Story()
+            for section in value as! [[String:AnyObject]]{
                 
                 Converter.jsonKeyConverter(dictionaryArray: section, completion: { (data) in
-                    singleStory.setValuesForKeys(data as! [String: AnyObject])
+                    singleStory.setValuesForKeys(data)
                     self.stories.append(singleStory)
                     //print(self.stories)
                 })

@@ -657,10 +657,10 @@ public class ApiService{
         
         api.call(method: "post", urlString: url, parameter: parameter as [String : AnyObject]?) { (status, error, data) in
             
-            print(status, error, data)
+            print(status, error as Any, data as Any)
             
             if !status{
-                if let errorMessage = error{
+                if error != nil{
                     complete(false)
                 }
             }else{
@@ -694,7 +694,7 @@ public class ApiService{
         
         api.call(method: "post", urlString: Constants.urlConfig.postComment, parameter: param as [String : AnyObject]?){ (status,error,data) in
             
-            print(data)
+            print(data as Any)
             
         }
     }
@@ -703,7 +703,7 @@ public class ApiService{
         
         api.call(method: "get", urlString: Constants.urlConfig.getCurrentUser, parameter: nil){ (status,error,data) in
             
-            print(data)
+            print(data as Any)
             complete(true)
             
             
@@ -715,7 +715,7 @@ public class ApiService{
         
         api.call(method: "get", urlString: Constants.urlConfig.GetAuthor + "/\(autherId)", parameter: nil){ (status,error,data) in
             
-            print(data)
+            print(data as Any)
             complete(true)
             
         }

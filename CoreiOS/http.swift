@@ -53,7 +53,7 @@ class Http{
                     //print(url.httpBody as Any)
                     
                 } catch let error {
-                    //print(error.localizedDescription)
+                    print(error.localizedDescription)
                 }
                 url.addValue("application/json", forHTTPHeaderField: "Content-Type")
                 if (defaults.value(forKey: Constants.login.auth) != nil){
@@ -101,7 +101,7 @@ class Http{
                             }
                             
                             DispatchQueue.main.async {
-                                print("Api call successfull",json)
+//                                print("Api call successfull",json)
                                 completion(true,nil,json as [String : AnyObject]?)
                             }
                         }else{
@@ -128,15 +128,16 @@ class Http{
                         }
                     }
                     
-                } catch let error {
-                    ////print("entered json parsing error")
-                    //print(error)
-                    DispatchQueue.main.async {
-                        ////print("Api call successfull but cannot parse")
-                        completion(false,"Cannot parse the data",nil)
-                    }
-                    
                 }
+//                catch let error {
+//                    print("entered json parsing error",error)
+//                    //print(error)
+//                    DispatchQueue.main.async {
+//                        ////print("Api call successfull but cannot parse")
+//                        completion(false,"Cannot parse the data",nil)
+//                    }
+//                    
+//                }
             }
             
             }.resume()

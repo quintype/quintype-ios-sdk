@@ -67,7 +67,7 @@ public class Config:SafeJsonObject{
             
             facebook = Facebook()
             Converter.jsonKeyConverter(dictionaryArray: value as? [String : AnyObject], completion: { (data) in
-                self.facebook?.setValuesForKeys(data as! [String: AnyObject])
+                self.facebook?.setValuesForKeys(data)
                 //print(self.facebook)
                 
             })
@@ -77,7 +77,7 @@ public class Config:SafeJsonObject{
             
             social_links = SocialLinks()
             Converter.jsonKeyConverter(dictionaryArray: value as? [String : AnyObject], completion: { (data) in
-                self.social_links?.setValuesForKeys(data as! [String: AnyObject])
+                self.social_links?.setValuesForKeys(data)
             })
             
         }

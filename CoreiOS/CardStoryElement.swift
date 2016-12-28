@@ -47,7 +47,7 @@ public class CardStoryElement:SafeJsonObject {
         else if key == "metadata" {
             metadata = CardStoryElementSubTypeMetaData()
             Converter.jsonKeyConverter(dictionaryArray: value as? [String : AnyObject], completion: { (data) in
-                self.metadata?.setValuesForKeys(data as! [String: AnyObject])
+                self.metadata?.setValuesForKeys(data )
             })
         }
         else {

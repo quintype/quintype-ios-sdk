@@ -57,11 +57,11 @@ public class Story:SafeJsonObject {
     override public func setValue(_ value: Any?, forKey key: String) {
         
         if key == "sections" {
-            var singleSection = Section()
-            for var section in value as! [[String:AnyObject]]{
+            let singleSection = Section()
+            for  section in value as! [[String:AnyObject]]{
 
                 Converter.jsonKeyConverter(dictionaryArray: section, completion: { (data) in
-                    singleSection.setValuesForKeys(data as! [String: AnyObject])
+                    singleSection.setValuesForKeys(data )
                     self.sections.append(singleSection)
                     //print(self.sections)
                 })
@@ -71,17 +71,17 @@ public class Story:SafeJsonObject {
          
             hero_image_metadata = ImageMetaData()
              Converter.jsonKeyConverter(dictionaryArray: value as? [String : AnyObject], completion: { (data) in
-            self.hero_image_metadata?.setValuesForKeys(data as! [String: AnyObject])
+            self.hero_image_metadata?.setValuesForKeys(data )
             })
         
         }
         else if key == "tags"{
-            var singleTag = Tag()
+            let singleTag = Tag()
             
-            for var tag in value as! [[String:AnyObject]]{
+            for tag in value as! [[String:AnyObject]]{
                 
                 Converter.jsonKeyConverter(dictionaryArray: tag, completion: { (data) in
-                    singleTag.setValuesForKeys(data as! [String: AnyObject])
+                    singleTag.setValuesForKeys(data )
                     self.tags.append(singleTag)
                     //print(self.tags)
                 })
@@ -91,12 +91,12 @@ public class Story:SafeJsonObject {
             
         }
         else if key == "cards"{
-            var singleCards = Card()
+            let singleCards = Card()
             
-            for var card in value as! [[String:AnyObject]]{
+            for card in value as! [[String:AnyObject]]{
                 
                 Converter.jsonKeyConverter(dictionaryArray: card, completion: { (data) in
-                    singleCards.setValuesForKeys(data as! [String: AnyObject])
+                    singleCards.setValuesForKeys(data )
                     self.cards.append(singleCards)
                     //print(self.cards)
                 })
