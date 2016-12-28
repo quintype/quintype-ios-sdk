@@ -7,7 +7,7 @@
 //
 
 import Foundation
-
+import UIKit
 
 //MARK: Random CGFloat values
 public extension CGFloat {

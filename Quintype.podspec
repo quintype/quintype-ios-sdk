@@ -24,7 +24,7 @@ Pod::Spec.new do |s|
   #   * Try to keep it short, snappy and to the point.
   #   * Write the description between the DESC delimiters below.
   #   * Finally, don't worry about the indent, CocoaPods strips it!
-  s.description  = "SDK for iOS development"
+  s.description  = "SDK for iOS development......................................................................................."
 
   s.homepage     = "https://github.com/Albinzr/Quintype"
   # s.screenshots  = "www.example.com/screenshots_1.gif", "www.example.com/screenshots_2.gif"
@@ -62,11 +62,11 @@ Pod::Spec.new do |s|
   #  the deployment target. You can optionally include the target after the platform.
   #
 
-  # s.platform     = :ios
+  s.platform     = :ios
   # s.platform     = :ios, "5.0"
 
   #  When using multiple platforms
-  # s.ios.deployment_target = "5.0"
+  s.ios.deployment_target = "9.3"
   # s.osx.deployment_target = "10.7"
   # s.watchos.deployment_target = "2.0"
   # s.tvos.deployment_target = "9.0"
@@ -89,7 +89,7 @@ Pod::Spec.new do |s|
   #  Not including the public_header_files will make all headers public.
   #
 
-  s.source_files = "CoreiOS/**/*.{h,swift}"
+  s.source_files = "CoreiOS/**/*.{h}"
   # s.exclude_files = "Classes/Exclude"
 
   # s.public_header_files = "Classes/**/*.h"
