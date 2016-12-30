@@ -97,7 +97,7 @@ open class Quintype{
     
     open static func getPublisherConfig(options:publisherOption,success:@escaping (Any?)->()){
         
-        Cache.retriveCacheData(keyName: Constants.publisherConfig.publisherKey) { (data) in
+        Cache.retriveCacheData(keyName: Constants.publisherConfig.publisherCacheKey) { (data) in
            //print(data as Any)
             
             if data == nil{

@@ -33,7 +33,12 @@ open class Cache{
         let time = NSDate.init()
         
         let preKey = "cacheData-"
-        let currentTime:String = String(time.timeIntervalSince1970 * 1000)
+        
+        var currentTime:String = String(0)
+        if cacheTimeInMinute != 0{
+            currentTime = String(time.timeIntervalSince1970 * 1000)
+        }
+        
         let cacheCreatedTimeKey = "cacheCreatedTimeKey-\(currentTime)-"
         let expireTime:String = String(cacheTimeInMinute * 60 * 1000)
         let cacheExpireTimeKey = "cacheExpireTimeKey-\(expireTime)-"
@@ -60,9 +65,9 @@ open class Cache{
         let cacheKey = "cacheKey-\(keyName)-"
         let preKey = "cacheData-"
         var data:Any?
-
+        
         for (key, value) in UserDefaults.standard.dictionaryRepresentation() {
-            ////print(key)
+            print(key)
             
             if key.hasPrefix(preKey){
                 

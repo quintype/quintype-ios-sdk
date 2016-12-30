@@ -1,4 +1,5 @@
-#
+
+#Final
 #  Be sure to run `pod spec lint Quintype.podspec' to ensure this is a
 #  valid spec and to remove all comments including this before submitting the spec.
 #
@@ -93,7 +94,7 @@ Pod::Spec.new do |s|
   # s.exclude_files = "Classes/{swift}"
 
 
-  s.public_header_files = "Classes/**/*.h"
+  s.public_header_files = "CoreiOS/**/*.h"
 
 
   # ――― Resources ―――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――― #
