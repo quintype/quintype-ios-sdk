@@ -25,9 +25,10 @@ open class Quintype{
     
     //MARK: - Private internal variable -
     private var _api:ApiService?
-    
     private var _analytics:Analytics?
-
+    private var _cache:Cache?
+    private var _publisherConfig:Config?
+    
     //MARK: - Open variable for direct access - Api Services
     open static var api:ApiService{
         get{
@@ -47,6 +48,20 @@ open class Quintype{
             return Quintype.sharedInstance._analytics!
         }
     }
+    
+    //MARK: - PublisherConfig for direct acces - Config
+    open static var publisherConfig:Config{
+        get{
+            if Quintype.sharedInstance._publisherConfig == nil{
+                
+                Quintype.sharedInstance.getPublisherConfig(options: publisherOption.all, success: { (data) in
+                Quintype.sharedInstance._publisherConfig = data as? Config
+                })
+            }
+            return Quintype.sharedInstance._publisherConfig!
+        }
+    }
+    
 
     //MARK: - SDK init to obtain base url
     open static func initWithBaseUrl(baseURL: String!) {
@@ -80,7 +95,8 @@ open class Quintype{
             
             //calling analytic installation
             let _ =  Quintype.analytics
-      
+            let _ = Quintype.publisherConfig
+            
             
             if error == nil{
                 if let delegate = Quintype.sharedInstance.delegate{
@@ -95,7 +111,7 @@ open class Quintype{
     //MARK - publisherConfig linking to Quintype
     
     
-    open static func getPublisherConfig(options:publisherOption,success:@escaping (Any?)->()){
+        func getPublisherConfig(options:publisherOption,success:@escaping (Any?)->()){
         
         Cache.retriveCacheData(keyName: Constants.publisherConfig.publisherCacheKey) { (data) in
            //print(data as Any)

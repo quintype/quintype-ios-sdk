@@ -8,9 +8,9 @@
 
 import Foundation
 
-open class Cache{
+public class Cache{
     
-    private init(){}
+    public init(){}
     
     private static let sharedInstance:Cache = Cache()
     
