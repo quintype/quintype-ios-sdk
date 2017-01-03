@@ -89,7 +89,7 @@ class Http{
             
             URLSession.shared.dataTask(with: url as URLRequest) { (data, response, error) in
                 
-                print("error0",data?.description as Any,response as Any,error as Any)
+//                print("error0",data?.description as Any,response as Any,error as Any)
                 
                 #if DEBUG
                     if let data = data,let json = try? JSONSerialization.jsonObject(with: data, options: []) as? [String: AnyObject] {
@@ -99,7 +99,7 @@ class Http{
                 #endif
                 
                 if error != nil {
-                    print(error as Any)
+//                    print(error as Any)
                     DispatchQueue.main.async {
 
                         Error("Unknown error occured,\(error.debugDescription)")

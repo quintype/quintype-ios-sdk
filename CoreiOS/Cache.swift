@@ -67,7 +67,7 @@ public class Cache{
         var data:Any?
         
         for (key, value) in UserDefaults.standard.dictionaryRepresentation() {
-            print(key)
+//            print(key)
             
             if key.hasPrefix(preKey){
                 

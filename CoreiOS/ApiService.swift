@@ -668,7 +668,7 @@ public class ApiService{
                 "access-token": facebookToken
             ]
         ]
-        print(parameter)
+//        print(parameter)
         let url = baseUrl + Constants.urlConfig.facebookLogin
         
         api.call(method: "post", urlString: url, parameter: parameter as [String : AnyObject]?, Success: { (status) in
