@@ -8,7 +8,7 @@
 
 import Foundation
 
-public class Analytics:Completion{
+public class Analytics{
     
     //shared instances
     let api = Http.sharedInstance
@@ -28,61 +28,79 @@ public class Analytics:Completion{
     let deviceIsMobile:Bool = true
     var parameter:[String:Any] = [:]
     
-    public init(){
-        
-        object.delegate = self
+    public init(){}
+    
+    
+    private func checkConfig(complete:@escaping ()->()){
+        if (defaults.string(forKey: Constants.analyticConfig.analyticKey) != nil){
+            
+            sessionId = NSUUID().uuidString
+            deviceId = UIDevice.current.identifierForVendor?.description
+            publisherId = Constants.publisherConfig.publisherId
+            userAgent = defaults.string(forKey: Constants.publisherConfig.appNameKey)! + "iOS"
+            software = "iOS - " + UIDevice.current.systemVersion.description
+            deviceModel = UIDevice.current.model
+            storyVisitPageViewEventId = NSUUID().uuidString
+            
+            parameter = [
+                "session-event-id":sessionId as Any,
+                "id":UUID().uuidString,
+                "device-tracker-id":deviceId as Any,
+                "publisher-id":publisherId as Any,
+                "referrer":"",
+            ]
+            if Constants.user.memberId != 0{
+                memberId = Constants.user.memberId
+                parameter["member-id"] = memberId
+            }//TODO: - Set user in user model
+            
+            complete()
+        }else{
+            Quintype.api.getPublisherConfig(cache: cacheOption.loadOldCacheAndReplaceWithNew, completion: { (error, configData) in
+                
+                if error == nil{
+                    
+                }else{
+                    Quintype.cachePublisherKeys(data: configData)
+                    complete()
+                }
+                
+            })
+        }
     }
     
-    func finished() {
-        //print("Finished initlizing")
-        sessionId = NSUUID().uuidString
-        deviceId = UIDevice.current.identifierForVendor?.description
-        publisherId = Constants.publisherConfig.publisherId
-        userAgent = defaults.string(forKey: Constants.publisherConfig.appNameKey)! + "iOS"
-        software = "iOS - " + UIDevice.current.systemVersion.description
-        deviceModel = UIDevice.current.model
-        storyVisitPageViewEventId = NSUUID().uuidString
-        
-        parameter = [
-            "session-event-id":sessionId as Any,
-            "id":UUID().uuidString,
-            "device-tracker-id":deviceId as Any,
-            "publisher-id":publisherId as Any,
-            "referrer":"",
-        ]
-        if Constants.user.memberId != 0{
-            memberId = Constants.user.memberId
-            parameter["member-id"] = memberId
-        }//TODO: - Set user in user model
-    }
     
     open func trackPageViewSectionVisit(section: String){//1
-        
-        parameter["page-type"] = pageType.section.rawValue
-        parameter["url"] = section
-        
-        Track(eventName: eventType.viewPage.rawValue, parameter: parameter as [String : AnyObject])
+        checkConfig {
+            self.parameter["page-type"] = pageType.section.rawValue
+            self.parameter["url"] = section
+            
+            self.Track(eventName: eventType.viewPage.rawValue, parameter: self.parameter as [String : AnyObject])
+            
+        }
         
     }
     
     //MARK: - - Trackhome page visit -
     
     open func trackPageViewHomeVisit(){//2
-        
-        parameter["page-type"] = pageType.home.rawValue
-        parameter["url"] = Constants.storage.getBaseUrl()
-        
-        Track(eventName: eventType.viewPage.rawValue, parameter: parameter as [String : AnyObject])
-        
+        checkConfig {
+            self.parameter["page-type"] = pageType.home.rawValue
+            self.parameter["url"] = Constants.storage.getBaseUrl()
+            
+            self.Track(eventName: eventType.viewPage.rawValue, parameter: self.parameter as [String : AnyObject])
+        }
     }
     
     //MARK: - Tracksearch results page view -
     
     open func trackPageViewSearchResults(){//3
-        parameter["page-type"] = pageType.searchResults.rawValue
-        parameter["url"] = ""
-        
-        Track(eventName: eventType.viewPage.rawValue, parameter: parameter as [String : AnyObject])
+        checkConfig {
+            self.parameter["page-type"] = pageType.searchResults.rawValue
+            self.parameter["url"] = ""
+            
+            self.Track(eventName: eventType.viewPage.rawValue, parameter: self.parameter as [String : AnyObject])
+        }
     }
     
     //MARK: - Trackstory page visit -
@@ -93,14 +111,14 @@ public class Analytics:Completion{
     
     open func trackPageViewStoryVisit(story: Story){//4
         
-        
-        parameter["page-type"] = pageType.story.rawValue
-        parameter["url"] = story.slug
-        parameter["page-view-event-id"] = storyVisitPageViewEventId
-        parameter["story-content-id"] = story.story_content_id
-        
-        Track(eventName: eventType.viewStory.rawValue, parameter: parameter as [String : AnyObject])
-        
+        checkConfig {
+            self.parameter["page-type"] = pageType.story.rawValue
+            self.parameter["url"] = story.slug
+            self.parameter["page-view-event-id"] = self.storyVisitPageViewEventId
+            self.parameter["story-content-id"] = story.story_content_id
+            
+            self.Track(eventName: eventType.viewStory.rawValue, parameter: self.parameter as [String : AnyObject])
+        }
     }
     
     //MARK: - Tracka story visit -
@@ -110,12 +128,14 @@ public class Analytics:Completion{
      */
     
     open func trackStoryVisit(story: Story){//5
-        parameter["page-type"] = pageType.story.rawValue
-        parameter["url"] = story.slug
-        parameter["page-view-event-id"] = storyVisitPageViewEventId
-        parameter["story-content-id"] = story.story_content_id
-        
-        Track(eventName: eventType.viewStory.rawValue, parameter: parameter as [String : AnyObject])
+        checkConfig {
+            self.parameter["page-type"] = pageType.story.rawValue
+            self.parameter["url"] = story.slug
+            self.parameter["page-view-event-id"] = self.storyVisitPageViewEventId
+            self.parameter["story-content-id"] = story.story_content_id
+            
+            self.Track(eventName: eventType.viewStory.rawValue, parameter: self.parameter as [String : AnyObject])
+        }
     }
     
     //MARK: - Trackstory element visit -
@@ -126,18 +146,20 @@ public class Analytics:Completion{
      */
     
     open func trackStoryElementVisit(story: Story, cardStoryElement: CardStoryElement){//6
-        
-        let card = cardForStoryElement(story: story, storyElement: cardStoryElement)
-        
-        parameter["story-content-id"] = story.story_content_id
-        parameter["story-version-id"] = story.story_version_id
-        parameter["card-content-id"] = card?.content_id
-        parameter["card-version-id"] = card?.content_version_id
-        parameter["story-element-id"] = cardStoryElement.id
-        parameter["story-element-type"] = cardStoryElement.type
-        parameter["page-view-event-id"] = storyVisitPageViewEventId
-        
-        Track(eventName: eventType.storyElementView.rawValue, parameter: parameter as [String : AnyObject])
+        checkConfig {
+            
+            let card = self.cardForStoryElement(story: story, storyElement: cardStoryElement)
+            
+            self.parameter["story-content-id"] = story.story_content_id
+            self.parameter["story-version-id"] = story.story_version_id
+            self.self.parameter["card-content-id"] = card?.content_id
+            self.parameter["card-version-id"] = card?.content_version_id
+            self.parameter["story-element-id"] = cardStoryElement.id
+            self.parameter["story-element-type"] = cardStoryElement.type
+            self.parameter["page-view-event-id"] = self.storyVisitPageViewEventId
+            
+            self.Track(eventName: eventType.storyElementView.rawValue, parameter: self.parameter as [String : AnyObject])
+        }
         
     }
     
@@ -151,20 +173,21 @@ public class Analytics:Completion{
      */
     
     open func trackStoryElementAction(story: Story, cardStoryElement: CardStoryElement, actionTimestamp: Float, action: String){//7
-        
-        let card = cardForStoryElement(story: story, storyElement: cardStoryElement)
-        
-        parameter["story-content-id"] = story.story_content_id
-        parameter["story-version-id"] = story.story_version_id
-        parameter["card-content-id"] = card?.content_id
-        parameter["card-version-id"] = card?.content_version_id
-        parameter["story-element-id"] = cardStoryElement.id
-        parameter["story-element-type"] = cardStoryElement.type
-        parameter["page-view-event-id"] = storyVisitPageViewEventId
-        parameter["story-element-action"] = actionTimestamp
-        parameter["action-timestamp"] = action
-        
-        Track(eventName: eventType.storyElementView.rawValue, parameter: parameter as [String : AnyObject])
+        checkConfig {
+            let card = self.cardForStoryElement(story: story, storyElement: cardStoryElement)
+            
+            self.parameter["story-content-id"] = story.story_content_id
+            self.parameter["story-version-id"] = story.story_version_id
+            self.parameter["card-content-id"] = card?.content_id
+            self.parameter["card-version-id"] = card?.content_version_id
+            self.parameter["story-element-id"] = cardStoryElement.id
+            self.parameter["story-element-type"] = cardStoryElement.type
+            self.parameter["page-view-event-id"] = self.storyVisitPageViewEventId
+            self.parameter["story-element-action"] = actionTimestamp
+            self.parameter["action-timestamp"] = action
+            
+            self.Track(eventName: eventType.storyElementView.rawValue, parameter: self.parameter as [String : AnyObject])
+        }
         
     }
     
@@ -176,14 +199,16 @@ public class Analytics:Completion{
      */
     
     open func trackShare(story: Story, provider: String){//10
-        parameter["page-view-event-id"] = storyVisitPageViewEventId
-        parameter["social-media-type"] = provider
-        parameter["story-content-id"] = story.story_content_id
-        parameter["content-type"] = story.content_type
-        parameter["url"] = story.slug
-        parameter["page-type"] = pageType.story.rawValue
-        
-        Track(eventName: eventType.viewStory.rawValue, parameter: parameter as [String : AnyObject])
+        checkConfig {
+            self.parameter["page-view-event-id"] = self.storyVisitPageViewEventId
+            self.parameter["social-media-type"] = provider
+            self.parameter["story-content-id"] = story.story_content_id
+            self.parameter["content-type"] = story.content_type
+            self.parameter["url"] = story.slug
+            self.parameter["page-type"] = pageType.story.rawValue
+            
+            self.Track(eventName: eventType.viewStory.rawValue, parameter: self.parameter as [String : AnyObject])
+        }
     }
     
     //MARK: - Find same card inside story's cards - 🌸
@@ -199,7 +224,7 @@ public class Analytics:Completion{
     }
     
     //MARK: - Main tracker function - 😍
-    public func Track(eventName:String,parameter:[String:AnyObject]){
+    private func Track(eventName:String,parameter:[String:AnyObject]){
         
         if let baseUrl = Constants.publisherConfig.analyticBaseUrl{
             
