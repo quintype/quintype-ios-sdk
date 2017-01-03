@@ -56,14 +56,12 @@ public class Analytics{
             
             complete()
         }else{
-            Quintype.api.getPublisherConfig(cache: cacheOption.loadOldCacheAndReplaceWithNew, completion: { (error, configData) in
+            
+            Quintype.api.getPublisherConfig(cache: cacheOption.loadOldCacheAndReplaceWithNew, Success: { (data) in
                 
-                if error == nil{
-                    
-                }else{
-                    Quintype.cachePublisherKeys(data: configData)
-                    complete()
-                }
+                Quintype.cachePublisherKeys(data: data)
+                
+            }, Error: { (error) in
                 
             })
         }
@@ -232,11 +230,11 @@ public class Analytics{
                 "event":parameter,
                 "event-type":"page-view"
             ]
-            
-            api.call(method: "post", urlString: baseUrl + Constants.analyticConfig.analyticEvent, parameter: param as [String : AnyObject]?) { (status, error, data) in
+            api.call(method: "post", urlString: baseUrl + Constants.analyticConfig.analyticEvent, parameter: param as [String : AnyObject]?, Success: { (data) in
                 
+            }, Error: { (error) in
                 
-            }
+            })
             
         }
     }

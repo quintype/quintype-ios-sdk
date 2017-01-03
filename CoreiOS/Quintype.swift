@@ -65,11 +65,11 @@ open class Quintype{
         
         storage.storageBaseURL(baseURL: baseURL)
         
-        api.getPublisherConfig(cache: cacheOption.loadOldCacheAndReplaceWithNew) { (error, data) in
+        api.getPublisherConfig(cache: cacheOption.loadOldCacheAndReplaceWithNew, Success: { (data) in
             
-             Quintype.cachePublisherKeys(data: data)
+            Quintype.cachePublisherKeys(data: data)
             
-        }
+        }) { (error) in }
         
     }
     

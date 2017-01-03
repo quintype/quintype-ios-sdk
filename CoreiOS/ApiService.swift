@@ -31,7 +31,7 @@ public class ApiService{
     //MARK: - Default initilizer
     public init(){}
     
- 
+    
     
     
     var saveToDisk:Bool = false
@@ -39,25 +39,27 @@ public class ApiService{
     var cacheStatus:Bool = true
     var replaceWithNewData = false
     
-
+    
     
     //MARK: - Api calling wrapper for reuseing the call (Common Call for all get Calls)
-    func apiCall(apiCallName:String,method:String,url:String,parameter:[String:AnyObject]?,cacheStatus:Bool,cacheTime:Int,saveToDisk:Bool,retuenData:Bool = true,completion:@escaping (String?,Any?)->()) {
-        api.call(method: method, urlString: url, parameter: parameter) { (status,error,data) in
-            if !status{
-                if let errorMessage = error{
-                    completion(errorMessage,nil)
-                }
+    func apiCall(apiCallName:String,method:String,url:String,parameter:[String:AnyObject]?,cacheStatus:Bool,cacheTime:Int,saveToDisk:Bool,retuenData:Bool = true,Success:@escaping (Any?)->(),Error:@escaping (String?)->()) {
+        
+        api.call(method: method, urlString: url, parameter: parameter, Success: { (data) in
+            
+            if cacheStatus{
+                Cache.cacheData(data: data as Any, key: apiCallName, cacheTimeInMinute: cacheTime,saveToDisk:saveToDisk)
+                Success(data)
             }else{
-                
-                if cacheStatus{
-                    Cache.cacheData(data: data as Any, key: apiCallName, cacheTimeInMinute: cacheTime,saveToDisk:saveToDisk)
-                    completion(nil,data)
-                }else{
-                    completion(nil,data)
-                }
-                
+                Success(data)
             }
+            
+            
+        }) { (error) in
+            
+            if let errorMessage = error{
+                Error(errorMessage)
+            }
+            
         }
     }
     
@@ -66,7 +68,7 @@ public class ApiService{
     
     
     //MARK:- Get publisher details -
-    public func getPublisherConfig(cache:cacheOption,completion:@escaping (String?,Config?)->()) {
+    public func getPublisherConfig(cache:cacheOption,Success:@escaping (Config?)->(),Error:@escaping (String?)->()) {
         
         let apiCallName = "\(#function)".components(separatedBy: "(")[0]
         //print(apiCallName)
@@ -92,17 +94,21 @@ public class ApiService{
         
         func requestCall(retuenData:Bool = true){
             
-            self.apiCall(apiCallName:apiCallName,method:"get",url: url, parameter: nil, cacheStatus: cacheStatus, cacheTime: cacheTime!, saveToDisk: saveToDisk, completion: { (error, data) in
+            self.apiCall(apiCallName:apiCallName,method:"get",url: url, parameter: nil, cacheStatus: cacheStatus, cacheTime: cacheTime!, saveToDisk: saveToDisk, Success: { (data) in
                 
                 ApiParser.configParser(data: data as! [String : AnyObject]?, completion: { (configObject) in
                     if retuenData{
                         DispatchQueue.main.async {
-                            completion(nil, configObject)
+                            Success(configObject)
                         }
                     }
                 })
                 
-            })
+            }) { (error) in
+                
+                Error(error)
+                
+            }
             
         }
         
@@ -111,7 +117,7 @@ public class ApiService{
             if data != nil {
                 ApiParser.configParser(data: data as! [String : AnyObject]?, completion: { (configObject) in
                     DispatchQueue.main.async {
-                        completion(nil, configObject)
+                        Success(configObject)
                     }
                     
                     if self.replaceWithNewData{
@@ -126,7 +132,7 @@ public class ApiService{
     }
     
     //MARK: - Get stories -
-    public func getStories(options:storiesOption,fields: [String]?,offset: Int?,limit: Int?,storyGroup: String?,cache:cacheOption,completion:@escaping (String?,[Story]?)->()) {
+    public func getStories(options:storiesOption,fields: [String]?,offset: Int?,limit: Int?,storyGroup: String?,cache:cacheOption,Success:@escaping ([Story]?)->(),Error:@escaping (String?)->()) {
         
         let stringURLFields = fields?.joined(separator: ",").replacingOccurrences(of: ",", with: "%2C")
         
@@ -174,19 +180,21 @@ public class ApiService{
         
         func requestCall(retuenData:Bool = true){
             
-            self.apiCall(apiCallName:apiCallName,method:"get",url: url, parameter: param as [String : AnyObject]?, cacheStatus: cacheStatus, cacheTime: cacheTime!, saveToDisk: saveToDisk, completion: { (error, data) in
+            self.apiCall(apiCallName:apiCallName,method:"get",url: url, parameter: nil, cacheStatus: cacheStatus, cacheTime: cacheTime!, saveToDisk: saveToDisk, Success: { (data) in
                 
                 ApiParser.StoriesParser(data: data as! [String : AnyObject]?, completion: { (storiesObject) in
                     if retuenData{
                         DispatchQueue.main.async {
-                            completion(nil,storiesObject)
+                            Success(storiesObject)
                         }
-                    }else{
-                        ////print("data not returned")
                     }
                 })
                 
-            })
+            }) { (error) in
+                
+                Error(error)
+                
+            }
             
         }
         
@@ -196,7 +204,7 @@ public class ApiService{
                 ApiParser.StoriesParser(data: data as! [String : AnyObject]?, completion: { (storiesObject) in
                     
                     DispatchQueue.main.async {
-                        completion(nil,storiesObject)
+                        Success(storiesObject)
                     }
                     
                     if self.replaceWithNewData{
@@ -212,7 +220,7 @@ public class ApiService{
     
     
     //MARK:- Get story by id
-    public func getStoryFromId(storyId: String,cache:cacheOption,completion:@escaping (String?,Story?)->()) {
+    public func getStoryFromId(storyId: String,cache:cacheOption,Success:@escaping (Story?)->(),Error:@escaping (String?)->()) {
         
         let apiCallName = "\(#function)".components(separatedBy: "(")[0] + storyId
         ////print(apiCallName)
@@ -238,19 +246,21 @@ public class ApiService{
         
         func requestCall(retuenData:Bool = true){
             
-            self.apiCall(apiCallName:apiCallName,method:"get",url: url, parameter: nil, cacheStatus: cacheStatus, cacheTime: cacheTime!, saveToDisk: saveToDisk, completion: { (error, data) in
+            self.apiCall(apiCallName:apiCallName,method:"get",url: url, parameter: nil, cacheStatus: cacheStatus, cacheTime: cacheTime!, saveToDisk: saveToDisk, Success: { (data) in
                 
-                ApiParser.storyParser(data: data as! [String : AnyObject]?, completion: { (storyObject) in
+                ApiParser.storyParser(data: data as! [String : AnyObject]?, completion: { (storiesObject) in
                     if retuenData{
                         DispatchQueue.main.async {
-                            completion(nil,storyObject)
+                            Success(storiesObject)
                         }
-                    }else{
-                        ////print("data not returned")
                     }
                 })
                 
-            })
+            }) { (error) in
+                
+                Error(error)
+                
+            }
             
         }
         
@@ -260,7 +270,7 @@ public class ApiService{
                 ApiParser.storyParser(data: data as! [String : AnyObject]?, completion: { (storyObject) in
                     
                     DispatchQueue.main.async {
-                        completion(nil,storyObject)
+                        Success(storyObject)
                     }
                     
                     if self.replaceWithNewData{
@@ -277,7 +287,7 @@ public class ApiService{
     }
     
     //MARK:- Get realted story
-    public func getRelatedStories(storyId: String,SectionId:String?,fields: [String]?,cache:cacheOption,completion:@escaping (String?,[Story]?)->()) {
+    public func getRelatedStories(storyId: String,SectionId:String?,fields: [String]?,cache:cacheOption,Success:@escaping ([Story]?)->(),Error:@escaping (String?)->()) {
         
         
         let stringURLFields = fields?.joined(separator: ",").replacingOccurrences(of: ",", with: "%2C")
@@ -314,19 +324,21 @@ public class ApiService{
         
         func requestCall(retuenData:Bool = true){
             
-            self.apiCall(apiCallName:apiCallName,method:"get",url: url, parameter: param as [String : AnyObject]?, cacheStatus: cacheStatus, cacheTime: cacheTime!, saveToDisk: saveToDisk, completion: { (error, data) in
+            self.apiCall(apiCallName:apiCallName,method:"get",url: url, parameter: nil, cacheStatus: cacheStatus, cacheTime: cacheTime!, saveToDisk: saveToDisk, Success: { (data) in
                 
                 ApiParser.StoriesParser(data: data as! [String : AnyObject]?,parseKey:"related-stories",completion: { (storiesObject) in
                     if retuenData{
                         DispatchQueue.main.async {
-                            completion(nil,storiesObject)
+                            Success(storiesObject)
                         }
-                    }else{
-                        ////print("data not returned")
                     }
                 })
                 
-            })
+            }) { (error) in
+                
+                Error(error)
+                
+            }
             
         }
         
@@ -336,7 +348,7 @@ public class ApiService{
                 ApiParser.StoriesParser(data: data as! [String : AnyObject]?,parseKey:"related-stories",completion: { (storiesObject) in
                     
                     DispatchQueue.main.async {
-                        completion(nil,storiesObject)
+                        Success(storiesObject)
                     }
                     
                     if self.replaceWithNewData{
@@ -352,8 +364,7 @@ public class ApiService{
     }
     
     //MARK:- Search
-    public func search(searchBy:searchOption,fields: [String]?,offset:Int?,limit:Int?,cache:cacheOption,completion:@escaping (String?,Search?)->()) {
-        
+    public func search(searchBy:searchOption,fields: [String]?,offset:Int?,limit:Int?,cache:cacheOption,Success:@escaping (Search?)->(),Error:@escaping (String?)->()) {
         
         let stringURLFields = fields?.joined(separator: ",").replacingOccurrences(of: ",", with: "%2C")
         var searchKey:String = ""
@@ -400,22 +411,24 @@ public class ApiService{
         
         func requestCall(retuenData:Bool = true){
             
-            self.apiCall(apiCallName:apiCallName,method:"get",url: url, parameter: nil, cacheStatus: cacheStatus, cacheTime: cacheTime!, saveToDisk: saveToDisk, completion: { (error, data) in
+            self.apiCall(apiCallName:apiCallName,method:"get",url: url, parameter: nil, cacheStatus: cacheStatus, cacheTime: cacheTime!, saveToDisk: saveToDisk, Success: { (data) in
                 
                 ApiParser.searchParser(data: data as! [String : AnyObject]?, completion: { (searchObject) in
-                    
                     if retuenData{
                         DispatchQueue.main.async {
-                            completion(nil,searchObject)
+                            Success(searchObject)
                         }
-                    }else{
-                        ////print("data not returned")
                     }
                 })
                 
-            })
+            }) { (error) in
+                
+                Error(error)
+                
+            }
             
         }
+        
         
         Cache.retriveCacheData(keyName: apiCallName, completion: { (data) in
             
@@ -424,7 +437,7 @@ public class ApiService{
                     
                     
                     DispatchQueue.main.async {
-                        completion(nil,searchObject)
+                        Success(searchObject)
                     }
                     
                     if self.replaceWithNewData{
@@ -440,7 +453,8 @@ public class ApiService{
     }
     
     //MARK:- Get comments of a particular story
-    public func getCommentsForStory(storyId:String,cache:cacheOption,completion:@escaping (String?,[Comment]?)->()) {
+    public func getCommentsForStory(storyId:String,cache:cacheOption,Success:@escaping ([Comment]?)->(),Error:@escaping (String?)->()) {
+        
         
         let apiCallName = "\(#function)".components(separatedBy: "(")[0] + storyId
         if let opt = cache.value{
@@ -464,23 +478,25 @@ public class ApiService{
         
         func requestCall(retuenData:Bool = true){
             
-            self.apiCall(apiCallName:apiCallName,method:"get",url: url, parameter: nil, cacheStatus: cacheStatus, cacheTime: cacheTime!, saveToDisk: saveToDisk, completion: { (error, data) in
+            self.apiCall(apiCallName:apiCallName,method:"get",url: url, parameter: nil, cacheStatus: cacheStatus, cacheTime: cacheTime!, saveToDisk: saveToDisk, Success: { (data) in
                 
                 ApiParser.commentsParser(data: data as! [String : AnyObject]?,completion: { (commentObject) in
-                    
-                    
                     if retuenData{
                         DispatchQueue.main.async {
-                            completion(nil,commentObject)
+                            Success(commentObject)
                         }
-                    }else{
-                        ////print("data not returned")
                     }
                 })
                 
-            })
+            }) { (error) in
+                
+                Error(error)
+                
+            }
             
         }
+        
+        
         
         Cache.retriveCacheData(keyName: apiCallName, completion: { (data) in
             
@@ -488,7 +504,7 @@ public class ApiService{
                 ApiParser.commentsParser(data: data as! [String : AnyObject]?,completion: { (commentObject) in
                     
                     DispatchQueue.main.async {
-                        completion(nil,commentObject)
+                        Success(commentObject)
                     }
                     
                     if self.replaceWithNewData{
@@ -503,7 +519,7 @@ public class ApiService{
     }
     
     //MARK:- Get story form slug
-    public func getStoryFromSlug(slug: String,cache:cacheOption,completion:@escaping (String?,Story?)->()) {
+    public func getStoryFromSlug(slug: String,cache:cacheOption,Success:@escaping (Story?)->(),Error:@escaping (String?)->()) {
         
         let urlSlug = slug.addingPercentEncoding(withAllowedCharacters: .urlHostAllowed)
         
@@ -531,20 +547,21 @@ public class ApiService{
         
         func requestCall(retuenData:Bool = true){
             
-            self.apiCall(apiCallName:apiCallName,method:"get",url: url, parameter: param as [String : AnyObject]?, cacheStatus: cacheStatus, cacheTime: cacheTime!, saveToDisk: saveToDisk, completion: { (error, data) in
+            self.apiCall(apiCallName:apiCallName,method:"get",url: url, parameter: nil, cacheStatus: cacheStatus, cacheTime: cacheTime!, saveToDisk: saveToDisk, Success: { (data) in
                 
                 ApiParser.storyParser(data: data as! [String : AnyObject]?,completion: { (storyObject) in
-                    
                     if retuenData{
                         DispatchQueue.main.async {
-                            completion(nil,storyObject)
+                            Success(storyObject)
                         }
-                    }else{
-                        ////print("data not returned")
                     }
                 })
                 
-            })
+            }) { (error) in
+                
+                Error(error)
+                
+            }
             
         }
         
@@ -555,7 +572,7 @@ public class ApiService{
                     
                     
                     DispatchQueue.main.async {
-                        completion(nil,storyObject)
+                        Success(storyObject)
                     }
                     
                     if self.replaceWithNewData{
@@ -570,8 +587,7 @@ public class ApiService{
     }
     
     //MARK:- Get breaking news
-    public func getBreakingNews(fields:[String]?,limit:Int?,offset:Int?,cache:cacheOption,completion:@escaping (String?,[Story]?)->()) {
-        
+    public func getBreakingNews(fields:[String]?,limit:Int?,offset:Int?,cache:cacheOption,Success:@escaping ([Story]?)->(),Error:@escaping (String?)->()) {
         
         let stringURLFields = fields?.joined(separator: ",").replacingOccurrences(of: ",", with: "%2C")
         
@@ -604,20 +620,21 @@ public class ApiService{
         
         func requestCall(retuenData:Bool = true){
             
-            self.apiCall(apiCallName:apiCallName,method:"get",url: url, parameter: param as [String : AnyObject]?, cacheStatus: cacheStatus, cacheTime: cacheTime!, saveToDisk: saveToDisk, completion: { (error, data) in
+            self.apiCall(apiCallName:apiCallName,method:"get",url: url, parameter: nil, cacheStatus: cacheStatus, cacheTime: cacheTime!, saveToDisk: saveToDisk, Success: { (data) in
                 
                 ApiParser.StoriesParser(data: data as! [String : AnyObject]?, completion: { (storiesObject) in
-                    
                     if retuenData{
                         DispatchQueue.main.async {
-                            completion(nil,storiesObject)
+                            Success(storiesObject)
                         }
-                    }else{
-                        ////print("data not returned")
                     }
                 })
                 
-            })
+            }) { (error) in
+                
+                Error(error)
+                
+            }
             
         }
         
@@ -628,7 +645,7 @@ public class ApiService{
                     
                     
                     DispatchQueue.main.async {
-                        completion(nil,storiesObject)
+                        Success(storiesObject)
                     }
                     
                     if self.replaceWithNewData{
@@ -644,7 +661,7 @@ public class ApiService{
     
     //MARK: Facebook Token Sender
     
-    public func facebookTokenLogin(facebookToken:String,complete:@escaping (Bool)->()){
+    public func facebookTokenLogin(facebookToken:String,Success:@escaping (Bool)->(),Error:@escaping (String?)->()) {
         
         let parameter: [String: Any] = [
             "token": [
@@ -654,21 +671,11 @@ public class ApiService{
         print(parameter)
         let url = baseUrl + Constants.urlConfig.facebookLogin
         
-        
-        api.call(method: "post", urlString: url, parameter: parameter as [String : AnyObject]?) { (status, error, data) in
-            
-            print(status, error as Any, data as Any)
-            
-            if !status{
-                if error != nil{
-                    complete(false)
-                }
-            }else{
-                complete(true)
-                
-            }
-            
-        }
+        api.call(method: "post", urlString: url, parameter: parameter as [String : AnyObject]?, Success: { (status) in
+            Success(true)
+        }, Error: { (error) in
+            Error(error)
+        })
         
         
     }
@@ -681,9 +688,9 @@ public class ApiService{
     
     
     //MARK: -POST Commants
-    //TODO: -Need testing
+    //TODO: -Need testing, check error types for post
     
-    public func postComment(comment:String?,storyId:Int){
+    public func postComment(comment:String?,storyId:Int,Success:@escaping (Any?)->(),Error:@escaping (String?)->()) {
         
         let param:[String:Any?] = [
             
@@ -691,32 +698,41 @@ public class ApiService{
             "text":comment,
             
             ]
+        api.call(method: "post", urlString: Constants.urlConfig.postComment, parameter: param as [String : AnyObject]?, Success: { (data) in
         
-        api.call(method: "post", urlString: Constants.urlConfig.postComment, parameter: param as [String : AnyObject]?){ (status,error,data) in
+        Success(data)
             
-            print(data as Any)
+        }) { (error) in
+            
+            Error(error)
+            
+        }
+        
+        
+    }
+    
+    public func getCurrentUser(storyId:Int,Success:@escaping (Any?)->(),Error:@escaping (String?)->()) {
+        
+        api.call(method: "get", urlString: Constants.urlConfig.getCurrentUser,parameter: nil, Success: { (data) in
+            
+            Success(data)
+            
+        }) { (error) in
+            
+            Error(error)
             
         }
     }
     
-    public func getCurrentUser(storyId:Int,complete:@escaping (Bool)->()){
-        
-        api.call(method: "get", urlString: Constants.urlConfig.getCurrentUser, parameter: nil){ (status,error,data) in
+    public func getAuthor(autherId:String,Success:@escaping (Any?)->(),Error:@escaping (String?)->()) {
+
+        api.call(method: "get", urlString: Constants.urlConfig.GetAuthor + "/\(autherId)", parameter: nil, Success: { (data) in
             
-            print(data as Any)
-            complete(true)
+            Success(data)
             
+        }) { (error) in
             
-        }
-    }
-    
-    public func getAuthor(autherId:String,complete:@escaping (Bool)->()){
-        
-        
-        api.call(method: "get", urlString: Constants.urlConfig.GetAuthor + "/\(autherId)", parameter: nil){ (status,error,data) in
-            
-            print(data as Any)
-            complete(true)
+            Error(error)
             
         }
         

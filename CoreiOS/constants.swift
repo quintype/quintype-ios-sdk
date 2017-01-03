@@ -139,15 +139,11 @@ public struct Constants{
     
         struct HttpError{
             
-            static let dataNotFound = "Unable to retrive data. Please try again after sometime"
+            static let pageNotFound = "Unable to retrive data. Please try again after sometime"
             static let noInternetConnection = "No internet connection. Please try again after sometime"
 
     
         }
-
-    //    struct FileError{
-    //
-    //    }
     
 }
 

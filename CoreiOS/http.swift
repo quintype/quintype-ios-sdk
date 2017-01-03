@@ -14,8 +14,28 @@ class Http{
     static let sharedInstance = Http()
     let defaults = UserDefaults.standard
     
-    //MARK: - API calling function - Private
-    public func call(method:String,urlString: String,parameter:[String:AnyObject]?, completion: @escaping (Bool,String?,[String: AnyObject]?) -> ()) {
+    private func isInternetAvailable() -> Bool
+    {
+        var zeroAddress = sockaddr_in()
+        zeroAddress.sin_len = UInt8(MemoryLayout.size(ofValue: zeroAddress))
+        zeroAddress.sin_family = sa_family_t(AF_INET)
+        
+        let defaultRouteReachability = withUnsafePointer(to: &zeroAddress) {
+            $0.withMemoryRebound(to: sockaddr.self, capacity: 1) {zeroSockAddress in
+                SCNetworkReachabilityCreateWithAddress(nil, zeroSockAddress)
+            }
+        }
+        
+        var flags = SCNetworkReachabilityFlags()
+        if !SCNetworkReachabilityGetFlags(defaultRouteReachability!, &flags) {
+            return false
+        }
+        let isReachable = (flags.rawValue & UInt32(kSCNetworkFlagsReachable)) != 0
+        let needsConnection = (flags.rawValue & UInt32(kSCNetworkFlagsConnectionRequired)) != 0
+        return (isReachable && !needsConnection)
+    }
+    
+    public func call(method:String,urlString: String,parameter:[String:AnyObject]?, Success: @escaping ([String: AnyObject]?) -> (),Error:@escaping (String?) -> ()) {
         
         if isInternetAvailable(){
             var urlString = urlString
@@ -81,10 +101,9 @@ class Http{
                 if error != nil {
                     print(error as Any)
                     DispatchQueue.main.async {
-                        
-                        
-                        
-                        completion(false,"Unknown error occured,\(error.debugDescription)",nil)
+
+                        Error("Unknown error occured,\(error.debugDescription)")
+
                     }
                     return
                 }else{
@@ -106,7 +125,8 @@ class Http{
                                 
                                 DispatchQueue.main.async {
                                     //                                print("Api call successfull",json)
-                                    completion(true,nil,json as [String : AnyObject]?)
+                                    Success(json as [String : AnyObject]?)
+                                    
                                 }
                             }else{
                                 
@@ -114,21 +134,21 @@ class Http{
                                     if let message =  errorMessage["message"] as? String{
                                         DispatchQueue.main.async {
                                             ////print("Unable to get data")
-                                            completion(false,message,nil)
+                                            Error(message)
                                         }
                                     }
                                 }
                             }
                         }
                         else{
-    
+                            
                             #if DEBUG
                                 if let analyticsCount = data?.count{
                                     print("analytic recived ..",analyticsCount)
                                 }
                             #endif
                             DispatchQueue.main.async {
-                                completion(false,Constants.HttpError.dataNotFound,nil)
+                                Error(Constants.HttpError.pageNotFound)
                             }
                         }
                         
@@ -138,7 +158,7 @@ class Http{
                     //                    //print(error)
                     //                    DispatchQueue.main.async {
                     //                        ////print("Api call successfull but cannot parse")
-                    //                        completion(false,"Cannot parse the data",nil)
+                    //                        Error("Api call successfull but cannot parse")
                     //                    }
                     //
                     //                }
@@ -146,31 +166,9 @@ class Http{
                 
                 }.resume()
         }else{
-            completion(false, Constants.HttpError.noInternetConnection, nil)
+            
+            Error(Constants.HttpError.noInternetConnection)
         }
     }
-    
-    
-    
-    private func isInternetAvailable() -> Bool
-    {
-        var zeroAddress = sockaddr_in()
-        zeroAddress.sin_len = UInt8(MemoryLayout.size(ofValue: zeroAddress))
-        zeroAddress.sin_family = sa_family_t(AF_INET)
-        
-        let defaultRouteReachability = withUnsafePointer(to: &zeroAddress) {
-            $0.withMemoryRebound(to: sockaddr.self, capacity: 1) {zeroSockAddress in
-                SCNetworkReachabilityCreateWithAddress(nil, zeroSockAddress)
-            }
-        }
-        
-        var flags = SCNetworkReachabilityFlags()
-        if !SCNetworkReachabilityGetFlags(defaultRouteReachability!, &flags) {
-            return false
-        }
-        let isReachable = (flags.rawValue & UInt32(kSCNetworkFlagsReachable)) != 0
-        let needsConnection = (flags.rawValue & UInt32(kSCNetworkFlagsConnectionRequired)) != 0
-        return (isReachable && !needsConnection)
-    }
-    
+
 }
