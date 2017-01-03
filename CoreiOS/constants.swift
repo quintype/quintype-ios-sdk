@@ -76,21 +76,21 @@ public struct Constants{
         static let razorpayKey = "razorpay_gateway_key"
         
         //Constants from user default storage
-        static let publisherId = UserDefaults.standard.integer(forKey: Constants.publisherConfig.publisherKey)
-        static let appName = UserDefaults.standard.string(forKey: Constants.publisherConfig.appNameKey)
-        static let analyticBaseUrl = UserDefaults.standard.string(forKey: Constants.analyticConfig.analyticKey)
-        static let stripId = UserDefaults.standard.string(forKey: Constants.payment.stripeKey)
-        static let cdnLink = UserDefaults.standard.string(forKey: Constants.publisherConfig.cdnNameKey)
-        static let cdnImage = UserDefaults.standard.string(forKey: Constants.publisherConfig.cdnImageKey)
-        static let sketchesHost = UserDefaults.standard.string(forKey: Constants.publisherConfig.sketchesHostKey)
-        static let noOfStoriesPerPage = UserDefaults.standard.integer(forKey: Constants.publisherConfig.noOfStoriesPerPageKey)
-        static let noOfStoriesOnTop = UserDefaults.standard.integer(forKey:Constants.publisherConfig.noOfStoriesOnTopKey)
-        static let typekitId = UserDefaults.standard.string(forKey: Constants.publisherConfig.typekitKey)
-        static let storySlugFormat = UserDefaults.standard.string(forKey: Constants.publisherConfig.storySlugFormatKey)
-        static let nudgeHost = UserDefaults.standard.string(forKey: Constants.publisherConfig.nudgeHostKey)
-        static let moreStoryCount = UserDefaults.standard.string(forKey: Constants.publisherConfig.moreStoryCountKey)
-        static let polltypeHost = UserDefaults.standard.stringArray(forKey: Constants.publisherConfig.polltypeHostKey)
-        static let razorpayId = UserDefaults.standard.string(forKey: Constants.publisherConfig.razorpayKey)
+        public static let publisherId = UserDefaults.standard.integer(forKey: Constants.publisherConfig.publisherKey)
+        public static let appName = UserDefaults.standard.string(forKey: Constants.publisherConfig.appNameKey)
+        public static let analyticBaseUrl = UserDefaults.standard.string(forKey: Constants.analyticConfig.analyticKey)
+        public static let stripId = UserDefaults.standard.string(forKey: Constants.payment.stripeKey)
+        public static let cdnLink = UserDefaults.standard.string(forKey: Constants.publisherConfig.cdnNameKey)
+        public static let cdnImage = UserDefaults.standard.string(forKey: Constants.publisherConfig.cdnImageKey)
+        public static let sketchesHost = UserDefaults.standard.string(forKey: Constants.publisherConfig.sketchesHostKey)
+        public static let noOfStoriesPerPage = UserDefaults.standard.integer(forKey: Constants.publisherConfig.noOfStoriesPerPageKey)
+        public static let noOfStoriesOnTop = UserDefaults.standard.integer(forKey:Constants.publisherConfig.noOfStoriesOnTopKey)
+        public static let typekitId = UserDefaults.standard.string(forKey: Constants.publisherConfig.typekitKey)
+        public static let storySlugFormat = UserDefaults.standard.string(forKey: Constants.publisherConfig.storySlugFormatKey)
+        public static let nudgeHost = UserDefaults.standard.string(forKey: Constants.publisherConfig.nudgeHostKey)
+        public static let moreStoryCount = UserDefaults.standard.string(forKey: Constants.publisherConfig.moreStoryCountKey)
+        public static let polltypeHost = UserDefaults.standard.stringArray(forKey: Constants.publisherConfig.polltypeHostKey)
+        public static let razorpayId = UserDefaults.standard.string(forKey: Constants.publisherConfig.razorpayKey)
         
         
     }
@@ -134,15 +134,13 @@ public struct Constants{
      
         static let auth = "x-qt-auth"
         
-        
     }
     
         struct HttpError{
             
             static let pageNotFound = "Unable to retrive data. Please try again after sometime"
             static let noInternetConnection = "No internet connection. Please try again after sometime"
-
-    
+            
         }
     
 }

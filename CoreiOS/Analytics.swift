@@ -30,29 +30,32 @@ public class Analytics{
     
     public init(){}
     
+    func paramInit(){
+        sessionId = NSUUID().uuidString
+        deviceId = UIDevice.current.identifierForVendor?.description
+        publisherId = Constants.publisherConfig.publisherId
+        userAgent = defaults.string(forKey: Constants.publisherConfig.appNameKey)! + "iOS"
+        software = "iOS - " + UIDevice.current.systemVersion.description
+        deviceModel = UIDevice.current.model
+        storyVisitPageViewEventId = NSUUID().uuidString
+        
+        parameter = [
+            "session-event-id":sessionId as Any,
+            "id":UUID().uuidString,
+            "device-tracker-id":deviceId as Any,
+            "publisher-id":publisherId as Any,
+            "referrer":"",
+        ]
+        if Constants.user.memberId != 0{
+            memberId = Constants.user.memberId
+            parameter["member-id"] = memberId
+        }//TODO: - Set user in user model
+    }
     
     private func checkConfig(complete:@escaping ()->()){
         if (defaults.string(forKey: Constants.analyticConfig.analyticKey) != nil){
             
-            sessionId = NSUUID().uuidString
-            deviceId = UIDevice.current.identifierForVendor?.description
-            publisherId = Constants.publisherConfig.publisherId
-            userAgent = defaults.string(forKey: Constants.publisherConfig.appNameKey)! + "iOS"
-            software = "iOS - " + UIDevice.current.systemVersion.description
-            deviceModel = UIDevice.current.model
-            storyVisitPageViewEventId = NSUUID().uuidString
-            
-            parameter = [
-                "session-event-id":sessionId as Any,
-                "id":UUID().uuidString,
-                "device-tracker-id":deviceId as Any,
-                "publisher-id":publisherId as Any,
-                "referrer":"",
-            ]
-            if Constants.user.memberId != 0{
-                memberId = Constants.user.memberId
-                parameter["member-id"] = memberId
-            }//TODO: - Set user in user model
+           paramInit()
             
             complete()
         }else{
@@ -60,6 +63,8 @@ public class Analytics{
             Quintype.api.getPublisherConfig(cache: cacheOption.loadOldCacheAndReplaceWithNew, Success: { (data) in
                 
                 Quintype.cachePublisherKeys(data: data)
+                
+                self.paramInit()
                 
             }, Error: { (error) in
                 
