@@ -99,6 +99,7 @@ public class ApiService{
                 ApiParser.configParser(data: data as! [String : AnyObject]?, completion: { (configObject) in
                     if retuenData{
                         DispatchQueue.main.async {
+                            Quintype.publisherConfig = configObject
                             Success(configObject)
                         }
                     }

@@ -16,6 +16,8 @@ import Foundation
 open class Quintype{
     
     
+    
+    
     public init() {}
     
     var delegate: Completion?
@@ -40,6 +42,8 @@ open class Quintype{
             return Quintype.sharedInstance._api!
         }
     }
+    
+    open static var publisherConfig:Config?
     
     //MARK: - Open variable for direct access - Analytic
     open static var analytics:Analytics{
@@ -73,7 +77,7 @@ open class Quintype{
         
     }
     
-    public static func cachePublisherKeys(data:Config?){
+     static func cachePublisherKeys(data:Config?){
         let defaults = UserDefaults.standard
         defaults.set(data?.publisher_id, forKey: Constants.publisherConfig.publisherKey)
         defaults.set(data?.shrubbery_host, forKey: Constants.analyticConfig.analyticKey)
