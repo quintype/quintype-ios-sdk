@@ -28,7 +28,7 @@ public class Layout:SafeJsonObject{
                 })
             }
             
-        }else  if key == "sections" {
+        }else  if key == "stacks" {
             let singleStacks = Stack()
             for section in value as! [[String:AnyObject]]{
                 
