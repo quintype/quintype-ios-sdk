@@ -119,6 +119,7 @@ public class ApiService{
             
             if data != nil {
                 ApiParser.configParser(data: data as! [String : AnyObject]?, completion: { (configObject) in
+                    Quintype.publisherConfig = configObject
                     DispatchQueue.main.async {
                         Success(configObject)
                     }
