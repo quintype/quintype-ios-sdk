@@ -97,10 +97,10 @@ public class ApiService{
             self.apiCall(apiCallName:apiCallName,method:"get",url: url, parameter: nil, cacheStatus: cacheStatus, cacheTime: cacheTime!, saveToDisk: saveToDisk, Success: { (data) in
                 
                 ApiParser.configParser(data: data as! [String : AnyObject]?, completion: { (configObject) in
+                    Quintype.publisherConfig = configObject
                     if retuenData{
                         DispatchQueue.main.async {
                             
-                            Quintype.publisherConfig = configObject
                             Success(configObject)
                             
                         }
