@@ -3,10 +3,10 @@
 git add .
 echo "Enter Commit Message: $name"
 read commitMessage
-git commit -m "$commitMessage $(git describe --abbrev=0 --tags)"
-echo "Current Tag is : " $(git describe --abbrev=0 --tags)
 echo "Enter the new tag "
 read newTag
+git commit -m "$commitMessage $snewTag"
+echo "Current Tag is : " $(git describe --abbrev=0 --tags)
 git tag '$newTag'
 git push --tag
 
