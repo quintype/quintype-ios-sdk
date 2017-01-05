@@ -14,7 +14,7 @@ public class Layout:SafeJsonObject{
     public var menu:[Menu] = []
     public var stacks:[Stack] = []
     override public func setValue(_ value: Any?, forKey key: String) {
-        
+    
         if key == "menu" {
            
             for section in value as! [[String:AnyObject]]{
