@@ -8,5 +8,7 @@ read newTag
 git commit -m "$commitMessage $snewTag"
 echo "Current Tag is : " $(git describe --abbrev=0 --tags)
 git tag '$newTag'
-git push --tag
+git push --
+
+echo "finished new tag is $snewTag"
 
