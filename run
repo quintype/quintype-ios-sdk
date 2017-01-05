@@ -5,8 +5,6 @@ echo "Enter Commit Message: $name"
 read commitMessage
 git commit -m "$commitMessage"
 currentTag=$(git describe --abbrev=0 --tags)
-
-totalmark=$(awk 'BEGIN{print $sum / $subjects}')
 newTag= $(0.01 + $(git describe --abbrev=0 --tags) | bc -l)
 
 echo $newTag
