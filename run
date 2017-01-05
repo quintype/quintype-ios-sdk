@@ -5,7 +5,7 @@ echo "Enter Commit Message: $name"
 read commitMessage
 git commit -m "$commitMessage"
 currentTag=$(git describe --abbrev=0 --tags)
-newTag=$(($currentTag + 0.0.1))
+newTag=$(awk($currentTag + 0.0.1))
 echo $newTag
 
 
