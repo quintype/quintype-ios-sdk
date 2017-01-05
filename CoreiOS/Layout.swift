@@ -25,7 +25,6 @@ public class Layout:SafeJsonObject{
                     
                 })
             }
-            
         }else  if key == "stacks" {
             
             for section in value as! [[String:AnyObject]]{
