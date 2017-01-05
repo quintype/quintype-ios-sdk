@@ -29,10 +29,10 @@ public class Card:SafeJsonObject  {
     override public func setValue(_ value: Any?, forKey key: String) {
         
         if key == "story_elements" {
-            let singleCardStoryElement = CardStoryElement()
-            for CardStoryElement in value as! [[String:AnyObject]]{
-                
-                Converter.jsonKeyConverter(dictionaryArray: CardStoryElement, completion: { (data) in
+            
+            for section in value as! [[String:AnyObject]]{
+                let singleCardStoryElement = CardStoryElement()
+                Converter.jsonKeyConverter(dictionaryArray: section, completion: { (data) in
                     singleCardStoryElement.setValuesForKeys(data)
                     self.story_elements.append(singleCardStoryElement)
                     //print(self.story_elements)

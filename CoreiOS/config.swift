@@ -41,9 +41,9 @@ public class Config:SafeJsonObject{
         
         
         if key == "sections" {
-            let singleSectionMeta = SectionMeta()
+          
             for section in value as! [[String:AnyObject]]{
-                
+                  let singleSectionMeta = SectionMeta()
                 Converter.jsonKeyConverter(dictionaryArray: section, completion: { (data) in
                     singleSectionMeta.setValuesForKeys(data)
                     self.sections.append(singleSectionMeta)
@@ -52,9 +52,9 @@ public class Config:SafeJsonObject{
             }
             
         } else if key == "story_attributes" {
-            let singleStoryAttributes = StoryAttributes()
+            
             for section in value as! [[String:AnyObject]]{
-                
+                let singleStoryAttributes = StoryAttributes()
                 Converter.jsonKeyConverter(dictionaryArray: section, completion: { (data) in
                     singleStoryAttributes.setValuesForKeys(data)
                     self.story_attributes.append(singleStoryAttributes)
@@ -93,33 +93,7 @@ public class Config:SafeJsonObject{
             super.setValue(value, forKey: key)
         }
     }
-    
-    //    public required convenience init?(coder aDecoder: NSCoder) {
-    //
-    //        self.init()
-    //
-    //        self.stripe_publishable_key = aDecoder.decodeObject(forKey: "field_name") as? String
-    //        self.type = aDecoder.decodeObject(forKey: "type") as? String
-    //        self.required = aDecoder.decodeBool(forKey: "required")
-    //        self.min = aDecoder.decodeObject(forKey: "min") as? NSNumber
-    //        self.max = aDecoder.decodeObject(forKey: "max") as? NSNumber
-    //        self.unique_id = aDecoder.decodeObject(forKey: "unique_id") as? NSNumber
-    //        self.userText = aDecoder.decodeObject(forKey: "userText") as? String
-    //        self.options = aDecoder.decodeObject(forKey: "options") as? [String]
-    //
-    //    }
-    //
-    //    public func encode(with aCoder: NSCoder) {
-    //        aCoder.encode(field_name, forKey: "field_name")
-    //        aCoder.encode(type, forKey: "type")
-    //        aCoder.encode(required, forKey: "required")
-    //        aCoder.encode(min, forKey: "min")
-    //        aCoder.encode(max, forKey: "max")
-    //        aCoder.encode(unique_id, forKey: "unique_id")
-    //        aCoder.encode(userText, forKey: "userText")
-    //        aCoder.encode(options, forKey: "options")
-    //    }
-    
+
     
 }
 

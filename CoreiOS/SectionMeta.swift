@@ -15,7 +15,5 @@ public class SectionMeta:SafeJsonObject{
     public var display_name:String?
     public var slug:String?
     public var parent_id:NSNumber?
-    
-    
 
 }

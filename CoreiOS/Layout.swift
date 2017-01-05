@@ -18,9 +18,9 @@ public class Layout:SafeJsonObject{
     override public func setValue(_ value: Any?, forKey key: String) {
         
         if key == "menu" {
-            let singleMenu = Menu()
+           
             for section in value as! [[String:AnyObject]]{
-                
+                 let singleMenu = Menu()
                 Converter.jsonKeyConverter(dictionaryArray: section, completion: { (data) in
                     singleMenu.setValuesForKeys(data)
                     self.menu.append(singleMenu)
@@ -29,9 +29,9 @@ public class Layout:SafeJsonObject{
             }
             
         }else  if key == "stacks" {
-            let singleStacks = Stack()
+            
             for section in value as! [[String:AnyObject]]{
-                
+                let singleStacks = Stack()
                 Converter.jsonKeyConverter(dictionaryArray: section, completion: { (data) in
                     singleStacks.setValuesForKeys(data)
                     self.stacks.append(singleStacks)

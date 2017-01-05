@@ -57,9 +57,9 @@ public class Story:SafeJsonObject {
     override public func setValue(_ value: Any?, forKey key: String) {
         
         if key == "sections" {
-            let singleSection = Section()
+            
             for  section in value as! [[String:AnyObject]]{
-
+                let singleSection = Section()
                 Converter.jsonKeyConverter(dictionaryArray: section, completion: { (data) in
                     singleSection.setValuesForKeys(data )
                     self.sections.append(singleSection)
@@ -76,10 +76,10 @@ public class Story:SafeJsonObject {
         
         }
         else if key == "tags"{
-            let singleTag = Tag()
+            
             
             for tag in value as! [[String:AnyObject]]{
-                
+                let singleTag = Tag()
                 Converter.jsonKeyConverter(dictionaryArray: tag, completion: { (data) in
                     singleTag.setValuesForKeys(data )
                     self.tags.append(singleTag)
@@ -91,10 +91,9 @@ public class Story:SafeJsonObject {
             
         }
         else if key == "cards"{
-            let singleCards = Card()
-            
+
             for card in value as! [[String:AnyObject]]{
-                
+                let singleCards = Card()
                 Converter.jsonKeyConverter(dictionaryArray: card, completion: { (data) in
                     singleCards.setValuesForKeys(data )
                     self.cards.append(singleCards)
