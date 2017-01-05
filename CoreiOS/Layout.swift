@@ -13,8 +13,6 @@ public class Layout:SafeJsonObject{
     public var stories_between_stacks:NSNumber?
     public var menu:[Menu] = []
     public var stacks:[Stack] = []
-
-    
     override public func setValue(_ value: Any?, forKey key: String) {
         
         if key == "menu" {
