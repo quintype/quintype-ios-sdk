@@ -5,6 +5,7 @@ name="$2"
 git add .
 echo "Enter Commit Message: $name"
 read commitMessage
+
 git commit -m $commitMessage
 
 
