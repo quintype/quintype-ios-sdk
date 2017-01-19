@@ -38,7 +38,7 @@ class Http{
     public func call(method:String,urlString: String,parameter:[String:AnyObject]?, Success: @escaping ([String: AnyObject]?) -> (),Error:@escaping (String?) -> ()) {
         
         if isInternetAvailable(){
-            var urlString = urlString
+            var urlString = urlString.replacingOccurrences(of: " ", with: "%20")
             var url = NSMutableURLRequest(url: URL(string: urlString)!)
             //        print(url,parameter)
             
