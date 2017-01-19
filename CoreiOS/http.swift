@@ -63,7 +63,7 @@ class Http{
                                 urlString = urlString + "&" + param.key + "=" +  (param.value as! String)
                                 
                             }
-                            url = NSMutableURLRequest(url: URL(string: urlString)!)
+                            url = NSMutableURLRequest(url: URL(string: urlString.replacingOccurrences(of: " ", with: "%20"))!)
                         }
                         
                     })
