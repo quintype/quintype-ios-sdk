@@ -184,7 +184,7 @@ public class ApiService{
         
         func requestCall(retuenData:Bool = true){
             
-            self.apiCall(apiCallName:apiCallName,method:"get",url: url, parameter: nil, cacheStatus: cacheStatus, cacheTime: cacheTime!, saveToDisk: saveToDisk, Success: { (data) in
+            self.apiCall(apiCallName:apiCallName,method:"get",url: url, parameter: param as [String : AnyObject]?, cacheStatus: cacheStatus, cacheTime: cacheTime!, saveToDisk: saveToDisk, Success: { (data) in
                 
                 ApiParser.StoriesParser(data: data as! [String : AnyObject]?, completion: { (storiesObject) in
                     if retuenData{
@@ -328,7 +328,7 @@ public class ApiService{
         
         func requestCall(retuenData:Bool = true){
             
-            self.apiCall(apiCallName:apiCallName,method:"get",url: url, parameter: nil, cacheStatus: cacheStatus, cacheTime: cacheTime!, saveToDisk: saveToDisk, Success: { (data) in
+            self.apiCall(apiCallName:apiCallName,method:"get",url: url, parameter: param as [String : AnyObject]?, cacheStatus: cacheStatus, cacheTime: cacheTime!, saveToDisk: saveToDisk, Success: { (data) in
                 
                 ApiParser.StoriesParser(data: data as! [String : AnyObject]?,parseKey:"related-stories",completion: { (storiesObject) in
                     if retuenData{
@@ -415,7 +415,7 @@ public class ApiService{
         
         func requestCall(retuenData:Bool = true){
             
-            self.apiCall(apiCallName:apiCallName,method:"get",url: url, parameter: nil, cacheStatus: cacheStatus, cacheTime: cacheTime!, saveToDisk: saveToDisk, Success: { (data) in
+            self.apiCall(apiCallName:apiCallName,method:"get",url: url, parameter: param as [String : AnyObject]?, cacheStatus: cacheStatus, cacheTime: cacheTime!, saveToDisk: saveToDisk, Success: { (data) in
                 
                 ApiParser.searchParser(data: data as! [String : AnyObject]?, completion: { (searchObject) in
                     if retuenData{
@@ -551,7 +551,7 @@ public class ApiService{
         
         func requestCall(retuenData:Bool = true){
             
-            self.apiCall(apiCallName:apiCallName,method:"get",url: url, parameter: nil, cacheStatus: cacheStatus, cacheTime: cacheTime!, saveToDisk: saveToDisk, Success: { (data) in
+            self.apiCall(apiCallName:apiCallName,method:"get",url: url, parameter: param as [String : AnyObject]?, cacheStatus: cacheStatus, cacheTime: cacheTime!, saveToDisk: saveToDisk, Success: { (data) in
                 
                 ApiParser.storyParser(data: data as! [String : AnyObject]?,completion: { (storyObject) in
                     if retuenData{
@@ -624,7 +624,7 @@ public class ApiService{
         
         func requestCall(retuenData:Bool = true){
             
-            self.apiCall(apiCallName:apiCallName,method:"get",url: url, parameter: nil, cacheStatus: cacheStatus, cacheTime: cacheTime!, saveToDisk: saveToDisk, Success: { (data) in
+            self.apiCall(apiCallName:apiCallName,method:"get",url: url, parameter: param as [String : AnyObject]?, cacheStatus: cacheStatus, cacheTime: cacheTime!, saveToDisk: saveToDisk, Success: { (data) in
                 
                 ApiParser.StoriesParser(data: data as! [String : AnyObject]?, completion: { (storiesObject) in
                     if retuenData{
