@@ -13,6 +13,7 @@ public  enum cacheOption {
     
     case none
     case cacheToMemoryWithTime(min:Int)
+    case cacheToDiskWithTime(min:Int)
     case cacheToMemoryAndDiskWithTime(min:Int)
     case loadOldCacheAndReplaceWithNew
     
@@ -25,12 +26,14 @@ public  enum cacheOption {
             return nil
         case .cacheToMemoryWithTime(let min):
             return [Constants.cache.cacheToMemoryWithTime: min]
+        case .cacheToDiskWithTime(let min):
+            return [Constants.cache.cacheToDiskWithTime: min]
         case .cacheToMemoryAndDiskWithTime(let min):
             return [Constants.cache.cacheToMemoryAndDiskWithTime: min]
         case .loadOldCacheAndReplaceWithNew:
             return [Constants.cache.loadOldCacheAndReplaceWithNew:0]
         }
-   }
+    }
 }
 
 

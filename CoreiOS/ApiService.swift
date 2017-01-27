@@ -9,7 +9,7 @@
 //TODO:- On hold -
 //collection, //login, // details
 
-
+//TODO - Enable reuse function to remove cachetype detection and cache retrival
 
 
 import Foundation
@@ -34,22 +34,22 @@ public class ApiService{
     
     
     
-    var saveToDisk:Bool = false
+    //    var saveToDisk:Bool = false
     var cacheTime:Int?
-    var cacheStatus:Bool = true
+    //    var cacheStatus:Bool = true
     var replaceWithNewData = false
     
     
     
     //MARK: - Api calling wrapper for reuseing the call (Common Call for all get Calls)
-    func apiCall(apiCallName:String,method:String,url:String,parameter:[String:AnyObject]?,cacheStatus:Bool,cacheTime:Int,saveToDisk:Bool,retuenData:Bool = true,Success:@escaping (Any?)->(),Error:@escaping (String?)->()) {
+    func apiCall(apiCallName:String,method:String,url:String,parameter:[String:AnyObject]?,cacheType:String,cacheTime:Int,Success:@escaping (Any?)->(),Error:@escaping (String?)->()) {
         
         api.call(method: method, urlString: url, parameter: parameter, Success: { (data) in
             
-            if cacheStatus{
-                Cache.cacheData(data: data as Any, key: apiCallName, cacheTimeInMinute: cacheTime,saveToDisk:saveToDisk)
+            if cacheType == Constants.cache.none{
                 Success(data)
             }else{
+                Cache.cacheData(data: data as Any, key: apiCallName, cacheTimeInMinute: cacheTime, cacheType: cacheType)
                 Success(data)
             }
             
@@ -71,30 +71,35 @@ public class ApiService{
     public func getPublisherConfig(cache:cacheOption,Success:@escaping (Config?)->(),Error:@escaping (String?)->()) {
         
         let apiCallName = "\(#function)".components(separatedBy: "(")[0]
-        //print(apiCallName)
         
+        var cacheType:String?
         if let opt = cache.value{
+            
             if opt.keys.first == Constants.cache.cacheToMemoryWithTime{
-                saveToDisk = false
+                cacheType = Constants.cache.cacheToMemoryWithTime
                 cacheTime = opt.values.first
             }else if opt.keys.first == Constants.cache.cacheToMemoryAndDiskWithTime{
-                saveToDisk = true
+                cacheType = Constants.cache.cacheToMemoryAndDiskWithTime
                 cacheTime = opt.values.first
             }else if opt.keys.first == Constants.cache.loadOldCacheAndReplaceWithNew{
+                cacheType = Constants.cache.loadOldCacheAndReplaceWithNew
                 replaceWithNewData = true
                 cacheTime = opt.values.first
-                saveToDisk = true
+            }else if opt.keys.first == Constants.cache.cacheToDiskWithTime{
+                cacheType = Constants.cache.cacheToMemoryWithTime
+                cacheTime = opt.values.first
             }
             
         }else{
-            cacheStatus = false
+            cacheType = Constants.cache.none
+            
         }
         
         let url = baseUrl + Constants.urlConfig.configUrl
         
         func requestCall(retuenData:Bool = true){
             
-            self.apiCall(apiCallName:apiCallName,method:"get",url: url, parameter: nil, cacheStatus: cacheStatus, cacheTime: cacheTime!, saveToDisk: saveToDisk, Success: { (data) in
+            self.apiCall(apiCallName:apiCallName,method:"get",url: url, parameter: nil, cacheType:cacheType!, cacheTime: cacheTime!,Success: { (data) in
                 
                 ApiParser.configParser(data: data as! [String : AnyObject]?, completion: { (configObject) in
                     Quintype.publisherConfig = configObject
@@ -163,28 +168,34 @@ public class ApiService{
         let apiCallName = "\(#function)".components(separatedBy: "(")[0] + param.description.replacingOccurrences(of: "-", with: "_")
         ////print(apiCallName)
         
+        var cacheType:String?
         if let opt = cache.value{
+            
             if opt.keys.first == Constants.cache.cacheToMemoryWithTime{
-                saveToDisk = false
+                cacheType = Constants.cache.cacheToMemoryWithTime
                 cacheTime = opt.values.first
             }else if opt.keys.first == Constants.cache.cacheToMemoryAndDiskWithTime{
-                saveToDisk = true
+                cacheType = Constants.cache.cacheToMemoryAndDiskWithTime
                 cacheTime = opt.values.first
             }else if opt.keys.first == Constants.cache.loadOldCacheAndReplaceWithNew{
+                cacheType = Constants.cache.cacheToMemoryAndDiskWithTime
                 replaceWithNewData = true
                 cacheTime = opt.values.first
-                saveToDisk = true
+            }else if opt.keys.first == Constants.cache.cacheToDiskWithTime{
+                cacheType = Constants.cache.cacheToMemoryWithTime
+                cacheTime = opt.values.first
             }
             
         }else{
-            cacheStatus = false
+            cacheType = Constants.cache.none
+            
         }
         
         let url = baseUrl + Constants.urlConfig.getStories
         
         func requestCall(retuenData:Bool = true){
             
-            self.apiCall(apiCallName:apiCallName,method:"get",url: url, parameter: param as [String : AnyObject]?, cacheStatus: cacheStatus, cacheTime: cacheTime!, saveToDisk: saveToDisk, Success: { (data) in
+            self.apiCall(apiCallName:apiCallName,method:"get",url: url, parameter: param as [String : AnyObject]?, cacheType:cacheType!, cacheTime: cacheTime!,Success: { (data) in
                 
                 ApiParser.StoriesParser(data: data as! [String : AnyObject]?, completion: { (storiesObject) in
                     if retuenData{
@@ -229,28 +240,34 @@ public class ApiService{
         let apiCallName = "\(#function)".components(separatedBy: "(")[0] + storyId
         ////print(apiCallName)
         
+        var cacheType:String?
         if let opt = cache.value{
+            
             if opt.keys.first == Constants.cache.cacheToMemoryWithTime{
-                saveToDisk = false
+                cacheType = Constants.cache.cacheToMemoryWithTime
                 cacheTime = opt.values.first
             }else if opt.keys.first == Constants.cache.cacheToMemoryAndDiskWithTime{
-                saveToDisk = true
+                cacheType = Constants.cache.cacheToMemoryAndDiskWithTime
                 cacheTime = opt.values.first
             }else if opt.keys.first == Constants.cache.loadOldCacheAndReplaceWithNew{
+                cacheType = Constants.cache.cacheToMemoryAndDiskWithTime
                 replaceWithNewData = true
                 cacheTime = opt.values.first
-                saveToDisk = true
+            }else if opt.keys.first == Constants.cache.cacheToDiskWithTime{
+                cacheType = Constants.cache.cacheToMemoryWithTime
+                cacheTime = opt.values.first
             }
             
         }else{
-            cacheStatus = false
+            cacheType = Constants.cache.none
+            
         }
         
         let url = baseUrl + Constants.urlConfig.getStories + "/" + storyId
         
         func requestCall(retuenData:Bool = true){
             
-            self.apiCall(apiCallName:apiCallName,method:"get",url: url, parameter: nil, cacheStatus: cacheStatus, cacheTime: cacheTime!, saveToDisk: saveToDisk, Success: { (data) in
+            self.apiCall(apiCallName:apiCallName,method:"get",url: url, parameter: nil, cacheType:cacheType!, cacheTime: cacheTime!,Success: { (data) in
                 
                 ApiParser.storyParser(data: data as! [String : AnyObject]?, completion: { (storiesObject) in
                     if retuenData{
@@ -307,28 +324,34 @@ public class ApiService{
         let apiCallName = "\(#function)".components(separatedBy: "(")[0] + storyId + param.description.replacingOccurrences(of: "-", with: "_")
         ////print(apiCallName)
         
+        var cacheType:String?
         if let opt = cache.value{
+            
             if opt.keys.first == Constants.cache.cacheToMemoryWithTime{
-                saveToDisk = false
+                cacheType = Constants.cache.cacheToMemoryWithTime
                 cacheTime = opt.values.first
             }else if opt.keys.first == Constants.cache.cacheToMemoryAndDiskWithTime{
-                saveToDisk = true
+                cacheType = Constants.cache.cacheToMemoryAndDiskWithTime
                 cacheTime = opt.values.first
             }else if opt.keys.first == Constants.cache.loadOldCacheAndReplaceWithNew{
+                cacheType = Constants.cache.cacheToMemoryAndDiskWithTime
                 replaceWithNewData = true
                 cacheTime = opt.values.first
-                saveToDisk = true
+            }else if opt.keys.first == Constants.cache.cacheToDiskWithTime{
+                cacheType = Constants.cache.cacheToMemoryWithTime
+                cacheTime = opt.values.first
             }
             
         }else{
-            cacheStatus = false
+            cacheType = Constants.cache.none
+            
         }
         
         let url = baseUrl + Constants.urlConfig.relatedStories(storyId: storyId)
         
         func requestCall(retuenData:Bool = true){
             
-            self.apiCall(apiCallName:apiCallName,method:"get",url: url, parameter: param as [String : AnyObject]?, cacheStatus: cacheStatus, cacheTime: cacheTime!, saveToDisk: saveToDisk, Success: { (data) in
+            self.apiCall(apiCallName:apiCallName,method:"get",url: url, parameter: param as [String : AnyObject]?, cacheType:cacheType!, cacheTime: cacheTime!,Success: { (data) in
                 
                 ApiParser.StoriesParser(data: data as! [String : AnyObject]?,parseKey:"related-stories",completion: { (storiesObject) in
                     if retuenData{
@@ -394,28 +417,34 @@ public class ApiService{
         let apiCallName = "\(#function)".components(separatedBy: "(")[0] + searchKey + param.description.replacingOccurrences(of: "-", with: "_")
         ////print(apiCallName)
         
+        var cacheType:String?
         if let opt = cache.value{
+            
             if opt.keys.first == Constants.cache.cacheToMemoryWithTime{
-                saveToDisk = false
+                cacheType = Constants.cache.cacheToMemoryWithTime
                 cacheTime = opt.values.first
             }else if opt.keys.first == Constants.cache.cacheToMemoryAndDiskWithTime{
-                saveToDisk = true
+                cacheType = Constants.cache.cacheToMemoryAndDiskWithTime
                 cacheTime = opt.values.first
             }else if opt.keys.first == Constants.cache.loadOldCacheAndReplaceWithNew{
+                cacheType = Constants.cache.cacheToMemoryAndDiskWithTime
                 replaceWithNewData = true
                 cacheTime = opt.values.first
-                saveToDisk = true
+            }else if opt.keys.first == Constants.cache.cacheToDiskWithTime{
+                cacheType = Constants.cache.cacheToMemoryWithTime
+                cacheTime = opt.values.first
             }
             
         }else{
-            cacheStatus = false
+            cacheType = Constants.cache.none
+            
         }
         
         let url = baseUrl + Constants.urlConfig.search
         
         func requestCall(retuenData:Bool = true){
             
-            self.apiCall(apiCallName:apiCallName,method:"get",url: url, parameter: param as [String : AnyObject]?, cacheStatus: cacheStatus, cacheTime: cacheTime!, saveToDisk: saveToDisk, Success: { (data) in
+            self.apiCall(apiCallName:apiCallName,method:"get",url: url, parameter: param as [String : AnyObject]?, cacheType:cacheType!, cacheTime: cacheTime!,Success: { (data) in
                 
                 ApiParser.searchParser(data: data as! [String : AnyObject]?, completion: { (searchObject) in
                     if retuenData{
@@ -459,30 +488,36 @@ public class ApiService{
     //MARK:- Get comments of a particular story
     public func getCommentsForStory(storyId:String,cache:cacheOption,Success:@escaping ([Comment]?)->(),Error:@escaping (String?)->()) {
         
-        
         let apiCallName = "\(#function)".components(separatedBy: "(")[0] + storyId
+        var cacheType:String?
+        
         if let opt = cache.value{
+            
             if opt.keys.first == Constants.cache.cacheToMemoryWithTime{
-                saveToDisk = false
+                cacheType = Constants.cache.cacheToMemoryWithTime
                 cacheTime = opt.values.first
             }else if opt.keys.first == Constants.cache.cacheToMemoryAndDiskWithTime{
-                saveToDisk = true
+                cacheType = Constants.cache.cacheToMemoryAndDiskWithTime
                 cacheTime = opt.values.first
             }else if opt.keys.first == Constants.cache.loadOldCacheAndReplaceWithNew{
+                cacheType = Constants.cache.cacheToMemoryAndDiskWithTime
                 replaceWithNewData = true
                 cacheTime = opt.values.first
-                saveToDisk = true
+            }else if opt.keys.first == Constants.cache.cacheToDiskWithTime{
+                cacheType = Constants.cache.cacheToMemoryWithTime
+                cacheTime = opt.values.first
             }
             
         }else{
-            cacheStatus = false
+            cacheType = Constants.cache.none
+            
         }
         
         let url = baseUrl + Constants.urlConfig.getComments(storyId: storyId)
         
         func requestCall(retuenData:Bool = true){
             
-            self.apiCall(apiCallName:apiCallName,method:"get",url: url, parameter: nil, cacheStatus: cacheStatus, cacheTime: cacheTime!, saveToDisk: saveToDisk, Success: { (data) in
+            self.apiCall(apiCallName:apiCallName,method:"get",url: url, parameter: nil, cacheType:cacheType!, cacheTime: cacheTime!,Success: { (data) in
                 
                 ApiParser.commentsParser(data: data as! [String : AnyObject]?,completion: { (commentObject) in
                     if retuenData{
@@ -530,28 +565,34 @@ public class ApiService{
         var param:[String:Any?] = ["slug":urlSlug]
         
         let apiCallName = "\(#function)".components(separatedBy: "(")[0] + slug
+        var cacheType:String?
         if let opt = cache.value{
+            
             if opt.keys.first == Constants.cache.cacheToMemoryWithTime{
-                saveToDisk = false
+                cacheType = Constants.cache.cacheToMemoryWithTime
                 cacheTime = opt.values.first
             }else if opt.keys.first == Constants.cache.cacheToMemoryAndDiskWithTime{
-                saveToDisk = true
+                cacheType = Constants.cache.cacheToMemoryAndDiskWithTime
                 cacheTime = opt.values.first
             }else if opt.keys.first == Constants.cache.loadOldCacheAndReplaceWithNew{
+                cacheType = Constants.cache.cacheToMemoryAndDiskWithTime
                 replaceWithNewData = true
                 cacheTime = opt.values.first
-                saveToDisk = true
+            }else if opt.keys.first == Constants.cache.cacheToDiskWithTime{
+                cacheType = Constants.cache.cacheToMemoryWithTime
+                cacheTime = opt.values.first
             }
             
         }else{
-            cacheStatus = false
+            cacheType = Constants.cache.none
+            
         }
         
         let url = baseUrl + Constants.urlConfig.getStoryFromSlug
         
         func requestCall(retuenData:Bool = true){
             
-            self.apiCall(apiCallName:apiCallName,method:"get",url: url, parameter: param as [String : AnyObject]?, cacheStatus: cacheStatus, cacheTime: cacheTime!, saveToDisk: saveToDisk, Success: { (data) in
+            self.apiCall(apiCallName:apiCallName,method:"get",url: url, parameter: param as [String : AnyObject]?, cacheType:cacheType!, cacheTime: cacheTime!,Success: { (data) in
                 
                 ApiParser.storyParser(data: data as! [String : AnyObject]?,completion: { (storyObject) in
                     if retuenData{
@@ -603,28 +644,34 @@ public class ApiService{
             ]
         
         let apiCallName = "\(#function)".components(separatedBy: "(")[0] + param.description.replacingOccurrences(of: "-", with: "_")
+        var cacheType:String?
         if let opt = cache.value{
+            
             if opt.keys.first == Constants.cache.cacheToMemoryWithTime{
-                saveToDisk = false
+                cacheType = Constants.cache.cacheToMemoryWithTime
                 cacheTime = opt.values.first
             }else if opt.keys.first == Constants.cache.cacheToMemoryAndDiskWithTime{
-                saveToDisk = true
+                cacheType = Constants.cache.cacheToMemoryAndDiskWithTime
                 cacheTime = opt.values.first
             }else if opt.keys.first == Constants.cache.loadOldCacheAndReplaceWithNew{
+                cacheType = Constants.cache.cacheToMemoryAndDiskWithTime
                 replaceWithNewData = true
                 cacheTime = opt.values.first
-                saveToDisk = true
+            }else if opt.keys.first == Constants.cache.cacheToDiskWithTime{
+                cacheType = Constants.cache.cacheToMemoryWithTime
+                cacheTime = opt.values.first
             }
             
         }else{
-            cacheStatus = false
+            cacheType = Constants.cache.none
+            
         }
         
         let url = baseUrl + Constants.urlConfig.breakingNews
         
         func requestCall(retuenData:Bool = true){
             
-            self.apiCall(apiCallName:apiCallName,method:"get",url: url, parameter: param as [String : AnyObject]?, cacheStatus: cacheStatus, cacheTime: cacheTime!, saveToDisk: saveToDisk, Success: { (data) in
+            self.apiCall(apiCallName:apiCallName,method:"get",url: url, parameter: param as [String : AnyObject]?, cacheType:cacheType!, cacheTime: cacheTime!,Success: { (data) in
                 
                 ApiParser.StoriesParser(data: data as! [String : AnyObject]?, completion: { (storiesObject) in
                     if retuenData{
@@ -672,7 +719,7 @@ public class ApiService{
                 "access-token": facebookToken
             ]
         ]
-//        print(parameter)
+        //        print(parameter)
         let url = baseUrl + Constants.urlConfig.facebookLogin
         
         api.call(method: "post", urlString: url, parameter: parameter as [String : AnyObject]?, Success: { (status) in
@@ -703,8 +750,8 @@ public class ApiService{
             
             ]
         api.call(method: "post", urlString: Constants.urlConfig.postComment, parameter: param as [String : AnyObject]?, Success: { (data) in
-        
-        Success(data)
+            
+            Success(data)
             
         }) { (error) in
             
@@ -729,7 +776,7 @@ public class ApiService{
     }
     
     public func getAuthor(autherId:String,Success:@escaping (Any?)->(),Error:@escaping (String?)->()) {
-
+        
         api.call(method: "get", urlString: Constants.urlConfig.GetAuthor + "/\(autherId)", parameter: nil, Success: { (data) in
             
             Success(data)

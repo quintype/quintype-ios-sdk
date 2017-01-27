@@ -28,7 +28,7 @@ public class Cache{
     }
     
     //MARK: - Cache data to memCache & disk
-    public class func cacheData(data:Any,key:String,cacheTimeInMinute:Int,saveToDisk:Bool){
+    public class func cacheData(data:Any,key:String,cacheTimeInMinute:Int,cacheType:String){
         
         let time = NSDate.init()
         
@@ -47,65 +47,39 @@ public class Cache{
         
         ////print(finalKey)
         
-        storeToCache(data: data as AnyObject, finalKey: finalKey)
-        
-        if saveToDisk{
+        if cacheType == Constants.cache.cacheToDiskWithTime{
+            
             storeToDisk(data: data as AnyObject, finalKey: finalKey)
+            
+        }else if cacheType == Constants.cache.cacheToMemoryWithTime{
+            
+            storeToCache(data: data as AnyObject, finalKey: finalKey)
+            storeToDisk(data: data as AnyObject, finalKey: finalKey)
+            
+        }else if cacheType == Constants.cache.cacheToMemoryAndDiskWithTime{
+            
+            storeToCache(data: data as AnyObject, finalKey: finalKey)
+            storeToDisk(data: data as AnyObject, finalKey: finalKey)
+            
+        }else if cacheType == Constants.cache.loadOldCacheAndReplaceWithNew{
+            
+            storeToCache(data: data as AnyObject, finalKey: finalKey)
+            storeToDisk(data: data as AnyObject, finalKey: finalKey)
+            
         }
         
         
     }
     
     //MARK: - Retrive data from memCache or from disk -
-    public class func retriveCacheData(keyName:String,completion:(Any?)->()){
-        
-        var userDefaults = UserDefaults.standard
-        let time = NSDate.init()
-        let currentTime:Float = Float(time.timeIntervalSince1970 * 1000)
-        let cacheKey = "cacheKey-\(keyName)-"
-        let preKey = "cacheData-"
-        var data:Any?
-        
-        for (key, value) in UserDefaults.standard.dictionaryRepresentation() {
-//            print(key)
-            
-            if key.hasPrefix(preKey){
-                
-                
-                if key.components(separatedBy: "cacheKey-")[1] == keyName {
-                    
-                    let initialKeySplit = key.components(separatedBy: "-")
-                    let cacheCreatedTimeKey = Float(initialKeySplit[2])
-                    let cacheExpireTimeKey = Float(initialKeySplit[4])
-                    let timeDifference = currentTime - cacheCreatedTimeKey!
-                    
-                    func retriveData(){
-                        retriveDataFromCache(key: key, error: {
-                            
-                            retriveFromDisk(key: key, error: {
-                                
-                            }, success: { (reteivedData) in
-                                data = reteivedData
-                                storeToCache(data: data as AnyObject, finalKey: key)
-                            })
-                            
-                        }, success: { (reteivedData) in
-                            data = reteivedData
-                        })
-                    }
-                    
-                    if cacheExpireTimeKey == 0{
-                        retriveData()
-                    }else{
-                        
-                        if timeDifference < cacheExpireTimeKey!{
-                            retriveData()
-                        }
-                    }
-                }
-            }
+    public class func retriveCacheData(keyName:String,completion:@escaping (Any?)->()){
+        print(keyName)
+        isPresent(keyName: keyName, success: { (reteivedData) in
+            completion(reteivedData)
+        }){
+            completion(nil)
         }
-        completion(data)
+        
     }
     
     //MARK: - Store data to disk -
@@ -143,5 +117,92 @@ public class Cache{
             success(data as Any)
         }
     }
+    
+    
+    //    func retriveData(){
+    //        retriveDataFromCache(key: key, error: {
+    //
+    //
+    //
+    //        }, success: { (reteivedData) in
+    //            data = reteivedData
+    //        })
+    //    }
+    
+    
+    //MARK: - Check if item is present
+    private class func isPresent(keyName:String,success:(Any?)->(),error:()->()){
+        
+        var userDefaults = UserDefaults.standard
+        let time = NSDate.init()
+        let currentTime:Float = Float(time.timeIntervalSince1970 * 1000)
+        let cacheKey = "cacheKey-\(keyName)-"
+        let preKey = "cacheData-"
+        
+        
+        
+        for (key, value) in userDefaults.dictionaryRepresentation() {
+            print(key)
+            
+            if key.hasPrefix(preKey){
+                
+                if key.components(separatedBy: "cacheKey-")[1] == keyName {
+                    
+                    let initialKeySplit = key.components(separatedBy: "-")
+                    let cacheCreatedTimeKey = Float(initialKeySplit[2])
+                    let cacheExpireTimeKey = Float(initialKeySplit[4])
+                    let timeDifference = currentTime - cacheCreatedTimeKey!
+                    
+                    
+                    
+                    if cacheExpireTimeKey == 0{
+                        
+                        retriveDataFromCache(key: key, error: {
+                            
+                            retriveFromDisk(key: key, error: {
+                                error()
+                            }, success: { (reteivedData) in
+                                success(reteivedData)
+                            })
+                            
+                        }, success: { (reteivedData) in
+                            success(reteivedData)
+                        })
+                        
+                    }else{
+                        
+                        if timeDifference < cacheExpireTimeKey!{
+                            
+                            retriveDataFromCache(key: key, error: {
+                                
+                                retriveFromDisk(key: key, error: {
+                                    error()
+                                }, success: { (reteivedData) in
+                                    success(reteivedData)
+                                    
+                                })
+                                
+                            }, success: { (reteivedData) in
+                                success(reteivedData)
+                            })
+                            
+                            
+                            
+                        }else{
+                            userDefaults.remove(key)
+                            cache.removeObject(forKey: key as! AnyObject)
+                            error()
+                        }
+                    }
+                }
+            }
+        }
+        error()
+        
+    }
+    
+    
+    
+    
     
 }
