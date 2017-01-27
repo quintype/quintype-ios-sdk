@@ -37,7 +37,7 @@ public struct Constants{
         static let postComment = "/api/v1/comments"
         static let getCurrentUser = "/api/v1/members/me"
         static let GetAuthor =  "/api/v1/authors"
-
+        
         //Function that return string
         static func relatedStories(storyId:String) -> String {return getStories + "/" + storyId + "/related-stories"}
         static func getComments(storyId:String) -> String {return getStories + "/" + storyId + "/comments"}
@@ -48,7 +48,7 @@ public struct Constants{
     public struct analyticConfig{
         
         //MARK: - analyticConfig -
-
+        
         static let analyticKey = "analyticKey"
         static let analyticEvent = "/api/event"
         
@@ -111,8 +111,10 @@ public struct Constants{
         
         //MARK: - cache detaisl -
         static let cacheToMemoryWithTime = "cacheToMemoryWithTime"
+        static let cacheToDiskWithTime = "cacheToDiskWithTime"
         static let cacheToMemoryAndDiskWithTime = "cacheToMemoryAndDiskWithTime"
         static let loadOldCacheAndReplaceWithNew = "loadOldCacheAndReplaceWithNew"
+        static let none = "none"
         
     }
     public struct story{
@@ -131,17 +133,17 @@ public struct Constants{
     }
     
     public struct login{
-     
+        
         static let auth = "x-qt-auth"
         
     }
     
-        struct HttpError{
-            
-            static let pageNotFound = "Unable to retrive data. Please try again after sometime"
-            static let noInternetConnection = "No internet connection. Please try again after sometime"
-            
-        }
+    struct HttpError{
+        
+        static let pageNotFound = "Unable to retrive data. Please try again after sometime"
+        static let noInternetConnection = "No internet connection. Please try again after sometime"
+        
+    }
     
 }
 
