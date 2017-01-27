@@ -52,8 +52,7 @@ public struct Constants{
         static let analyticEvent = "/api/event"
         
         //Function that return string
-        
-        
+    
     }
     
     public struct publisherConfig{
