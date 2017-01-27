@@ -24,7 +24,6 @@ public struct Constants{
     
     static let storage = Storage.sharedStorage
     
-    
     public struct urlConfig{
         
         //MARK: - urlConfig -
