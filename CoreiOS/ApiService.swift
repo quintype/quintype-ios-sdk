@@ -92,6 +92,8 @@ public class ApiService{
             
         }else{
             cacheType = Constants.cache.none
+            cacheTime = 0
+
             
         }
         
@@ -188,6 +190,8 @@ public class ApiService{
             
         }else{
             cacheType = Constants.cache.none
+            cacheTime = 0
+
             
         }
         
@@ -260,6 +264,8 @@ public class ApiService{
             
         }else{
             cacheType = Constants.cache.none
+            cacheTime = 0
+
             
         }
         
@@ -344,6 +350,8 @@ public class ApiService{
             
         }else{
             cacheType = Constants.cache.none
+            cacheTime = 0
+
             
         }
         
@@ -437,6 +445,8 @@ public class ApiService{
             
         }else{
             cacheType = Constants.cache.none
+            cacheTime = 0
+
             
         }
         
@@ -510,6 +520,8 @@ public class ApiService{
             
         }else{
             cacheType = Constants.cache.none
+            cacheTime = 0
+
             
         }
         
@@ -585,6 +597,8 @@ public class ApiService{
             
         }else{
             cacheType = Constants.cache.none
+            cacheTime = 0
+
             
         }
         
@@ -664,6 +678,8 @@ public class ApiService{
             
         }else{
             cacheType = Constants.cache.none
+            cacheTime = 0
+
             
         }
         
