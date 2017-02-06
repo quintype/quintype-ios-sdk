@@ -89,7 +89,6 @@ public class ApiService{
                 cacheType = Constants.cache.cacheToMemoryWithTime
                 cacheTime = opt.values.first
             }
-            
         }else{
             cacheType = Constants.cache.none
             cacheTime = 0
