@@ -93,8 +93,6 @@ public class ApiService{
         }else{
             cacheType = Constants.cache.none
             cacheTime = 0
-
-            
         }
         
         let url = baseUrl + Constants.urlConfig.configUrl
