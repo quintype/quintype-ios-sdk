@@ -29,6 +29,6 @@ public class CardStoryElementSubTypeMetaData:SafeJsonObject {
     //Q&A
     public var question:String?
     public var answer:String?
+    public var type:String?
     
 }
-
