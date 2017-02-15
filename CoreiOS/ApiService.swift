@@ -410,7 +410,7 @@ public class ApiService{
         
         if let opt = searchBy.value{
             
-            if opt.isEmpty{
+            if !opt.isEmpty{
                 
                 param[opt.first!.key] = opt.first!.value
                 searchKey = opt.first!.value

@@ -55,12 +55,12 @@ class Http{
                             
                             if counter == 0{
                                 
-                                urlString = urlString + "?" + param.key + "=" + (param.value as! String)
+                                urlString = urlString + "?" + param.key + "=" + (param.value.addingPercentEncoding(withAllowedCharacters: .urlHostAllowed))!
                                 counter = counter + 1
                                 
                             }else{
                                 
-                                urlString = urlString + "&" + param.key + "=" +  (param.value as! String)
+                                urlString = urlString + "&" + param.key + "=" +  (param.value.addingPercentEncoding(withAllowedCharacters: .urlHostAllowed))!
                                 
                             }
                             url = NSMutableURLRequest(url: URL(string: urlString.replacingOccurrences(of: " ", with: "%20"))!)
