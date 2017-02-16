@@ -571,9 +571,9 @@ public class ApiService{
         
         let urlSlug = slug.addingPercentEncoding(withAllowedCharacters: .urlHostAllowed)
         
-        var param:[String:Any?] = ["slug":urlSlug]
+      
         
-        let apiCallName = "\(#function)".components(separatedBy: "(")[0] + slug
+        let apiCallName = "\(#function)".components(separatedBy: "(")[0] + "?slug=" + slug
         var cacheType:String?
         if let opt = cache.value{
             
