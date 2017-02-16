@@ -603,7 +603,7 @@ public class ApiService{
         
         func requestCall(retuenData:Bool = true){
             
-            self.apiCall(apiCallName:apiCallName,method:"get",url: url, parameter: param as [String : AnyObject]?, cacheType:cacheType!, cacheTime: cacheTime!,Success: { (data) in
+            self.apiCall(apiCallName:apiCallName,method:"get",url: url, parameter: nil, cacheType:cacheType!, cacheTime: cacheTime!,Success: { (data) in
                 
                 ApiParser.storyParser(data: data as! [String : AnyObject]?,completion: { (storyObject) in
                     if retuenData{
