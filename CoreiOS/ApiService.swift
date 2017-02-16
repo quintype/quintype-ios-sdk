@@ -599,7 +599,7 @@ public class ApiService{
             
         }
         
-        let url = baseUrl + Constants.urlConfig.getStoryFromSlug
+        let url = baseUrl + Constants.urlConfig.getStoryFromSlug + "?slug=" + slug
         
         func requestCall(retuenData:Bool = true){
             
