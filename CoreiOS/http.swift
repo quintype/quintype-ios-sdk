@@ -51,16 +51,16 @@ class Http{
                     
                     parameter.forEach({ (param) in
                         
-                        if param.value as? String != nil{
+                        if param.value as? String != nil || param.value as? Int != nil {
                             
                             if counter == 0{
                                 
-                                urlString = urlString + "?" + param.key + "=" + (param.value.addingPercentEncoding(withAllowedCharacters: .urlHostAllowed))!
+                                urlString = urlString + "?" + param.key + "=" + (String(describing: param.value).addingPercentEncoding(withAllowedCharacters: .urlHostAllowed))!
                                 counter = counter + 1
                                 
                             }else{
                                 
-                                urlString = urlString + "&" + param.key + "=" +  (param.value.addingPercentEncoding(withAllowedCharacters: .urlHostAllowed))!
+                                urlString = urlString + "&" + param.key + "=" +  (String(describing: param.value).addingPercentEncoding(withAllowedCharacters: .urlHostAllowed))!
                                 
                             }
                             url = NSMutableURLRequest(url: URL(string: urlString.replacingOccurrences(of: " ", with: "%20"))!)
