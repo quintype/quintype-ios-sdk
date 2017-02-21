@@ -24,7 +24,7 @@ public class InternalCardStoryElement:SafeJsonObject {
     
     override public func setValue(_ value: Any?, forKey key: String) {
         
-        if key == "hero_image_metadata" {
+        if key == "image-metadata" {
             image_metadata = ImageMetaData()
             image_metadata?.setValuesForKeys(value as! [String: AnyObject])
         }
