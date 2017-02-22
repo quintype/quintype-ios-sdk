@@ -92,10 +92,6 @@ public class CardStoryElement:SafeJsonObject {
     override public func setValue(_ value: Any?, forKey key: String) {
         
         if key == "hero_image_metadata" {
-            hero_image_metadata = ImageMetaData()
-            hero_image_metadata?.setValuesForKeys(value as! [String: AnyObject])
-        }
-        else if key == "metadata" {
             
             let image = ImageMetaData()
             let data = value as? [String : AnyObject]
@@ -111,6 +107,15 @@ public class CardStoryElement:SafeJsonObject {
             }
             print(image)
             hero_image_metadata = image
+        }
+        else if key == "metadata" {
+            
+            metadata = CardStoryElementSubTypeMetaData()
+            Converter.jsonKeyConverter(dictionaryArray: value as? [String : AnyObject], completion: { (data) in
+                self.metadata?.setValuesForKeys(data )
+            })
+
+            
         }
         else if key == "story_elements" {
             
