@@ -24,9 +24,23 @@ public class InternalCardStoryElement:SafeJsonObject {
     
     override public func setValue(_ value: Any?, forKey key: String) {
         
-        if key == "image-metadata" {
-            image_metadata = ImageMetaData()
-            image_metadata?.setValuesForKeys(value as! [String: AnyObject])
+        if key == "image_metadata" {
+            
+            let image = ImageMetaData()
+            let data = value as? [String : AnyObject]
+            
+            if let width = data?["width"] as? NSNumber{
+                image.width = width
+            }
+            if let height = data?["height"] as? NSNumber{
+                image.height = height
+            }
+            if let focusPoint = data?["focus-point"] as? [NSNumber]{
+                image.focus_point = focusPoint
+            }
+            print(image)
+            image_metadata = image
+            
         }
         else if key == "metadata" {
             metadata = CardStoryElementSubTypeMetaData()
@@ -69,7 +83,7 @@ public class CardStoryElement:SafeJsonObject {
     //    public var tweetId: NSNumber?
     
     
-    public var hero_image_metadata: ImageMetaData?
+    public var hero_image_metadata:ImageMetaData?
     public var image_s3_key:String?
     public var metadata: CardStoryElementSubTypeMetaData?
     public var story_elements: [InternalCardStoryElement] = []
@@ -82,10 +96,21 @@ public class CardStoryElement:SafeJsonObject {
             hero_image_metadata?.setValuesForKeys(value as! [String: AnyObject])
         }
         else if key == "metadata" {
-            metadata = CardStoryElementSubTypeMetaData()
-            Converter.jsonKeyConverter(dictionaryArray: value as? [String : AnyObject], completion: { (data) in
-                self.metadata?.setValuesForKeys(data )
-            })
+            
+            let image = ImageMetaData()
+            let data = value as? [String : AnyObject]
+            
+            if let width = data?["width"] as? NSNumber{
+                image.width = width
+            }
+            if let height = data?["height"] as? NSNumber{
+                image.height = height
+            }
+            if let focusPoint = data?["focus-point"] as? [NSNumber]{
+                image.focus_point = focusPoint
+            }
+            print(image)
+            hero_image_metadata = image
         }
         else if key == "story_elements" {
             

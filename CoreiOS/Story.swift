@@ -69,10 +69,20 @@ public class Story:SafeJsonObject {
             
         }else if key == "hero_image_metadata"{
          
-            hero_image_metadata = ImageMetaData()
-             Converter.jsonKeyConverter(dictionaryArray: value as? [String : AnyObject], completion: { (data) in
-            self.hero_image_metadata?.setValuesForKeys(data )
-            })
+            let image = ImageMetaData()
+            let data = value as? [String : AnyObject]
+            
+            if let width = data?["width"] as? NSNumber{
+                image.width = width
+            }
+            if let height = data?["height"] as? NSNumber{
+                image.height = height
+            }
+            if let focusPoint = data?["focus-point"] as? [NSNumber]{
+                image.focus_point = focusPoint
+            }
+            print(image)
+            hero_image_metadata = image
         
         }
         else if key == "tags"{
