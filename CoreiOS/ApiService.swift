@@ -792,13 +792,28 @@ public class ApiService{
         }
     }
     
-    public func getAuthor(autherId:String,Success:@escaping (Any?)->(),Error:@escaping (String?)->()) {
+    public func getAuthor(autherId:String,Success:@escaping (Author?)->(),Error:@escaping (String?)->()) {
         
         let url = baseUrl + Constants.urlConfig.GetAuthor
         
         api.call(method: "get", urlString: url + "/\(autherId)", parameter: nil, Success: { (data) in
             
-            Success(data)
+//
+
+            if let authorDetails = data{
+                
+                ApiParser.authorDetailParser(data: authorDetails, completion: { (authorObject) in
+                
+                    print(authorObject)
+                    Success(authorObject)
+                    
+                })
+                
+                
+            }
+        
+            
+            
             
         }) { (error) in
             

@@ -9,6 +9,7 @@
 /* Begin PBXBuildFile section */
 		6104D7AD1E015C7B0082439C /* Cache.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6104D7AC1E015C7B0082439C /* Cache.swift */; };
 		6104D7AF1E015CB40082439C /* CacheOptions.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6104D7AE1E015CB40082439C /* CacheOptions.swift */; };
+		610EB6F61E60449F005D61AC /* Author.swift in Sources */ = {isa = PBXBuildFile; fileRef = 610EB6F51E60449F005D61AC /* Author.swift */; };
 		6134D6851E07F3B100D304CB /* AnalyticsOptions.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6134D6841E07F3B100D304CB /* AnalyticsOptions.swift */; };
 		6139405B1E00067200427902 /* Extension.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6139405A1E00067200427902 /* Extension.swift */; };
 		6139405E1E01232C00427902 /* NSUserDefaults.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6139405D1E01232C00427902 /* NSUserDefaults.swift */; };
@@ -48,6 +49,7 @@
 /* Begin PBXFileReference section */
 		6104D7AC1E015C7B0082439C /* Cache.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Cache.swift; sourceTree = "<group>"; };
 		6104D7AE1E015CB40082439C /* CacheOptions.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = CacheOptions.swift; sourceTree = "<group>"; };
+		610EB6F51E60449F005D61AC /* Author.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Author.swift; sourceTree = "<group>"; };
 		6134D6841E07F3B100D304CB /* AnalyticsOptions.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = AnalyticsOptions.swift; sourceTree = "<group>"; };
 		6139405A1E00067200427902 /* Extension.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Extension.swift; sourceTree = "<group>"; };
 		6139405D1E01232C00427902 /* NSUserDefaults.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = NSUserDefaults.swift; sourceTree = "<group>"; };
@@ -143,6 +145,7 @@
 			children = (
 				6164ACE81E0A5CAB000284B6 /* AnalyticModels */,
 				6150065E1DD5C38B000E20B3 /* Story.swift */,
+				610EB6F51E60449F005D61AC /* Author.swift */,
 				61FFD0C51DF9604D00B67E27 /* Stack.swift */,
 				615006641DD5C54F000E20B3 /* Card.swift */,
 				615006541DD5BB69000E20B3 /* CardStoryElement.swift */,
@@ -326,6 +329,7 @@
 				61FFD0D01DFA897A00B67E27 /* ApiParser.swift in Sources */,
 				6104D7AF1E015CB40082439C /* CacheOptions.swift in Sources */,
 				6139405E1E01232C00427902 /* NSUserDefaults.swift in Sources */,
+				610EB6F61E60449F005D61AC /* Author.swift in Sources */,
 				6134D6851E07F3B100D304CB /* AnalyticsOptions.swift in Sources */,
 				615006681DD5C715000E20B3 /* http.swift in Sources */,
 				615006651DD5C54F000E20B3 /* Card.swift in Sources */,

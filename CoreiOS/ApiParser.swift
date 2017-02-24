@@ -166,6 +166,36 @@ class ApiParser{
         }
     }
     
+    class func authorDetailParser(data:[String:AnyObject]?,completion:@escaping (Author) -> () ){
+   
+        if var autherArray = data?["author"] as? [String: AnyObject] {
+            
+            let autherDetails = Author()
+            
+            for (_,autherDetail) in autherArray.enumerated(){
+                
+                let key = autherDetail.key
+                let value = autherDetail.value
+                let letters = CharacterSet.alphanumerics
+                if (key.trimmingCharacters(in: letters) != "") {
+                    ////print(key)
+                    let newKey = key.replacingOccurrences(of: "-", with: "_").replacingOccurrences(of: "?", with: "_")
+                    autherArray.removeValue(forKey: key)
+                    autherArray[newKey] = value
+                    
+                }
+                
+            }
+            autherDetails.setValuesForKeys(autherArray)
+            completion(autherDetails)
+            
+        }
+        
+    }
+    
+    
+    
+    
 }
 
 
