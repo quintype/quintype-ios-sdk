@@ -188,7 +188,7 @@ public class ApiService{
         }else{
             cacheType = Constants.cache.none
             cacheTime = 0
-
+            
             
         }
         
@@ -262,7 +262,7 @@ public class ApiService{
         }else{
             cacheType = Constants.cache.none
             cacheTime = 0
-
+            
             
         }
         
@@ -348,7 +348,7 @@ public class ApiService{
         }else{
             cacheType = Constants.cache.none
             cacheTime = 0
-
+            
             
         }
         
@@ -443,7 +443,7 @@ public class ApiService{
         }else{
             cacheType = Constants.cache.none
             cacheTime = 0
-
+            
             
         }
         
@@ -518,7 +518,7 @@ public class ApiService{
         }else{
             cacheType = Constants.cache.none
             cacheTime = 0
-
+            
             
         }
         
@@ -571,7 +571,7 @@ public class ApiService{
         
         let urlSlug = slug.addingPercentEncoding(withAllowedCharacters: .urlHostAllowed)
         
-      
+        
         
         let apiCallName = "\(#function)".components(separatedBy: "(")[0] + "?slug=" + slug
         var cacheType:String?
@@ -595,7 +595,7 @@ public class ApiService{
         }else{
             cacheType = Constants.cache.none
             cacheTime = 0
-
+            
             
         }
         
@@ -676,7 +676,7 @@ public class ApiService{
         }else{
             cacheType = Constants.cache.none
             cacheTime = 0
-
+            
             
         }
         
@@ -756,13 +756,15 @@ public class ApiService{
     
     public func postComment(comment:String?,storyId:Int,Success:@escaping (Any?)->(),Error:@escaping (String?)->()) {
         
+        let url = baseUrl + Constants.urlConfig.postComment
+        
         let param:[String:Any?] = [
             
             "story-content-id":storyId,
             "text":comment,
             
             ]
-        api.call(method: "post", urlString: Constants.urlConfig.postComment, parameter: param as [String : AnyObject]?, Success: { (data) in
+        api.call(method: "post", urlString: url, parameter: param as [String : AnyObject]?, Success: { (data) in
             
             Success(data)
             
@@ -777,7 +779,9 @@ public class ApiService{
     
     public func getCurrentUser(storyId:Int,Success:@escaping (Any?)->(),Error:@escaping (String?)->()) {
         
-        api.call(method: "get", urlString: Constants.urlConfig.getCurrentUser,parameter: nil, Success: { (data) in
+        let url = baseUrl + Constants.urlConfig.getCurrentUser
+        
+        api.call(method: "get", urlString: url,parameter: nil, Success: { (data) in
             
             Success(data)
             
@@ -790,7 +794,9 @@ public class ApiService{
     
     public func getAuthor(autherId:String,Success:@escaping (Any?)->(),Error:@escaping (String?)->()) {
         
-        api.call(method: "get", urlString: Constants.urlConfig.GetAuthor + "/\(autherId)", parameter: nil, Success: { (data) in
+        let url = baseUrl + Constants.urlConfig.GetAuthor
+        
+        api.call(method: "get", urlString: url + "/\(autherId)", parameter: nil, Success: { (data) in
             
             Success(data)
             
