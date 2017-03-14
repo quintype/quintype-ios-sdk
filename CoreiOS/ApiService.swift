@@ -120,7 +120,7 @@ public class ApiService{
         }
         
         Cache.retriveCacheData(keyName: apiCallName, completion: { (data) in
-            
+            print(data)
             if data != nil {
                 ApiParser.configParser(data: data as! [String : AnyObject]?, completion: { (configObject) in
                     Quintype.publisherConfig = configObject
