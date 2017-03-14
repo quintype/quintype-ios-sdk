@@ -9,14 +9,14 @@
 import Foundation
 
 public class Author:SafeJsonObject{
-
-    var avatar_s3_key:String?
-    var avatar_url:String?
-    var bio:String?
-    var id:NSNumber?
-    var name:String?
-    var publisher_id:NSNumber?
-    var slug:String?
-    var twitter_handle:String?
+    
+    public var avatar_s3_key:String?
+    public var avatar_url:String?
+    public var bio:String?
+    public var id:NSNumber?
+    public var name:String?
+    public var publisher_id:NSNumber?
+    public var slug:String?
+    public var twitter_handle:String?
     
 }

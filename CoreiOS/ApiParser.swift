@@ -8,7 +8,7 @@
 
 import Foundation
 
-class ApiParser{
+open class ApiParser{
     
     //MARK:- Stroy Parser -
     class func storyParser(data:[String:AnyObject]?,completion:@escaping (Story) -> () ){

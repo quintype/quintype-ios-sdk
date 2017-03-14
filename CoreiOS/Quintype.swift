@@ -27,6 +27,7 @@ open class Quintype{
     
     //MARK: - Private internal variable -
     private var _api:ApiService?
+    private var _parser:ApiParser?
     private var _analytics:Analytics?
     private var _cache:Cache?
     private var _publisherConfig:Config?
@@ -54,6 +55,19 @@ open class Quintype{
             return Quintype.sharedInstance._analytics!
         }
     }
+    
+    //MARK: - open variable for parser
+    
+    open static var ApiParesr:ApiParser{
+        get{
+            if Quintype.sharedInstance._parser == nil{
+                Quintype.sharedInstance._parser = ApiParser()
+            }
+            return Quintype.sharedInstance._parser!
+        }
+    }
+    
+    
     
     
     
