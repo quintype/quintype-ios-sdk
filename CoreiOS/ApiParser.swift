@@ -11,7 +11,7 @@ import Foundation
 open class ApiParser{
     
     //MARK:- Stroy Parser -
-    class func storyParser(data:[String:AnyObject]?,completion:@escaping (Story) -> () ){
+   open class func storyParser(data:[String:AnyObject]?,completion:@escaping (Story) -> () ){
         if var storyDictionary = data?["story"] as? [String:AnyObject]{
             
             
@@ -41,7 +41,7 @@ open class ApiParser{
     }
     
     //MARK:- Get stories parser-
-    class func StoriesParser(data:[String:AnyObject]?,parseKey:String = "stories",completion:@escaping ([Story]) -> () ){
+  open class func StoriesParser(data:[String:AnyObject]?,parseKey:String = "stories",completion:@escaping ([Story]) -> () ){
         var stories = [Story]()
         if let storyArray = data?[parseKey] as? [[String: AnyObject]] {
             
@@ -80,7 +80,7 @@ open class ApiParser{
     
     
     //MARK:- Config parser -
-    class func configParser(data:[String:AnyObject]?,completion:@escaping (Config) -> () ){
+  open class func configParser(data:[String:AnyObject]?,completion:@escaping (Config) -> () ){
         let config = Config()
         if var configDetails = data{
             for (_,singleConfigDetails) in configDetails.enumerated(){
@@ -104,7 +104,7 @@ open class ApiParser{
     
     
     //MARK:- Search parser -
-    class func searchParser(data:[String:AnyObject]?,completion:@escaping (Search) -> () ){
+ open class func searchParser(data:[String:AnyObject]?,completion:@escaping (Search) -> () ){
         
         if var searchDictionary = data?["results"] as? [String:AnyObject]{
             
@@ -133,7 +133,7 @@ open class ApiParser{
     
     
     //MARK:- Comments parser -
-    class func commentsParser(data:[String:AnyObject]?,completion:@escaping ([Comment]) -> () ){
+ open class func commentsParser(data:[String:AnyObject]?,completion:@escaping ([Comment]) -> () ){
         
         var comments = [Comment]()
         if let commentArray = data?["comments"] as? [[String: AnyObject]] {
@@ -166,7 +166,7 @@ open class ApiParser{
         }
     }
     
-    class func authorDetailParser(data:[String:AnyObject]?,completion:@escaping (Author) -> () ){
+ open class func authorDetailParser(data:[String:AnyObject]?,completion:@escaping (Author) -> () ){
    
         if var autherArray = data?["author"] as? [String: AnyObject] {
             
