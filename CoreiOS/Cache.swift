@@ -135,6 +135,7 @@ public class Cache{
     //MARK: - Check if item is present
     private class func isPresent(keyName:String,success:(Any?)->(),error:()->()){
         
+        
         var userDefaults = UserDefaults.standard
         let time = NSDate.init()
         let currentTime:Float = Float(time.timeIntervalSince1970 * 1000)
