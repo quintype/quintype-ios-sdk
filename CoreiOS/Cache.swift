@@ -45,7 +45,7 @@ public class Cache{
         let cacheKey = "cacheKey-\(key)"
         let finalKey = preKey + cacheCreatedTimeKey + cacheExpireTimeKey + cacheKey
         
-    
+        
         
         ////print(finalKey)
         
@@ -139,10 +139,10 @@ public class Cache{
         var userDefaults = UserDefaults.standard
         let time = NSDate.init()
         let currentTime:Float = Float(time.timeIntervalSince1970 * 1000)
-//        let cacheKey = "cacheKey-\(keyName)-"
+        //        let cacheKey = "cacheKey-\(keyName)-"
         let preKey = "cacheData-"
         var counter = 0
-        
+        var returnedStatus:Bool = false
         
         for (key, value) in userDefaults.dictionaryRepresentation() {
             print(key)
@@ -165,10 +165,12 @@ public class Cache{
                             
                             retriveFromDisk(key: key, error: {
                                 print("err from disk")
+                                returnedStatus = true
                                 error()
                                 return
                             }, success: { (reteivedData) in
                                 print("succ from disk")
+                                returnedStatus = true
                                 success(reteivedData)
                                 
                                 return
@@ -176,6 +178,7 @@ public class Cache{
                             
                         }, success: { (reteivedData) in
                             print("succ from cache")
+                            returnedStatus = true
                             success(reteivedData)
                             return
                         })
@@ -188,16 +191,19 @@ public class Cache{
                                 
                                 retriveFromDisk(key: key, error: {
                                     print("err from disk")
+                                    returnedStatus = true
                                     error()
                                     return
                                 }, success: { (reteivedData) in
                                     print("succ from disk")
+                                    returnedStatus = true
                                     success(reteivedData)
                                     return
                                 })
                                 
                             }, success: { (reteivedData) in
                                 print("succ from cache")
+                                returnedStatus = true
                                 success(reteivedData)
                                 return
                             })
@@ -207,6 +213,7 @@ public class Cache{
                         }else{
                             userDefaults.remove(key)
                             cache.removeObject(forKey: key as! AnyObject)
+                            returnedStatus = true
                             print("data removed for ns")
                             error()
                             return
@@ -216,7 +223,10 @@ public class Cache{
             }
             else if counter == userDefaults.dictionaryRepresentation().count{
                 print("not in ud")
-                error()
+                if !returnedStatus{
+                    error()
+                }
+                
                 return
             }
         }

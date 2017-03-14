@@ -22,7 +22,7 @@ class ViewController: UIViewController {
         
         
         
-        Quintype.api.getPublisherConfig(cache: cacheOption.cacheToDiskWithTime(min: 5), Success: { (config) in
+        Quintype.api.getPublisherConfig(cache: cacheOption., Success: { (config) in
             
             print(config)
             
