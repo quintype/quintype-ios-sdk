@@ -38,9 +38,8 @@ class Http{
     public func call(method:String,urlString: String,parameter:[String:AnyObject]?, Success: @escaping ([String: AnyObject]?) -> (),Error:@escaping (String?) -> ()) {
         
         if isInternetAvailable(){
-            var urlString = urlString.replacingOccurrences(of: " ", with: "%20")
+            var urlString = urlString.addingPercentEncoding(withAllowedCharacters: CharacterSet.urlFragmentAllowed)!
             var url = NSMutableURLRequest(url: URL(string: urlString)!)
-            //        print(url,parameter)
             
             url.httpMethod = method.capitalized
             
