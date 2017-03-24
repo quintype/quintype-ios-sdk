@@ -794,16 +794,16 @@ public class ApiService{
     
     public func getAuthor(autherId:String,Success:@escaping (Author?)->(),Error:@escaping (String?)->()) {
         
-        let url = baseUrl + Constants.urlConfig.GetAuthor
+        let url = baseUrl + Constants.urlConfig.getAuthor
         
         api.call(method: "get", urlString: url + "/\(autherId)", parameter: nil, Success: { (data) in
             
-//
-
+            //
+            
             if let authorDetails = data{
                 
                 ApiParser.authorDetailParser(data: authorDetails, completion: { (authorObject) in
-                
+                    
                     print(authorObject)
                     Success(authorObject)
                     
@@ -811,9 +811,6 @@ public class ApiService{
                 
                 
             }
-        
-            
-            
             
         }) { (error) in
             
@@ -822,6 +819,63 @@ public class ApiService{
         }
         
     }
+    
+    
+    
+    
+    public func bulkCall(param:[String:[String:[String:Any]]],Success:@escaping (Any?)->(),Error:@escaping (String?)->()) {
+        
+        let url = baseUrl + Constants.urlConfig.bulkCall
+        
+        api.call(method: "post", urlString: url, parameter: param as [String : AnyObject]?, Success: { (data) in
+            
+            Success(data)
+            
+        }) { (err) in
+            
+            print(err)
+            Error(err)
+            
+        }
+    }
+    
+    
+    public func collectionApiRequest(stack:String,Success:@escaping (Any?)->(),Error:@escaping (String?)->()) {
+        
+        let url = baseUrl + Constants.urlConfig.collectionRequest(stack: stack)
+        
+        api.call(method: "get", urlString: url, parameter: nil, Success: { (data) in
+            
+            print(data)
+            Success(data)
+            
+        }) { (err) in
+            
+            print(err)
+            Error(err)
+            
+        }
+        
+        
+        
+    }
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
     
     
     
