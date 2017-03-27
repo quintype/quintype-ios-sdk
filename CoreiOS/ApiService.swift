@@ -815,6 +815,7 @@ public class ApiService{
             
         }
         
+        
     }
     
     public func bulkCall(param:[String:[String:[String:Any]]],Success:@escaping (Any?)->(),Error:@escaping (String?)->()) {
