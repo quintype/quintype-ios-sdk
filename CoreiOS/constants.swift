@@ -35,12 +35,15 @@ public struct Constants{
         static let facebookLogin = "/api/login/facebook"
         static let postComment = "/api/v1/comments"
         static let getCurrentUser = "/api/v1/members/me"
-        static let GetAuthor =  "/api/v1/authors"
+        static let getAuthor =  "/api/v1/authors"
+        static let bulkCall = "/api/v1/bulk"
+        static let collectionUrl = "/api/v1/collections"
         
         //Function that return string
         static func relatedStories(storyId:String) -> String {return getStories + "/" + storyId + "/related-stories"}
         static func getComments(storyId:String) -> String {return getStories + "/" + storyId + "/comments"}
         static func getBaseUrl() -> String {return storage.getBaseUrl()!}
+        static func collectionRequest(stack:String) ->String { return collectionUrl + "/" + stack }
         
     }
     
@@ -52,7 +55,7 @@ public struct Constants{
         static let analyticEvent = "/api/event"
         
         //Function that return string
-    
+        
     }
     
     public struct publisherConfig{

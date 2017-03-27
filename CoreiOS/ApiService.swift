@@ -798,8 +798,6 @@ public class ApiService{
         
         api.call(method: "get", urlString: url + "/\(autherId)", parameter: nil, Success: { (data) in
             
-            //
-            
             if let authorDetails = data{
                 
                 ApiParser.authorDetailParser(data: authorDetails, completion: { (authorObject) in
@@ -808,8 +806,7 @@ public class ApiService{
                     Success(authorObject)
                     
                 })
-                
-                
+    
             }
             
         }) { (error) in
@@ -819,9 +816,6 @@ public class ApiService{
         }
         
     }
-    
-    
-    
     
     public func bulkCall(param:[String:[String:[String:Any]]],Success:@escaping (Any?)->(),Error:@escaping (String?)->()) {
         
