@@ -17,47 +17,16 @@ class ViewController: UIViewController {
         Quintype.initWithBaseUrl(baseURL: "https://thequint-next.quintype.io")
         
         
-        
-        
-        
-//        let param:[String:[String:[String:Any]]] = [
-//            
-//            "requests":[
-//                
-//                "videos":["story-group": "stack-92",
-//                          "limit": 10,
-//                          "fields": "id,headline,slug,url,hero-image-s3-key,hero-image-metadata,first-published-at,last-published-at,alternative,published-at,author-name,author-id,sections,story-template,summary,metadata",
-//                          "_type": "stories"
-//                ]
-//                
-//            ]
-//            
-//            
-//        ]
-//        
-//        Quintype.api.bulkCall(param: param, Success: { (data) in
-//            
-//            print(data)
-//            
-//        }) { (err) in
-//            
-//            print(err)
-//        }
-//        
-        
-        Quintype.api.collectionApiRequest(stack: "videos", Success: { (data) in
+        Quintype.api.getPublisherConfig(cache: cacheOption.loadOldCacheAndReplaceWithNew, Success: { (dara) in
             
-            print(data)
+            print(dara)
+            
+          
             
         }) { (err) in
-            
-            print(err)
-            
+            print("oops")
         }
-        
-        
     }
-    
     
     
 }

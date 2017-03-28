@@ -14,6 +14,7 @@ public class Cache{
     
     private static let sharedInstance:Cache = Cache()
     
+    
     private var _cache:NSCache<AnyObject, AnyObject>?
     
     public static var cache:NSCache<AnyObject, AnyObject>{
@@ -28,26 +29,18 @@ public class Cache{
     }
     
     //MARK: - Cache data to memCache & disk
+    
+    //TODO: - pass currect url as key afer adding param
     public class func cacheData(data:Any,key:String,cacheTimeInMinute:Int,cacheType:String){
         
         let time = NSDate.init()
         
-        let preKey = "cacheData-"
+        let finalKey = "cacheData-\(key)"
         
         var currentTime:String = String(0)
-        if cacheTimeInMinute != 0{
-            currentTime = String(time.timeIntervalSince1970 * 1000)
-        }
-        
-        let cacheCreatedTimeKey = "cacheCreatedTimeKey-\(currentTime)-"
-        let expireTime:String = String(cacheTimeInMinute * 60 * 1000)
-        let cacheExpireTimeKey = "cacheExpireTimeKey-\(expireTime)-"
-        let cacheKey = "cacheKey-\(key)"
-        let finalKey = preKey + cacheCreatedTimeKey + cacheExpireTimeKey + cacheKey
-        
-        
-        
-        ////print(finalKey)
+        if cacheTimeInMinute != 0 { currentTime = String(time.timeIntervalSince1970 * 1000) }
+        let cacheCreatedTimeKey = currentTime
+        let data:[String:Any] = [cacheCreatedTimeKey:data]
         
         if cacheType == Constants.cache.cacheToDiskWithTime{
             
@@ -74,34 +67,55 @@ public class Cache{
     }
     
     //MARK: - Retrive data from memCache or from disk -
-    public class func retriveCacheData(keyName:String,completion:@escaping (Any?)->()){
-        print(keyName)
+    public class func retriveCacheData(keyName:String,cachTimelimt:Double,Success:@escaping (Any?)->(),error:@escaping ()->()){
+        
+        let key = "cacheData-\(keyName)"
+        
         isPresent(keyName: keyName, success: { (reteivedData) in
-            completion(reteivedData)
-            //            return
+            
+            let cachedData = reteivedData as? [String:AnyObject]
+            
+            if let cacheTime = cachedData?.first?.key{
+                
+                if cacheExpiryCheck(cacheTime: cacheTime,cachTimelimt:cachTimelimt, key: key){
+                     Success(reteivedData)
+                }else{
+                    error()
+                }
+            }
         }){
-            completion(nil)
+            error()
         }
     }
     
     //MARK: - Store data to disk -
     private class func storeToDisk(data:AnyObject,finalKey:String){
+
         let userDefaults = UserDefaults.standard
         let encodedData: Data = NSKeyedArchiver.archivedData(withRootObject: data)
         userDefaults.set(encodedData, forKey: finalKey)
         userDefaults.synchronize()
+        
     }
     
     //
     private class func retriveFromDisk(key:String,error:()->(),success:(Any)->()){
         let userDefaults = UserDefaults.standard
-        let decoded  = userDefaults.object(forKey:key) as! Data
-        let data = NSKeyedUnarchiver.unarchiveObject(with: decoded)
-        if data == nil{
-            error()
+
+        if let decoded  = userDefaults.object(forKey:key) as? Data{
+            
+            let data = NSKeyedUnarchiver.unarchiveObject(with: decoded)
+            if data == nil{
+                error()
+            }else{
+                success(data as Any)
+            }
+            
         }else{
-            success(data as Any)
+            
+            error()
         }
+        
     }
     
     //MARK: - Store data to cache -
@@ -112,12 +126,20 @@ public class Cache{
     
     
     private class func retriveDataFromCache(key:String,error:()->(),success:(Any)->()){
-        let data = cache.object(forKey: key as AnyObject)
-        if data == nil{
-            error()
+        
+        if let data = cache.object(forKey: key as AnyObject) as? [String:AnyObject]{
+            
+            if data == nil{
+                error()
+            }else{
+                success(data as Any)
+            }
+            
         }else{
-            success(data as Any)
+            error()
         }
+        
+        
     }
     
     
@@ -133,110 +155,73 @@ public class Cache{
     
     
     //MARK: - Check if item is present
-    private class func isPresent(keyName:String,success:(Any?)->(),error:()->()){
-        
-        
+    private class func isPresent(keyName:String,success:@escaping (Any?)->(),error:@escaping ()->()){
+
         var userDefaults = UserDefaults.standard
-        let time = NSDate.init()
+        let time = NSDate()
         let currentTime:Float = Float(time.timeIntervalSince1970 * 1000)
-        //        let cacheKey = "cacheKey-\(keyName)-"
-        let preKey = "cacheData-"
         var counter = 0
-        var returnedStatus:Bool = false
+     
+        let finalKey = "cacheData-\(keyName)"
         
-        for (key, value) in userDefaults.dictionaryRepresentation() {
-            print(key)
-            counter = counter + 1
-            
-            if key.hasPrefix(preKey){
-                
-                if key.components(separatedBy: "cacheKey-")[1] == keyName {
-                    
-                    let initialKeySplit = key.components(separatedBy: "-")
-                    let cacheCreatedTimeKey = Float(initialKeySplit[2])
-                    let cacheExpireTimeKey = Float(initialKeySplit[4])
-                    let timeDifference = currentTime - cacheCreatedTimeKey!
-                    
-                    
-                    
-                    if cacheExpireTimeKey == 0{
-                        
-                        retriveDataFromCache(key: key, error: {
-                            
-                            retriveFromDisk(key: key, error: {
-                                print("err from disk")
-                                returnedStatus = true
-                                error()
-                                return
-                            }, success: { (reteivedData) in
-                                print("succ from disk")
-                                returnedStatus = true
-                                success(reteivedData)
-                                
-                                return
-                            })
-                            
-                        }, success: { (reteivedData) in
-                            print("succ from cache")
-                            returnedStatus = true
-                            success(reteivedData)
-                            return
-                        })
-                        
-                    }else{
-                        
-                        if timeDifference < cacheExpireTimeKey!{
-                            
-                            retriveDataFromCache(key: key, error: {
-                                
-                                retriveFromDisk(key: key, error: {
-                                    print("err from disk")
-                                    returnedStatus = true
-                                    error()
-                                    return
-                                }, success: { (reteivedData) in
-                                    print("succ from disk")
-                                    returnedStatus = true
-                                    success(reteivedData)
-                                    return
-                                })
-                                
-                            }, success: { (reteivedData) in
-                                print("succ from cache")
-                                returnedStatus = true
-                                success(reteivedData)
-                                return
-                            })
-                            
-                            
-                            
-                        }else{
-                            userDefaults.remove(key)
-                            cache.removeObject(forKey: key as! AnyObject)
-                            returnedStatus = true
-                            print("data removed for ns")
-                            error()
-                            return
-                        }
-                    }
-                }
-            }
-            else if counter == userDefaults.dictionaryRepresentation().count{
-                print("not in ud")
-                if !returnedStatus{
-                    error()
-                }
-                
+        retriveDataFromCache(key: finalKey, error: {
+            retriveFromDisk(key: finalKey, error: {
+                print("err from disk")
+                error()
                 return
-            }
+            }, success: { (reteivedData) in
+                print("succ from disk")
+                success(reteivedData)
+                return
+            })
+            
+        }) { (data) in
+            
+            success(data)
+            return
+            print("came from cache 'MEMORY'")
+            
+        }
+    
+    }
+
+    //cache time - timeStamp attached to URL
+    //cacheTimelimit - minute for url cache
+    
+    //CurrentT-CTL => someT
+    
+//    if CT > someT{
+//    
+//    }
+    
+    private class func cacheExpiryCheck(cacheTime:String,cachTimelimt:Double,key:String) -> Bool{
+        
+        let userDefaults = UserDefaults.standard
+        
+        if cacheTime == "0"{
+            return true
+        }
+        
+        let time = NSDate()
+        let currentTime:Double = time.timeIntervalSince1970 * 1000
+        let cachedTime = Double(cacheTime) ?? 0
+        let timeDifference:Double = currentTime - cachTimelimt
+        
+        if timeDifference <= cachedTime{
+            
+            return true
+            
+        }else{
+            
+            userDefaults.remove(key)
+            Cache.cache.removeObject(forKey: key as! AnyObject)
+            print("data removed for ns")
+            return false
+            
         }
         
         
-        
     }
-    
-    
-    
     
     
 }

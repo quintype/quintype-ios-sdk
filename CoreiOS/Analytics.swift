@@ -235,7 +235,7 @@ public class Analytics{
                 "event":parameter,
                 "event-type":"page-view"
             ]
-            api.call(method: "post", urlString: baseUrl + Constants.analyticConfig.analyticEvent, parameter: param as [String : AnyObject]?, Success: { (data) in
+            api.call(method: "post", urlString: baseUrl + Constants.analyticConfig.analyticEvent, parameter: param as [String : AnyObject]?,cache:cacheOption.none, Success: { (data) in
                 
             }, Error: { (error) in
                 

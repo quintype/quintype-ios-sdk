@@ -11,11 +11,13 @@ import SystemConfiguration
 
 class Http{
     
+    var cacheKey:String?
+    
     static let sharedInstance = Http()
     let defaults = UserDefaults.standard
     
-    private func isInternetAvailable() -> Bool
-    {
+    private func isInternetAvailable() -> Bool {
+        
         var zeroAddress = sockaddr_in()
         zeroAddress.sin_len = UInt8(MemoryLayout.size(ofValue: zeroAddress))
         zeroAddress.sin_family = sa_family_t(AF_INET)
@@ -27,147 +29,288 @@ class Http{
         }
         
         var flags = SCNetworkReachabilityFlags()
+        
         if !SCNetworkReachabilityGetFlags(defaultRouteReachability!, &flags) {
             return false
         }
+        
         let isReachable = (flags.rawValue & UInt32(kSCNetworkFlagsReachable)) != 0
         let needsConnection = (flags.rawValue & UInt32(kSCNetworkFlagsConnectionRequired)) != 0
         return (isReachable && !needsConnection)
+        
     }
     
-    public func call(method:String,urlString: String,parameter:[String:AnyObject]?, Success: @escaping ([String: AnyObject]?) -> (),Error:@escaping (String?) -> ()) {
+    private func createUrlFromParameter(method:String,urlString: String,param:[String:AnyObject]?) -> NSMutableURLRequest? {
+        
+        var urlString = urlString.addingPercentEncoding(withAllowedCharacters: CharacterSet.urlFragmentAllowed)!
+        var url = NSMutableURLRequest(url: URL(string: urlString)!)
+        var counter = 0
+        
+        url.httpMethod = method.capitalized
+        
+        if let parameter = param{
+            
+            if method.capitalized == "Get"{
+                
+                parameter.forEach({ (param) in
+                    
+                    if param.value as? String != nil || param.value as? Int != nil {
+                        
+                        if counter == 0{
+                            
+                            urlString = urlString + "?" + param.key + "=" + (String(describing: param.value).addingPercentEncoding(withAllowedCharacters: .urlHostAllowed))!
+                            counter = counter + 1
+                            
+                        }else{
+                            
+                            urlString = urlString + "&" + param.key + "=" +  (String(describing: param.value).addingPercentEncoding(withAllowedCharacters: .urlHostAllowed))!
+                            
+                        }
+                        url = NSMutableURLRequest(url: URL(string: urlString.replacingOccurrences(of: " ", with: "%20"))!)
+                    }
+                    
+                })
+                
+                cacheKey = url.url!.description
+                
+                return url
+                
+            }else{
+                
+                do {
+                    url.httpBody = try JSONSerialization.data(withJSONObject: parameter, options: .prettyPrinted) // pass dictionary to nsdata object and set it as request body
+                    //print(url.httpBody as Any)
+                    
+                } catch let error {
+                    print(error.localizedDescription)
+                }
+                
+                url.addValue("application/json", forHTTPHeaderField: "Content-Type")
+                if (defaults.value(forKey: Constants.login.auth) != nil){
+                    url.addValue(defaults.value(forKey: Constants.login.auth) as! String, forHTTPHeaderField: Constants.login.auth)
+                }
+                
+                cacheKey = url.url!.description + parameter.description
+                
+                return url
+                
+            }
+        }else{
+            cacheKey = url.url!.description
+            return url
+        }
+        
+    }
+    
+    
+    public func getData(url:NSMutableURLRequest,Success: @escaping ([String: AnyObject]?) -> (), Error:@escaping (String?) -> ()) {
+        
+        URLSession.shared.dataTask(with: url as URLRequest) { (data, response, error) in
+            
+            #if DEBUG
+                print("error0",data?.description as Any,response as Any,error as Any)
+                if let data = data,let json = try? JSONSerialization.jsonObject(with: data, options: []) as? [String: AnyObject] { print(json as Any) }
+            #endif
+            
+            if error != nil {
+                
+                #if DEBUG
+                    print(error as Any)
+                #endif
+                
+                DispatchQueue.main.async {
+                    
+                    Error("Unknown error occured,\(error.debugDescription)")
+                    
+                }
+                return
+            }else{
+                
+                do {
+                    
+                    if let data = data,let json = try? JSONSerialization.jsonObject(with: data, options: []) as? [String: AnyObject] {
+                        
+                        let httpResponse = response as? HTTPURLResponse
+                        let status = httpResponse?.statusCode
+                        if status == 200 || status == 201{
+                            
+                            if let httpResponse = response as? HTTPURLResponse {
+                                if let loginHeader = httpResponse.allHeaderFields["x-qt-auth"] as? String {
+                                    self.defaults.set(loginHeader, forKey: Constants.login.auth)
+                                    
+                                }
+                            }
+                            
+                            DispatchQueue.main.async {
+                                
+                                #if DEBUG
+                                    print("Api call successfull",json)
+                                #endif
+                                
+                                Success(json as [String : AnyObject]?)
+                                
+                            }
+                        }else{
+                            
+                            if let errorMessage = json?["error"]{
+                                if let message =  errorMessage["message"] as? String{
+                                    DispatchQueue.main.async {
+                                        
+                                        #if DEBUG
+                                            print("Unable to get data")
+                                        #endif
+                                        
+                                        Error(message)
+                                    }
+                                }
+                            }
+                        }
+                    }
+                    else{
+                        
+                        #if DEBUG
+                            if let analyticsCount = data?.count{ print("analytic recived ..",analyticsCount) }
+                        #endif
+                        
+                        DispatchQueue.main.async {
+                            Error(Constants.HttpError.pageNotFound)
+                        }
+                    }
+                    
+                }
+                //                #if DEBUG
+                //                    catch let error {
+                //                        print("entered json parsing error",error)
+                //                        //print(error)
+                //                        DispatchQueue.main.async {
+                //                            ////print("Api call successfull but cannot parse")
+                //                            Error("Api call successfull but cannot parse")
+                //                        }
+                //
+                //                    }
+                //                #endif
+            }
+            
+            }.resume()
+    }
+    
+    
+    public func call(method:String,urlString: String,parameter:[String:AnyObject]?,cache:cacheOption,Success: @escaping ([String: AnyObject]?) -> (),Error:@escaping (String?) -> ()) {
+        
+        var cacheType:String?
+        var cacheTime:Int?
         
         if isInternetAvailable(){
+            
+            if let opt = cache.value{
+                
+                if opt.keys.first == Constants.cache.cacheToMemoryWithTime{
+                    cacheType = Constants.cache.cacheToMemoryWithTime
+                    cacheTime = opt.values.first
+                }else if opt.keys.first == Constants.cache.cacheToMemoryAndDiskWithTime{
+                    cacheType = Constants.cache.cacheToMemoryAndDiskWithTime
+                    cacheTime = opt.values.first
+                }else if opt.keys.first == Constants.cache.loadOldCacheAndReplaceWithNew{
+                    cacheType = Constants.cache.loadOldCacheAndReplaceWithNew
+                    cacheTime = opt.values.first
+                }else if opt.keys.first == Constants.cache.cacheToDiskWithTime{
+                    cacheType = Constants.cache.cacheToDiskWithTime
+                    cacheTime = opt.values.first
+                }
+                
+            }else{
+                cacheType = Constants.cache.none
+                cacheTime = 0
+            }
+            
             var urlString = urlString.addingPercentEncoding(withAllowedCharacters: CharacterSet.urlFragmentAllowed)!
             var url = NSMutableURLRequest(url: URL(string: urlString)!)
             
             url.httpMethod = method.capitalized
+            url = createUrlFromParameter(method: method, urlString: urlString, param: parameter) ?? url
             
-            if let parameter = parameter{
+            let expiryTime = cacheTime! * 60 * 1000
+            if cacheType == Constants.cache.none{
                 
-                if method.capitalized == "Get"{
-                    var counter = 0
+                self.getData(url: url, Success: { (data) in
                     
-                    parameter.forEach({ (param) in
+                    Success(data)
+                    
+                }, Error: { (error) in
+                    
+                    Error(error)
+                    
+                })
+                
+            }else if cacheType == Constants.cache.loadOldCacheAndReplaceWithNew{
+                
+                Cache.retriveCacheData(keyName: self.cacheKey!,cachTimelimt:Double(expiryTime), Success: { (data) in
+                    
+                    let info = data as? [String:Any]
+                    
+                    Success(info?.first?.value as! [String : AnyObject]?)
+                      print("FCK")
+                    self.getData(url: url, Success: { (data) in
+
+                        print("albin")
+                        return
                         
-                        if param.value as? String != nil || param.value as? Int != nil {
-                            
-                            if counter == 0{
-                                
-                                urlString = urlString + "?" + param.key + "=" + (String(describing: param.value).addingPercentEncoding(withAllowedCharacters: .urlHostAllowed))!
-                                counter = counter + 1
-                                
-                            }else{
-                                
-                                urlString = urlString + "&" + param.key + "=" +  (String(describing: param.value).addingPercentEncoding(withAllowedCharacters: .urlHostAllowed))!
-                                
-                            }
-                            url = NSMutableURLRequest(url: URL(string: urlString.replacingOccurrences(of: " ", with: "%20"))!)
-                        }
+                    }, Error: { (error) in
+                        
+                        return
                         
                     })
                     
-                }else{
+                }, error: {
                     
-                    do {
-                        url.httpBody = try JSONSerialization.data(withJSONObject: parameter, options: .prettyPrinted) // pass dictionary to nsdata object and set it as request body
-                        //print(url.httpBody as Any)
+                    self.getData(url: url, Success: { (data) in
                         
-                    } catch let error {
-                        print(error.localizedDescription)
-                    }
-                    url.addValue("application/json", forHTTPHeaderField: "Content-Type")
-                    if (defaults.value(forKey: Constants.login.auth) != nil){
-                        url.addValue(defaults.value(forKey: Constants.login.auth) as! String, forHTTPHeaderField: Constants.login.auth)
-                    }
-                    //
+                        Cache.cacheData(data: data!, key: self.cacheKey!, cacheTimeInMinute: cacheTime ?? 0, cacheType: cacheType!)
+                        
+                        Success(data)
+                        
+                    }, Error: { (error) in
+                        
+                        Error(error)
+                        
+                    })
+                })
+
+                
+                
+            }else{
+                
+                Cache.retriveCacheData(keyName: self.cacheKey!,cachTimelimt:Double(expiryTime), Success: { (data) in
                     
-                }
+                    let info = data as? [String:Any]
+                    
+                    Success(info?.first?.value as! [String : AnyObject]?)
+                    
+                }, error: {
+                    
+                    self.getData(url: url, Success: { (data) in
+                        
+                          Cache.cacheData(data: data!, key: self.cacheKey!, cacheTimeInMinute: cacheTime ?? 0, cacheType: cacheType!)
+                        
+                        Success(data)
+                        
+                    }, Error: { (error) in
+                        
+                        Error(error)
+                        
+                    })
+                })
             }
             
-            
-            URLSession.shared.dataTask(with: url as URLRequest) { (data, response, error) in
-                
-//                print("error0",data?.description as Any,response as Any,error as Any)
-                
-                #if DEBUG
-                    if let data = data,let json = try? JSONSerialization.jsonObject(with: data, options: []) as? [String: AnyObject] {
-                        
-                        print(json as Any)
-                    }
-                #endif
-                
-                if error != nil {
-//                    print(error as Any)
-                    DispatchQueue.main.async {
-
-                        Error("Unknown error occured,\(error.debugDescription)")
-
-                    }
-                    return
-                }else{
-                    
-                    do {
-                        
-                        if let data = data,let json = try? JSONSerialization.jsonObject(with: data, options: []) as? [String: AnyObject] {
-                            
-                            let httpResponse = response as? HTTPURLResponse
-                            let status = httpResponse?.statusCode
-                            if status == 200 || status == 201{
-                                
-                                if let httpResponse = response as? HTTPURLResponse {
-                                    if let loginHeader = httpResponse.allHeaderFields["x-qt-auth"] as? String {
-                                        self.defaults.set(loginHeader, forKey: Constants.login.auth)
-                                        
-                                    }
-                                }
-                                
-                                DispatchQueue.main.async {
-                                    //                                print("Api call successfull",json)
-                                    Success(json as [String : AnyObject]?)
-                                    
-                                }
-                            }else{
-                                
-                                if let errorMessage = json?["error"]{
-                                    if let message =  errorMessage["message"] as? String{
-                                        DispatchQueue.main.async {
-                                            ////print("Unable to get data")
-                                            Error(message)
-                                        }
-                                    }
-                                }
-                            }
-                        }
-                        else{
-                            
-                            #if DEBUG
-                                if let analyticsCount = data?.count{
-                                    print("analytic recived ..",analyticsCount)
-                                }
-                            #endif
-                            DispatchQueue.main.async {
-                                Error(Constants.HttpError.pageNotFound)
-                            }
-                        }
-                        
-                    }
-                    //                catch let error {
-                    //                    print("entered json parsing error",error)
-                    //                    //print(error)
-                    //                    DispatchQueue.main.async {
-                    //                        ////print("Api call successfull but cannot parse")
-                    //                        Error("Api call successfull but cannot parse")
-                    //                    }
-                    //
-                    //                }
-                }
-                
-                }.resume()
         }else{
             
             Error(Constants.HttpError.noInternetConnection)
+            
         }
+        
     }
-
+    
+    
+    
+    
 }
