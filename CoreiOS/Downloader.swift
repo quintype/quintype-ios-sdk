@@ -64,7 +64,6 @@ open class Downloader:NSObject,URLSessionDelegate,URLSessionDownloadDelegate{
             catch let error { print("Ooops! cannot read: \(error)") }
  
         }
-        //
     }
     private func readJson(fileName:URL) -> [String:Any]? {
         do {
