@@ -51,8 +51,7 @@ open class Downloader:NSObject,URLSessionDelegate,URLSessionDownloadDelegate{
             let fileName = "ofline.json"
             
             let desinationURL = documentDirectory.appendingPathComponent(fileName)
-            
-            
+        
             do {
                 _ = try fileManager.replaceItemAt(desinationURL, withItemAt:location)
                 
@@ -67,7 +66,6 @@ open class Downloader:NSObject,URLSessionDelegate,URLSessionDownloadDelegate{
         }
         //
     }
-    
     private func readJson(fileName:URL) -> [String:Any]? {
         do {
             
