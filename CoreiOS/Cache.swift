@@ -31,12 +31,13 @@ public class Cache{
     //MARK: - Cache data to memCache & disk
     
     //TODO: - pass currect url as key afer adding param
-    public class func cacheData(data:Any,key:String,cacheTimeInMinute:Int,cacheType:String){
+    public class func cacheData(data:Any,key:String,cacheTimeInMinute:Int,cacheType:String,oflineStatus:Bool = false){
         
         let time = NSDate.init()
         
-        let finalKey = "cacheData-\(key)"
         
+        let finalKey = !oflineStatus == false ?("oflineCacheData-\(key)") : ("cacheData-\(key)") 
+
         var currentTime:String = String(0)
         if cacheTimeInMinute != 0 { currentTime = String(time.timeIntervalSince1970 * 1000) }
         let cacheCreatedTimeKey = currentTime

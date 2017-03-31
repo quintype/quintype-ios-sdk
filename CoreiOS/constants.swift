@@ -92,8 +92,7 @@ public struct Constants{
         public static let moreStoryCount = UserDefaults.standard.string(forKey: Constants.publisherConfig.moreStoryCountKey)
         public static let polltypeHost = UserDefaults.standard.stringArray(forKey: Constants.publisherConfig.polltypeHostKey)
         public static let razorpayId = UserDefaults.standard.string(forKey: Constants.publisherConfig.razorpayKey)
-        
-        
+    
     }
     public struct user{
         

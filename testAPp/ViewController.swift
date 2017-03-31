@@ -17,15 +17,7 @@ class ViewController: UIViewController {
         Quintype.initWithBaseUrl(baseURL: "https://thequint-next.quintype.io")
         
         
-        Quintype.api.getPublisherConfig(cache: cacheOption.loadOldCacheAndReplaceWithNew, Success: { (dara) in
-            
-            print(dara)
-            
-          
-            
-        }) { (err) in
-            print("oops")
-        }
+      Quintype.downloader.Download(url: "https://www.thequint.com/api/v1/config")
     }
     
     

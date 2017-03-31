@@ -27,6 +27,7 @@ open class Quintype{
     
     //MARK: - Private internal variable -
     private var _api:ApiService?
+    private var _downloader:Downloader?
     private var _parser:ApiParser?
     private var _analytics:Analytics?
     private var _cache:Cache?
@@ -67,10 +68,17 @@ open class Quintype{
         }
     }
     
+    //MARK: - open variable Downloader
+    open static var downloader:Downloader{
+        get{
+            if Quintype.sharedInstance._downloader == nil{
+                Quintype.sharedInstance._downloader = Downloader()
+            }
+            return Quintype.sharedInstance._downloader!
+        }
+    }
     
-    
-    
-    
+
     //MARK: - SDK init to obtain base url
     open static func initWithBaseUrl(baseURL: String!) {
         
