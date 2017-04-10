@@ -80,7 +80,7 @@ public class ApiService{
         
         api.call(method: "get", urlString: url, parameter: param as [String : AnyObject]?,cache:cache, Success: { (data) in
             
-            ApiParser.StoriesParser(data: data as! [String : AnyObject]?, completion: { (storiesObject) in
+            ApiParser.StoriesParser(data: data , completion: { (storiesObject) in
                 
                 DispatchQueue.main.async { Success(storiesObject) }
                 
@@ -136,7 +136,7 @@ public class ApiService{
         
         api.call(method: "get", urlString: url, parameter: param as [String : AnyObject]?,cache:cache, Success: { (data) in
             
-            ApiParser.StoriesParser(data: data as! [String : AnyObject]?,parseKey:"related-stories",completion: { (storiesObject) in
+            ApiParser.StoriesParser(data: data ,parseKey:"related-stories",completion: { (storiesObject) in
                 
                 DispatchQueue.main.async { Success(storiesObject) }
                 

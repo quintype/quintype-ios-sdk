@@ -77,7 +77,6 @@ open class Quintype{
             return Quintype.sharedInstance._downloader!
         }
     }
-    
 
     //MARK: - SDK init to obtain base url
     open static func initWithBaseUrl(baseURL: String!) {

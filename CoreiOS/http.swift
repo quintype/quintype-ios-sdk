@@ -40,7 +40,7 @@ class Http{
         
     }
     
-    private func createUrlFromParameter(method:String,urlString: String,param:[String:AnyObject]?) -> NSMutableURLRequest? {
+    private func createUrlFromParameter(method:String,urlString: String,param:[String:AnyObject]?) -> NSMutableURLRequest {
         
         var urlString = urlString.addingPercentEncoding(withAllowedCharacters: CharacterSet.urlFragmentAllowed)!
         var url = NSMutableURLRequest(url: URL(string: urlString)!)
@@ -223,11 +223,9 @@ class Http{
                 cacheTime = 0
             }
             
-            var urlString = urlString.addingPercentEncoding(withAllowedCharacters: CharacterSet.urlFragmentAllowed)!
-            var url = NSMutableURLRequest(url: URL(string: urlString)!)
-            
+            var url = createUrlFromParameter(method: method, urlString: urlString, param: parameter)
             url.httpMethod = method.capitalized
-            url = createUrlFromParameter(method: method, urlString: urlString, param: parameter) ?? url
+            
             
             let expiryTime = cacheTime! * 60 * 1000
             if cacheType == Constants.cache.none{
@@ -249,9 +247,9 @@ class Http{
                     let info = data as? [String:Any]
                     
                     Success(info?.first?.value as! [String : AnyObject]?)
-                      print("FCK")
+                    print("FCK")
                     self.getData(url: url, Success: { (data) in
-
+                        
                         print("albin")
                         return
                         
@@ -275,7 +273,7 @@ class Http{
                         
                     })
                 })
-
+                
                 
                 
             }else{
@@ -290,7 +288,7 @@ class Http{
                     
                     self.getData(url: url, Success: { (data) in
                         
-                          Cache.cacheData(data: data!, key: self.cacheKey!, cacheTimeInMinute: cacheTime ?? 0, cacheType: cacheType!)
+                        Cache.cacheData(data: data!, key: self.cacheKey!, cacheTimeInMinute: cacheTime ?? 0, cacheType: cacheType!)
                         
                         Success(data)
                         

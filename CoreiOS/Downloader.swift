@@ -8,11 +8,24 @@
 
 import Foundation
 import UIKit
+//import Kingfisher
+//import KingfisherWebP
+
+//open class ImageObject{
+//    
+//    public var imageURL:String?
+//    public var imageMetaData:ImageMetaData?
+//    
+//}
 
 open class Downloader:NSObject,URLSessionDelegate,URLSessionDownloadDelegate{
     
     public typealias completion = () -> ()
     public var tellAppDelegateHandleEventsForBackgroundURLSessionIsCompleted:completion?
+    
+//    public typealias sendImageObjectBack = ([ImageObject]) -> ()
+//    
+//    public var ch : sendImageObjectBack?
     
     var backgroundSession :URLSession?
     var url:URL?
@@ -28,7 +41,6 @@ open class Downloader:NSObject,URLSessionDelegate,URLSessionDownloadDelegate{
         
         let config = URLSessionConfiguration.background(withIdentifier: "com.downloade.storage")
         config.isDiscretionary = true
-        
         backgroundSession = URLSession(configuration: config, delegate: self, delegateQueue: nil)
     }
     
@@ -38,6 +50,7 @@ open class Downloader:NSObject,URLSessionDelegate,URLSessionDownloadDelegate{
         let requestDownload = URLRequest(url: self.url!)
         let downloadTask = self.backgroundSession?.downloadTask(with: requestDownload)
         downloadTask?.resume()
+        
     }
     
     public func urlSession(_ session: URLSession, downloadTask: URLSessionDownloadTask, didFinishDownloadingTo location: URL) {
@@ -51,18 +64,18 @@ open class Downloader:NSObject,URLSessionDelegate,URLSessionDownloadDelegate{
             let fileName = "ofline.json"
             
             let desinationURL = documentDirectory.appendingPathComponent(fileName)
-        
+            
             do {
                 _ = try fileManager.replaceItemAt(desinationURL, withItemAt:location)
                 
                 if let data = readJson(fileName: desinationURL){
-                
-                Cache.cacheData(data: data, key: (self.url?.absoluteString)!, cacheTimeInMinute: 12 * 60, cacheType: Constants.cache.cacheToMemoryAndDiskWithTime,oflineStatus: true)
-                
+                    
+                    Cache.cacheData(data: data, key: (self.url?.absoluteString)!, cacheTimeInMinute: 12 * 60, cacheType: Constants.cache.cacheToMemoryAndDiskWithTime,oflineStatus: true)
+
                 }
             }
             catch let error { print("Ooops! cannot read: \(error)") }
- 
+            
         }
     }
     private func readJson(fileName:URL) -> [String:Any]? {
@@ -72,6 +85,24 @@ open class Downloader:NSObject,URLSessionDelegate,URLSessionDownloadDelegate{
             let json = try JSONSerialization.jsonObject(with: data, options: [])
             
             if let object = json as? [String: Any] {
+                
+                ApiParser.StoriesParser(data: object as [String : AnyObject]?, completion: { (stories) in
+                    
+                    print(stories)
+                    
+                    for story in stories{
+                        
+                        if let image = story.hero_image_s3_key{
+                            
+                           // get image pass to KF
+                            //get story id
+                            
+                        }
+                        
+                    }
+//                    self.ch?(//)
+                })
+
                 return object
             }else{
                 return nil
@@ -107,5 +138,4 @@ open class Downloader:NSObject,URLSessionDelegate,URLSessionDownloadDelegate{
     
     
 }
-
 
