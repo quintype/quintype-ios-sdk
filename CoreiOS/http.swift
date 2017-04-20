@@ -304,6 +304,7 @@ class Http{
                 })
             }
             
+            
         }else if cacheType == Constants.cache.oflineCacheToDisk{
             
             self.getData(url: url, Success: { (data) in
