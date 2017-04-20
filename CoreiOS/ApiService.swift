@@ -14,6 +14,12 @@
 
 import Foundation
 
+public enum returnType:String{
+    
+    case json = "json"
+    case object = "object"
+}
+
 // This is where API is defined
 public class ApiService{
     
@@ -53,9 +59,54 @@ public class ApiService{
     }
     
     //MARK: - Get stories -
-    public func getStories(options:storiesOption,fields: [String]?,offset: Int?,limit: Int?,storyGroup: String?,cache:cacheOption,Success:@escaping ([Story]?)->(),Error:@escaping (String?)->()) {
+//    public func getStories(options:storiesOption,fields: [String]?,offset: Int?,limit: Int?,storyGroup: String?,cache:cacheOption,Success:@escaping ([Story]?)->(),Error:@escaping (String?)->()) {
+//        
+//        let stringURLFields = fields?.joined(separator: ",")
+//        
+//        var param:[String:Any?] = [
+//            
+//            "fields":stringURLFields,
+//            "offset":offset,
+//            "limit":limit,
+//            "story-group":storyGroup
+//        ]
+//        
+//        if let opt = options.value{
+//            
+//            if !opt.isEmpty{
+//                
+//                for (index,options) in opt{
+//                    param[index] = options
+//                }
+//                
+//            }
+//        }
+//        
+//        let url = baseUrl + Constants.urlConfig.getStories
+//        
+//        api.call(method: "get", urlString: url, parameter: param as [String : AnyObject]?,cache:cache, Success: { (data) in
+//            
+//            ApiParser.StoriesParser(data: data , completion: { (storiesObject) in
+//                
+//                DispatchQueue.main.async { Success(storiesObject) }
+//                
+//            })
+//            
+//        }) { (error) in
+//            
+//            Error(error)
+//            
+//        }
+//        
+//    }
+    
+    public typealias json = ([String:AnyObject]?) ->()
+    public var json: json?
+    
+    //MARK: - Get stories -
+    public func getStories(options:storiesOption,fields: [String]?,offset: Int?,limit: Int?,storyGroup: String?,cache:cacheOption,returnDataType:returnType = returnType.object ,Success:@escaping ([Story]?)->(),json:json? = nil,Error:@escaping (String?)->()) {
         
-        let stringURLFields = fields?.joined(separator: ",").replacingOccurrences(of: ",", with: "%2C")
+        let stringURLFields = fields?.joined(separator: ",")
         
         var param:[String:Any?] = [
             
@@ -80,18 +131,24 @@ public class ApiService{
         
         api.call(method: "get", urlString: url, parameter: param as [String : AnyObject]?,cache:cache, Success: { (data) in
             
+            
+            
             ApiParser.StoriesParser(data: data , completion: { (storiesObject) in
                 
                 DispatchQueue.main.async { Success(storiesObject) }
                 
             })
             
+            if returnDataType == returnType.json{
+                
+                if let jsonData = data{ DispatchQueue.main.async { json!(jsonData) } }
+            }
+            
         }) { (error) in
             
             Error(error)
             
         }
-        
     }
     
     //    //MARK:- Get story by id
@@ -121,8 +178,7 @@ public class ApiService{
     public func getRelatedStories(storyId: String,SectionId:String?,fields: [String]?,cache:cacheOption,Success:@escaping ([Story]?)->(),Error:@escaping (String?)->()) {
         
         
-        let stringURLFields = fields?.joined(separator: ",").replacingOccurrences(of: ",", with: "%2C")
-        
+        let stringURLFields = fields?.joined(separator: ",")
         var param:[String:Any?] = [
             
             "fields":stringURLFields,
@@ -155,7 +211,7 @@ public class ApiService{
     //MARK:- Search
     public func search(searchBy:searchOption,fields: [String]?,offset:Int?,limit:Int?,cache:cacheOption,Success:@escaping (Search?)->(),Error:@escaping (String?)->()) {
         
-        let stringURLFields = fields?.joined(separator: ",").replacingOccurrences(of: ",", with: "%2C")
+        let stringURLFields = fields?.joined(separator: ",")
         var searchKey:String = ""
         
         var param:[String:Any?] = [
@@ -243,7 +299,7 @@ public class ApiService{
     //MARK:- Get breaking news
     public func getBreakingNews(fields:[String]?,limit:Int?,offset:Int?,cache:cacheOption,Success:@escaping ([Story]?)->(),Error:@escaping (String?)->()) {
         
-        let stringURLFields = fields?.joined(separator: ",").replacingOccurrences(of: ",", with: "%2C")
+        let stringURLFields = fields?.joined(separator: ",")
         
         var param:[String:Any?] = [
             

@@ -15,11 +15,21 @@ class ViewController: UIViewController {
         super.viewDidLoad()
         Quintype.initWithBaseUrl(baseURL: "https://thequint-next.quintype.io")
       
-//      Quintype.downloader.Download(url: "https://thequint-next.quintype.io/api/v1/stories") { (data) in
-//    
-//        print(data)
-//        
-//        }
+
+        Quintype.api.getPublisherConfig(cache: cacheOption.loadOldCacheAndReplaceWithNew, Success: { (data) in
+            
+            print(data)
+            
+            
+            
+        }) { (err) in
+            
+            print(err)
+            
+            
+        }
+        
+        
     }
 
     

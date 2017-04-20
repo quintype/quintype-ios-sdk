@@ -31,15 +31,25 @@ public class Cache{
     //MARK: - Cache data to memCache & disk
     
     //TODO: - pass currect url as key afer adding param
-    public class func cacheData(data:Any,key:String,cacheTimeInMinute:Int,cacheType:String,oflineStatus:Bool = false){
+    public class func cacheData(data:Any,key:String, cacheTimeInMinute:Int,cacheType:String,oflineStatus:Bool = false){
         
+        var cacheTimeInMinute = cacheTimeInMinute
         let time = NSDate.init()
         
         
-        let finalKey = !oflineStatus == false ?("oflineCacheData-\(key)") : ("cacheData-\(key)") 
-
+        
+        var finalKey = !oflineStatus == false ?("oflineCacheData-\(key)") : ("cacheData-\(key)")
+        var cacheTime = !oflineStatus == false ?(cacheTimeInMinute * 60) : (cacheTimeInMinute)
+        
+        if finalKey == "oflineCacheData-\(key)"{
+            
+            print("---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------")
+            
+        }
+        
+        //        print(finalKey)
         var currentTime:String = String(0)
-        if cacheTimeInMinute != 0 { currentTime = String(time.timeIntervalSince1970 * 1000) }
+        if cacheTime != 0 { currentTime = String(time.timeIntervalSince1970 * 1000) }
         let cacheCreatedTimeKey = currentTime
         let data:[String:Any] = [cacheCreatedTimeKey:data]
         
@@ -62,36 +72,51 @@ public class Cache{
             storeToCache(data: data as AnyObject, finalKey: finalKey)
             storeToDisk(data: data as AnyObject, finalKey: finalKey)
             
+        }else if cacheType == Constants.cache.oflineCacheToDisk {
+            
+            storeToDisk(data: data as AnyObject, finalKey: finalKey)
+            
         }
-        
-        
+  
     }
     
     //MARK: - Retrive data from memCache or from disk -
-    public class func retriveCacheData(keyName:String,cachTimelimt:Double,Success:@escaping (Any?)->(),error:@escaping ()->()){
+    public class func retriveCacheData(keyName:String,cachTimelimt:Double,oflineStatus:Bool = false,Success:@escaping (Any?)->(),error:@escaping ()->()){
         
-        let key = "cacheData-\(keyName)"
+        var finalKey:String?
         
-        isPresent(keyName: keyName, success: { (reteivedData) in
+        if (oflineStatus && (keyName.components(separatedBy: "/")).last == "config") || !oflineStatus{
+            finalKey = ("cacheData-\(keyName)")
+        }else if oflineStatus {
+            finalKey =  ("oflineCacheData-\(keyName)")
+        }
+        
+        isPresent(keyName: finalKey!,oflineStatus:oflineStatus, success: { (reteivedData) in
             
             let cachedData = reteivedData as? [String:AnyObject]
             
             if let cacheTime = cachedData?.first?.key{
                 
-                if cacheExpiryCheck(cacheTime: cacheTime,cachTimelimt:cachTimelimt, key: key){
-                     Success(reteivedData)
-                }else{
-                    error()
-                }
+                if !oflineStatus{
+                    
+                    if cacheExpiryCheck(cacheTime: cacheTime,cachTimelimt:cachTimelimt, key: finalKey!){
+                        Success(reteivedData)
+                    }else{
+                        error()
+                    }
+                    
+                }else{ Success(reteivedData) }
+                
             }
         }){
             error()
         }
+        
     }
     
     //MARK: - Store data to disk -
     private class func storeToDisk(data:AnyObject,finalKey:String){
-
+        
         let userDefaults = UserDefaults.standard
         let encodedData: Data = NSKeyedArchiver.archivedData(withRootObject: data)
         userDefaults.set(encodedData, forKey: finalKey)
@@ -102,7 +127,7 @@ public class Cache{
     //
     private class func retriveFromDisk(key:String,error:()->(),success:(Any)->()){
         let userDefaults = UserDefaults.standard
-
+        
         if let decoded  = userDefaults.object(forKey:key) as? Data{
             
             let data = NSKeyedUnarchiver.unarchiveObject(with: decoded)
@@ -116,6 +141,7 @@ public class Cache{
             
             error()
         }
+        
         
     }
     
@@ -156,17 +182,21 @@ public class Cache{
     
     
     //MARK: - Check if item is present
-    private class func isPresent(keyName:String,success:@escaping (Any?)->(),error:@escaping ()->()){
-
+    private class func isPresent(keyName:String,oflineStatus:Bool,success:@escaping (Any?)->(),error:@escaping ()->()){
+        
         var userDefaults = UserDefaults.standard
         let time = NSDate()
         let currentTime:Float = Float(time.timeIntervalSince1970 * 1000)
         var counter = 0
-     
-        let finalKey = "cacheData-\(keyName)"
         
-        retriveDataFromCache(key: finalKey, error: {
-            retriveFromDisk(key: finalKey, error: {
+        
+        for (key, value) in UserDefaults.standard.dictionaryRepresentation() {
+            print(key)
+        }
+        
+        
+        retriveDataFromCache(key: keyName, error: {
+            retriveFromDisk(key: keyName, error: {
                 print("err from disk")
                 error()
                 return
@@ -180,20 +210,20 @@ public class Cache{
             
             success(data)
             return
-            print("came from cache 'MEMORY'")
+                print("came from cache 'MEMORY'")
             
         }
-    
+        
     }
-
+    
     //cache time - timeStamp attached to URL
     //cacheTimelimit - minute for url cache
     
     //CurrentT-CTL => someT
     
-//    if CT > someT{
-//    
-//    }
+    //    if CT > someT{
+    //
+    //    }
     
     private class func cacheExpiryCheck(cacheTime:String,cachTimelimt:Double,key:String) -> Bool{
         

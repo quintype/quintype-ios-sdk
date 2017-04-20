@@ -200,6 +200,10 @@ class Http{
         var cacheType:String?
         var cacheTime:Int?
         
+        var url = createUrlFromParameter(method: method, urlString: urlString, param: parameter)
+        url.httpMethod = method.capitalized
+        
+        
         if isInternetAvailable(){
             
             if let opt = cache.value{
@@ -216,6 +220,9 @@ class Http{
                 }else if opt.keys.first == Constants.cache.cacheToDiskWithTime{
                     cacheType = Constants.cache.cacheToDiskWithTime
                     cacheTime = opt.values.first
+                }else if opt.keys.first == Constants.cache.oflineCacheToDisk{
+                    cacheType = Constants.cache.oflineCacheToDisk
+                    cacheTime = opt.values.first
                 }
                 
             }else{
@@ -223,11 +230,8 @@ class Http{
                 cacheTime = 0
             }
             
-            var url = createUrlFromParameter(method: method, urlString: urlString, param: parameter)
-            url.httpMethod = method.capitalized
-            
-            
             let expiryTime = cacheTime! * 60 * 1000
+            
             if cacheType == Constants.cache.none{
                 
                 self.getData(url: url, Success: { (data) in
@@ -300,9 +304,37 @@ class Http{
                 })
             }
             
-        }else{
+        }else if cacheType == Constants.cache.oflineCacheToDisk{
             
-            Error(Constants.HttpError.noInternetConnection)
+            self.getData(url: url, Success: { (data) in
+                
+                Cache.cacheData(data: data!, key: self.cacheKey!, cacheTimeInMinute: cacheTime ?? 0, cacheType: cacheType!, oflineStatus: true)
+                
+                Success(data)
+                
+            }, Error: { (error) in
+                
+                Error(error)
+                
+            })
+            
+        }
+            
+        else{
+            
+            //            Error(Constants.HttpError.noInternetConnection)
+            Cache.retriveCacheData(keyName:  (url.url?.absoluteString)!, cachTimelimt: 0, oflineStatus: true, Success: { (data) in
+                
+                print(data)
+                let json = (data as? [String : AnyObject])?.first?.value as? [String:AnyObject]
+                
+                Success(json)
+                
+            }, error: {
+                Error(Constants.HttpError.noInternetConnection)
+                
+            })
+            
             
         }
         

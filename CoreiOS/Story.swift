@@ -42,18 +42,19 @@ public class Story:SafeJsonObject {
     public var bullet_type: String?
     public var story_template: String?
     public var content_type:String?
-   
+    
     public var cards: [Card] = []
     public var tags: [Tag] = []
     public var hero_image_metadata: ImageMetaData?
     public var sections: [Section] = []
+    public var id:String?
     
     
     
-
     
-
-
+    
+    
+    
     override public func setValue(_ value: Any?, forKey key: String) {
         
         if key == "sections" {
@@ -68,7 +69,7 @@ public class Story:SafeJsonObject {
             }
             
         }else if key == "hero_image_metadata"{
-         
+            
             let image = ImageMetaData()
             let data = value as? [String : AnyObject]
             
@@ -83,7 +84,7 @@ public class Story:SafeJsonObject {
             }
             print(image)
             hero_image_metadata = image
-        
+            
         }
         else if key == "tags"{
             
@@ -95,13 +96,13 @@ public class Story:SafeJsonObject {
                     self.tags.append(singleTag)
                     //print(self.tags)
                 })
-  
+                
             }
             
             
         }
         else if key == "cards"{
-
+            
             for card in value as! [[String:AnyObject]]{
                 let singleCards = Card()
                 Converter.jsonKeyConverter(dictionaryArray: card, completion: { (data) in
@@ -114,7 +115,7 @@ public class Story:SafeJsonObject {
             
             
         }
-            else {
+        else {
             super.setValue(value, forKey: key)
         }
     }

@@ -18,6 +18,7 @@ public enum storiesOption {
     case template(templateName:String)
     case storyGroup(storyGroupName:String)
     case storyGroupInSection(storyGroupName:String,sectionName:String)
+    case storyOrder(storyIds:[String])
     
     
     var value: [String:String]? {
@@ -36,10 +37,13 @@ public enum storiesOption {
             return [Constants.story.storyGroup: storyGroupName]
         case .storyGroupInSection(let storyGroupName,let sectionName):
             return [Constants.story.storyGroup: storyGroupName,Constants.story.section: sectionName]
+        case .storyOrder(let storyIds):
+            return [Constants.story.storyOrder: storyIds.joined(separator: ",")]
             
         }
     }
 }
+
 
 
 public enum searchOption {
@@ -67,7 +71,7 @@ public enum publisherOption {
     
     case all
     case key(keyName:String)
-  
+    
     
     var value: [String:String]? {
         
@@ -77,7 +81,7 @@ public enum publisherOption {
             return nil
         case .key(let keyName):
             return ["key": keyName]
-
+            
         }
     }
 }
