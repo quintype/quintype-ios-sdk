@@ -1,3 +1,4 @@
+
 //
 //  http.swift
 //  CoreiOS
@@ -16,7 +17,7 @@ class Http{
     static let sharedInstance = Http()
     let defaults = UserDefaults.standard
     
-    private func isInternetAvailable() -> Bool {
+    public class func isInternetAvailable() -> Bool {
         
         var zeroAddress = sockaddr_in()
         zeroAddress.sin_len = UInt8(MemoryLayout.size(ofValue: zeroAddress))
@@ -173,6 +174,7 @@ class Http{
                         #endif
                         
                         DispatchQueue.main.async {
+                            print(data,url,response)
                             Error(Constants.HttpError.pageNotFound)
                         }
                     }
@@ -200,35 +202,35 @@ class Http{
         var cacheType:String?
         var cacheTime:Int?
         
-        var url = createUrlFromParameter(method: method, urlString: urlString, param: parameter)
-        url.httpMethod = method.capitalized
-        
-        
-        if isInternetAvailable(){
+        if let opt = cache.value{
             
-            if let opt = cache.value{
-                
-                if opt.keys.first == Constants.cache.cacheToMemoryWithTime{
-                    cacheType = Constants.cache.cacheToMemoryWithTime
-                    cacheTime = opt.values.first
-                }else if opt.keys.first == Constants.cache.cacheToMemoryAndDiskWithTime{
-                    cacheType = Constants.cache.cacheToMemoryAndDiskWithTime
-                    cacheTime = opt.values.first
-                }else if opt.keys.first == Constants.cache.loadOldCacheAndReplaceWithNew{
-                    cacheType = Constants.cache.loadOldCacheAndReplaceWithNew
-                    cacheTime = opt.values.first
-                }else if opt.keys.first == Constants.cache.cacheToDiskWithTime{
-                    cacheType = Constants.cache.cacheToDiskWithTime
-                    cacheTime = opt.values.first
-                }else if opt.keys.first == Constants.cache.oflineCacheToDisk{
-                    cacheType = Constants.cache.oflineCacheToDisk
-                    cacheTime = opt.values.first
-                }
-                
-            }else{
-                cacheType = Constants.cache.none
-                cacheTime = 0
+            if opt.keys.first == Constants.cache.cacheToMemoryWithTime{
+                cacheType = Constants.cache.cacheToMemoryWithTime
+                cacheTime = opt.values.first
+            }else if opt.keys.first == Constants.cache.cacheToMemoryAndDiskWithTime{
+                cacheType = Constants.cache.cacheToMemoryAndDiskWithTime
+                cacheTime = opt.values.first
+            }else if opt.keys.first == Constants.cache.loadOldCacheAndReplaceWithNew{
+                cacheType = Constants.cache.loadOldCacheAndReplaceWithNew
+                cacheTime = opt.values.first
+            }else if opt.keys.first == Constants.cache.cacheToDiskWithTime{
+                cacheType = Constants.cache.cacheToDiskWithTime
+                cacheTime = opt.values.first
+            }else if opt.keys.first == Constants.cache.oflineCacheToDisk{
+                cacheType = Constants.cache.oflineCacheToDisk
+                cacheTime = opt.values.first
             }
+            
+        }else{
+            cacheType = Constants.cache.none
+            cacheTime = 0
+        }
+        
+        var url = createUrlFromParameter(method: method, urlString: urlString, param: parameter)
+        
+        if Http.isInternetAvailable(){
+            
+            url.httpMethod = method.capitalized
             
             let expiryTime = cacheTime! * 60 * 1000
             
@@ -251,10 +253,9 @@ class Http{
                     let info = data as? [String:Any]
                     
                     Success(info?.first?.value as! [String : AnyObject]?)
-                    print("FCK")
+                    
                     self.getData(url: url, Success: { (data) in
                         
-                        print("albin")
                         return
                         
                     }, Error: { (error) in
@@ -279,6 +280,19 @@ class Http{
                 })
                 
                 
+            }else if cacheType == Constants.cache.oflineCacheToDisk{
+                
+                self.getData(url: url, Success: { (data) in
+                    
+                    Cache.cacheData(data: data!, key: self.cacheKey!, cacheTimeInMinute: cacheTime ?? 0, cacheType: cacheType!, oflineStatus: true)
+                    
+                    Success(data)
+                    
+                }, Error: { (error) in
+                    
+                    Error(error)
+                    
+                })
                 
             }else{
                 
@@ -304,26 +318,8 @@ class Http{
                 })
             }
             
+        }else{
             
-        }else if cacheType == Constants.cache.oflineCacheToDisk{
-            
-            self.getData(url: url, Success: { (data) in
-                
-                Cache.cacheData(data: data!, key: self.cacheKey!, cacheTimeInMinute: cacheTime ?? 0, cacheType: cacheType!, oflineStatus: true)
-                
-                Success(data)
-                
-            }, Error: { (error) in
-                
-                Error(error)
-                
-            })
-            
-        }
-            
-        else{
-            
-            //            Error(Constants.HttpError.noInternetConnection)
             Cache.retriveCacheData(keyName:  (url.url?.absoluteString)!, cachTimelimt: 0, oflineStatus: true, Success: { (data) in
                 
                 print(data)
@@ -336,12 +332,8 @@ class Http{
                 
             })
             
-            
         }
         
     }
-    
-    
-    
     
 }

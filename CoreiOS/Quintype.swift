@@ -12,11 +12,9 @@ protocol Completion{
 
 
 import Foundation
+import SystemConfiguration
 
 open class Quintype{
-    
-    
-    
     
     public init() {}
     
@@ -43,6 +41,32 @@ open class Quintype{
             }
             return Quintype.sharedInstance._api!
         }
+    }
+    
+    //    public var isInternetActive = isInternetAvailable()
+    
+    open class func isInternetAvailable() -> Bool {
+        
+        var zeroAddress = sockaddr_in()
+        zeroAddress.sin_len = UInt8(MemoryLayout.size(ofValue: zeroAddress))
+        zeroAddress.sin_family = sa_family_t(AF_INET)
+        
+        let defaultRouteReachability = withUnsafePointer(to: &zeroAddress) {
+            $0.withMemoryRebound(to: sockaddr.self, capacity: 1) {zeroSockAddress in
+                SCNetworkReachabilityCreateWithAddress(nil, zeroSockAddress)
+            }
+        }
+        
+        var flags = SCNetworkReachabilityFlags()
+        
+        if !SCNetworkReachabilityGetFlags(defaultRouteReachability!, &flags) {
+            return false
+        }
+        
+        let isReachable = (flags.rawValue & UInt32(kSCNetworkFlagsReachable)) != 0
+        let needsConnection = (flags.rawValue & UInt32(kSCNetworkFlagsConnectionRequired)) != 0
+        return (isReachable && !needsConnection)
+        
     }
     
     open static var publisherConfig:Config?
@@ -77,7 +101,8 @@ open class Quintype{
             return Quintype.sharedInstance._downloader!
         }
     }
-
+    
+    
     //MARK: - SDK init to obtain base url
     open static func initWithBaseUrl(baseURL: String!) {
         
@@ -90,15 +115,15 @@ open class Quintype{
         
         storage.storageBaseURL(baseURL: baseURL)
         
-//        api.getPublisherConfig(cache: cacheOption.loadOldCacheAndReplaceWithNew, Success: { (data) in
-//            
-//            Quintype.cachePublisherKeys(data: data)
-//            
-//        }) { (error) in }
+        //        api.getPublisherConfig(cache: cacheOption.loadOldCacheAndReplaceWithNew, Success: { (data) in
+        //
+        //            Quintype.cachePublisherKeys(data: data)
+        //
+        //        }) { (error) in }
         
     }
     
-     static func cachePublisherKeys(data:Config?){
+    static func cachePublisherKeys(data:Config?){
         let defaults = UserDefaults.standard
         defaults.set(data?.publisher_id, forKey: Constants.publisherConfig.publisherKey)
         defaults.set(data?.shrubbery_host, forKey: Constants.analyticConfig.analyticKey)

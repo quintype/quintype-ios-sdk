@@ -45,7 +45,6 @@ public enum storiesOption {
 }
 
 
-
 public enum searchOption {
     
     case authorName(authorName:String)

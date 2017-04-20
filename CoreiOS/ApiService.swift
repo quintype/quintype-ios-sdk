@@ -58,48 +58,6 @@ public class ApiService{
         }
     }
     
-    //MARK: - Get stories -
-//    public func getStories(options:storiesOption,fields: [String]?,offset: Int?,limit: Int?,storyGroup: String?,cache:cacheOption,Success:@escaping ([Story]?)->(),Error:@escaping (String?)->()) {
-//        
-//        let stringURLFields = fields?.joined(separator: ",")
-//        
-//        var param:[String:Any?] = [
-//            
-//            "fields":stringURLFields,
-//            "offset":offset,
-//            "limit":limit,
-//            "story-group":storyGroup
-//        ]
-//        
-//        if let opt = options.value{
-//            
-//            if !opt.isEmpty{
-//                
-//                for (index,options) in opt{
-//                    param[index] = options
-//                }
-//                
-//            }
-//        }
-//        
-//        let url = baseUrl + Constants.urlConfig.getStories
-//        
-//        api.call(method: "get", urlString: url, parameter: param as [String : AnyObject]?,cache:cache, Success: { (data) in
-//            
-//            ApiParser.StoriesParser(data: data , completion: { (storiesObject) in
-//                
-//                DispatchQueue.main.async { Success(storiesObject) }
-//                
-//            })
-//            
-//        }) { (error) in
-//            
-//            Error(error)
-//            
-//        }
-//        
-//    }
-    
     public typealias json = ([String:AnyObject]?) ->()
     public var json: json?
     
@@ -179,6 +137,7 @@ public class ApiService{
         
         
         let stringURLFields = fields?.joined(separator: ",")
+        
         var param:[String:Any?] = [
             
             "fields":stringURLFields,
