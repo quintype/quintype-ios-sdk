@@ -174,7 +174,6 @@ class Http{
                         #endif
                         
                         DispatchQueue.main.async {
-                            print(data,url,response)
                             Error(Constants.HttpError.pageNotFound)
                         }
                     }
@@ -322,7 +321,6 @@ class Http{
             
             Cache.retriveCacheData(keyName:  (url.url?.absoluteString)!, cachTimelimt: 0, oflineStatus: true, Success: { (data) in
                 
-                print(data)
                 let json = (data as? [String : AnyObject])?.first?.value as? [String:AnyObject]
                 
                 Success(json)

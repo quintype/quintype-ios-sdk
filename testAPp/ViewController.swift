@@ -18,7 +18,6 @@ class ViewController: UIViewController {
 
         Quintype.api.getPublisherConfig(cache: cacheOption.loadOldCacheAndReplaceWithNew, Success: { (data) in
             
-            print(data)
             
             
             
