@@ -109,8 +109,7 @@ class Http{
         URLSession.shared.dataTask(with: url as URLRequest) { (data, response, error) in
             
             #if DEBUG
-                print("error0",data?.description as Any,response as Any,error as Any)
-                if let data = data,let json = try? JSONSerialization.jsonObject(with: data, options: []) as? [String: AnyObject] { print(json as Any) }
+                if let data = data,let json = try? JSONSerialization.jsonObject(with: data, options: []) as? [String: AnyObject] {  }
             #endif
             
             if error != nil {
@@ -145,7 +144,7 @@ class Http{
                             DispatchQueue.main.async {
                                 
                                 #if DEBUG
-                                    print("Api call successfull",json)
+                                    print("Api call successfull")
                                 #endif
                                 
                                 Success(json as [String : AnyObject]?)
