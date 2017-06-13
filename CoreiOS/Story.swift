@@ -48,9 +48,7 @@ public class Story:SafeJsonObject {
     public var hero_image_metadata: ImageMetaData?
     public var sections: [Section] = []
     public var id:String?
-    
-    
-    
+    public var subheadline :String?
     
     
     
@@ -82,7 +80,6 @@ public class Story:SafeJsonObject {
             if let focusPoint = data?["focus-point"] as? [NSNumber]{
                 image.focus_point = focusPoint
             }
-            print(image)
             hero_image_metadata = image
             
         }

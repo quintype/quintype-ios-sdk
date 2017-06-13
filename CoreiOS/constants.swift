@@ -92,7 +92,7 @@ public struct Constants{
         public static let moreStoryCount = UserDefaults.standard.string(forKey: Constants.publisherConfig.moreStoryCountKey)
         public static let polltypeHost = UserDefaults.standard.stringArray(forKey: Constants.publisherConfig.polltypeHostKey)
         public static let razorpayId = UserDefaults.standard.string(forKey: Constants.publisherConfig.razorpayKey)
-    
+        
     }
     public struct user{
         
@@ -114,6 +114,7 @@ public struct Constants{
         static let cacheToDiskWithTime = "cacheToDiskWithTime"
         static let cacheToMemoryAndDiskWithTime = "cacheToMemoryAndDiskWithTime"
         static let loadOldCacheAndReplaceWithNew = "loadOldCacheAndReplaceWithNew"
+        static let oflineCacheToDisk = "oflineCacheToDisk"
         static let none = "none"
         
     }
@@ -124,6 +125,8 @@ public struct Constants{
         static let tag = "tag"
         static let template = "template"
         static let storyGroup = "story-group"
+        static let storyOrder = "story-order"
+        static let storyAttribute = "story-attributes"
         
     }
     public struct payment{

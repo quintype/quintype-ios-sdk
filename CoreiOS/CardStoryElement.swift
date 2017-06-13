@@ -38,7 +38,6 @@ public class InternalCardStoryElement:SafeJsonObject {
             if let focusPoint = data?["focus-point"] as? [NSNumber]{
                 image.focus_point = focusPoint
             }
-            print(image)
             image_metadata = image
             
         }
@@ -91,7 +90,7 @@ public class CardStoryElement:SafeJsonObject {
     
     override public func setValue(_ value: Any?, forKey key: String) {
         
-        if key == "hero_image_metadata" {
+        if key == "image_metadata" {
             
             let image = ImageMetaData()
             let data = value as? [String : AnyObject]
@@ -105,7 +104,6 @@ public class CardStoryElement:SafeJsonObject {
             if let focusPoint = data?["focus-point"] as? [NSNumber]{
                 image.focus_point = focusPoint
             }
-            print(image)
             hero_image_metadata = image
         }
         else if key == "metadata" {
@@ -124,7 +122,6 @@ public class CardStoryElement:SafeJsonObject {
                 Converter.jsonKeyConverter(dictionaryArray: section, completion: { (data) in
                     singleCardStoryElement.setValuesForKeys(data)
                     self.story_elements.append(singleCardStoryElement)
-                    print(self.story_elements)
                 })
             }
             

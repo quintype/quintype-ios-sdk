@@ -88,7 +88,6 @@ open class Downloader:NSObject,URLSessionDelegate,URLSessionDownloadDelegate{
                 
                 ApiParser.StoriesParser(data: object as [String : AnyObject]?, completion: { (stories) in
                     
-                    print(stories)
                     
                     for story in stories{
                         
