@@ -10,7 +10,7 @@
 import Foundation
 import SystemConfiguration
 
-class Http{
+public class Http{
     
     var cacheKey:String?
     
