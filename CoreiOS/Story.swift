@@ -9,7 +9,7 @@
 import Foundation
 
 
-public class Story:SafeJsonObject {
+public class Story:SafeJsonObject, NSCopying {
     
     public var updated_at: NSNumber?
     public var assignee_id: NSNumber?
@@ -51,7 +51,43 @@ public class Story:SafeJsonObject {
     
     
     
-    
+    public func copy(with zone: NSZone? = nil) -> Any {
+        let story =  Story()
+        story.id = self.id
+        story.sections = self.sections
+        story.hero_image_metadata = self.hero_image_metadata
+        story.tags = self.tags
+        story.cards = self.cards
+        story.content_type = self.content_type
+        story.story_template = self.story_template
+        story.bullet_type = self.bullet_type
+        story.version = self.version
+        story.push_notification = self.push_notification
+        story.published_at = self.published_at
+        story.last_published_at = self.last_published_at
+        story.first_published_at = self.first_published_at
+        story.storyline_title = self.storyline_title
+        story.hero_image_caption = self.hero_image_caption
+        story.hero_image_s3_key = self.hero_image_s3_key
+        story.summary = self.summary
+        story.comments = self.comments
+        story.slug = self.slug
+        story.status = self.status
+        story.story_content_id = self.story_content_id
+        story.storyline_id = self.storyline_id
+        story.headline = self.headline
+        story.created_at = self.created_at
+        story.owner_id = self.owner_id
+        story.assignee_name = self.assignee_name
+        story.assignee_id = self.assignee_id
+        story.owner_name = self.owner_name
+        story.author_id = self.author_id
+        story.story_version_id = self.story_version_id
+        story.publisher_id = self.publisher_id
+        story.author_name = self.author_name
+        story.updated_at = self.updated_at
+        return story
+    }
     
     
     

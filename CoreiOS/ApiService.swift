@@ -409,11 +409,11 @@ public class ApiService{
     }
     
     //MARK: - Collection Api Call -
-    public func collectionApiRequest(stack:String,cache:cacheOption,Success:@escaping (Any?)->(),Error:@escaping (String?)->()) {
+    public func collectionApiRequest(stack:String,cache:cacheOption,param:[String:AnyObject]? = nil,Success:@escaping (Any?)->(),Error:@escaping (String?)->()) {
         
         let url = baseUrl + Constants.urlConfig.collectionRequest(stack: stack)
         
-        api.call(method: "get", urlString: url, parameter: nil,cache:cache, Success: { (data) in
+        api.call(method: "get", urlString: url, parameter: param,cache:cache, Success: { (data) in
             
             DispatchQueue.main.async { Success(data) }
             
