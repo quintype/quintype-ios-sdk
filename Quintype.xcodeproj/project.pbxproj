@@ -161,7 +161,7 @@
 		6150063D1DD5BA61000E20B3 = {
 			isa = PBXGroup;
 			children = (
-				615006491DD5BA61000E20B3 /* CoreiOS */,
+				615006491DD5BA61000E20B3 /* Framework */,
 				619788021E7818EA0027478A /* testApp */,
 				615006481DD5BA61000E20B3 /* Products */,
 			);
@@ -176,7 +176,7 @@
 			name = Products;
 			sourceTree = "<group>";
 		};
-		615006491DD5BA61000E20B3 /* CoreiOS */ = {
+		615006491DD5BA61000E20B3 /* Framework */ = {
 			isa = PBXGroup;
 			children = (
 				615006661DD5C6F2000E20B3 /* Constants */,
@@ -189,6 +189,7 @@
 				6150064B1DD5BA61000E20B3 /* Info.plist */,
 				61BFC3E61DFE81F0007C898B /* Quintype.swift */,
 			);
+			name = Framework;
 			path = CoreiOS;
 			sourceTree = "<group>";
 		};

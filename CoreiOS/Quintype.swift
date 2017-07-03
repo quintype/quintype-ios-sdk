@@ -44,7 +44,6 @@ open class Quintype{
         }
     }
     
-    
     open static var http:Http{
         get{
             if Quintype.sharedInstance._http == nil{
@@ -53,6 +52,7 @@ open class Quintype{
             return Quintype.sharedInstance._http!
         }
     }
+    
     
     //    public var isInternetActive = isInternetAvailable()
     
