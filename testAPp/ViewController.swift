@@ -13,21 +13,22 @@ class ViewController: UIViewController {
     
     override func viewDidLoad() {
         super.viewDidLoad()
-        Quintype.initWithBaseUrl(baseURL: "https://thequint-next.quintype.io")
-      
+        Quintype.initWithBaseUrl(baseURL: "https://www.thequint.com")
 
-        Quintype.api.getPublisherConfig(cache: cacheOption.loadOldCacheAndReplaceWithNew, Success: { (data) in
-            
-            
-            
-            
-        }) { (err) in
-            
-            print(err)
-            
-            
-        }
         
+     Quintype.api.collectionApiRequest(stack: "home", cache: cacheOption.none, Success: { (data) in
+        
+        let collections = data as? CollectionModel
+        
+     
+        
+        
+     }) { (errorMsg) in
+        
+        print(errorMsg)
+        
+        
+        }
         
     }
 

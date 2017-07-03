@@ -8,7 +8,7 @@
 
 import Foundation
 
-open class Collection: SafeJsonObject {
+open class CollectionModel: SafeJsonObject {
     
     var id:NSNumber?
     var slug:String?
@@ -51,7 +51,7 @@ open class CollectionItem:SafeJsonObject{
     var slug:String?
     var template:String?
     var type:String?
-    var collection:Collection?
+    var collection:CollectionModel?
     var story:Story?
     
     override open func setValue(_ value: Any?, forKey key: String) {
