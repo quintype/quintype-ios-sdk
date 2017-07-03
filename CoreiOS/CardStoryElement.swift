@@ -90,7 +90,7 @@ public class CardStoryElement:SafeJsonObject {
     public var metadata: CardStoryElementSubTypeMetaData?
     public var story_elements: [InternalCardStoryElement] = []
     public var tableData:TableData?
-    
+    public var userData:Any?
     
     override public func setValue(_ value: Any?, forKey key: String) {
         
