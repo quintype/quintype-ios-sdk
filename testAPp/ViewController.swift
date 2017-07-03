@@ -20,15 +20,13 @@ class ViewController: UIViewController {
         
         let collections = data as? CollectionModel
         
-     
-        
+    
         
      }) { (errorMsg) in
         
         print(errorMsg)
         
         
-        }
         
     }
 
