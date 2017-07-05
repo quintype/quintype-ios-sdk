@@ -10,16 +10,16 @@ import Foundation
 
 open class CollectionModel: SafeJsonObject {
     
-    var id:NSNumber?
-    var slug:String?
-    var summary:String?
-    var total_count:NSNumber?
-    var automated:NSNumber?
-    var updated_at:NSNumber?
-    var created_at:NSNumber?
-    var template:String?
-    var items:[CollectionItem] = []
-    var name:String?
+    public var id:NSNumber?
+    public var slug:String?
+    public var summary:String?
+    public var total_count:NSNumber?
+    public  var automated:NSNumber?
+    public  var updated_at:NSNumber?
+    public  var created_at:NSNumber?
+    public var template:String?
+    public var items:[CollectionItem] = []
+    public var name:String?
     
     override open func setValue(_ value: Any?, forKey key: String) {
         if key == "items"{
@@ -46,13 +46,13 @@ open class CollectionModel: SafeJsonObject {
 
 open class CollectionItem:SafeJsonObject{
     
-    var id:NSNumber?
-    var name:String?
-    var slug:String?
-    var template:String?
-    var type:String?
-    var collection:CollectionModel?
-    var story:Story?
+    public var id:NSNumber?
+    public var name:String?
+    public var slug:String?
+    public var template:String?
+    public var type:String?
+    public var collection:CollectionModel?
+    public var story:Story?
     
     override open func setValue(_ value: Any?, forKey key: String) {
         
@@ -78,5 +78,5 @@ open class CollectionItem:SafeJsonObject{
         item.collection = collection
         item.story = story
     }
-  
+    
 }

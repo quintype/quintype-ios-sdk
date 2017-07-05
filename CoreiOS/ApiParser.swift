@@ -10,6 +10,16 @@ import Foundation
 
 open class ApiParser{
     
+    
+    open class func sanitize(keyd:String) -> String{
+        var key = keyd
+        let letters = CharacterSet.alphanumerics
+        if (key.trimmingCharacters(in: letters) != ""){
+            key = key.replacingOccurrences(of: "-", with: "_").replacingOccurrences(of: "?", with: "_")
+        }
+        return key
+    }
+    
     //MARK:- Stroy Parser -
     open class func storyParser(data:[String:AnyObject]?,completion:@escaping (Story) -> () ){
         if var storyDictionary = data?["story"] as? [String:AnyObject]{
@@ -193,11 +203,24 @@ open class ApiParser{
         
     }
     
-    
-    
-    
+    open class func collectionParser(data:[String:AnyObject]?, completion:@escaping (CollectionModel) -> () ){
+        
+        
+        if var collectionArray = data{
+            
+            let collectionData = CollectionModel()
+            
+            for (_, enumeratedObject) in collectionArray.enumerated(){
+                
+                let value = enumeratedObject.value
+                let key = ApiParser.sanitize(keyd: enumeratedObject.key)
+                collectionArray.removeValue(forKey: key)
+                collectionArray[key] = value
+            }
+            
+            collectionData.setValuesForKeys(collectionArray)
+            completion(collectionData)
+            
+        }
+    }
 }
-
-
-
-
