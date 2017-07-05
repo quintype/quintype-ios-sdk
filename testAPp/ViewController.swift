@@ -24,7 +24,7 @@ class ViewController: UIViewController {
     
     var deepDive = 4
     var count = 0
-    var bulkLimit = 5
+    var bulkLimit = 6
     
     let bulkFields:[String] = ["id","headline","slug","url","hero-image-s3-key","hero-image-metadata","first-published-at","last-published-at","alternative","published-at","author-name","author-id","sections","story-template","summary","metadata"]
     
@@ -77,28 +77,20 @@ class ViewController: UIViewController {
                 }else if collection.type == collectionTypes.story.rawValue{
                     
                     
-                    print(collection.name)
-                    //
-                    collectionData.items.forEach({ (collectionItem) in
+                    if storyCollection[collection.name!] == nil {
                         
-                        if storyCollection[collectionData.name!] == nil {
-                            
-                            storyCollection[collectionData.name!] = [collectionItem.story!]
-                            
-                        }else{
-                            storyCollection[collectionData.name!]?.append(collectionItem.story!)
-                            
-                        }
-                    })
-                    
+                        storyCollection[collection.name!] = [collection.story!]
+                        
+                    }else{
+                        storyCollection[collection.name!]?.append(collection.story!)
+                        
+                    }
                     
                 }
             }
             let requestDict = ["requests": outerDict]
             
             return requestDict
-            
-            
             
         }else{
             return nil
@@ -111,7 +103,7 @@ class ViewController: UIViewController {
         
         self.count = self.count + 1
         
-        if count < 4 {
+        if count < deepDive {
             
             Quintype.api.bulkCall(param: requestDict, cache: cacheOption.none, Success: { (data) in
                 
@@ -122,44 +114,57 @@ class ViewController: UIViewController {
                 guard let results = someData["results"] as? [String:AnyObject] else{
                     return
                 }
-                var mergedCollection:[CollectionModel] = []
                 
-                for (index, value) in Array(results.values).enumerated(){
-                    
-                    
-                    print(value)
+                var mergedCollection:CollectionModel = CollectionModel()
+                
+                for (_,value) in Array(results.values).enumerated(){
                     
                     ApiParser.collectionParser(data: value as? [String:AnyObject], completion: { (collection) in
-                        print(collection)
                         
-                        let keyArray = Array(results.keys)
-//                        mergedCollection.
-                        
-                        if let parsedData = self.parseCollectionData(data: collection){
+                        for (_,item) in collection.items.enumerated(){
                             
-                            
-                            
-            
-                                self.collectionBulkCall(requestDict: parsedData)
+                            if item.type == collectionTypes.collection.rawValue{
                                 
-                      
-                            
-                            
-                            
+                                mergedCollection.items.append(item)
+                                
+                            }else if item.type == collectionTypes.story.rawValue{
+                                
+                                
+                                if self.storyCollection[collection.name!] == nil {
+                                    
+                                    self.storyCollection[collection.name!] = [item.story!]
+                                    
+                                }else{
+                                    
+                                    self.storyCollection[collection.name!]?.append(item.story!)
+                                    
+                                }
+                            }
                         }
-                        
-                        
                     })
                 }
                 
+                if requestDict["requests"]?.count == 0 || mergedCollection.items.count == 0{
+                    print(self.storyCollection)
+                    return
+                }
+                
+                //TODO:- just parse data needed
+                
+                if let parsedData = self.parseCollectionData(data: mergedCollection){
+                    
+                    self.collectionBulkCall(requestDict: parsedData)
+                    
+                }
                 
                 
             }, Error: { (error) in print("error from collection bulk call")})
             
-        }else{
-            print(storyCollection)
-            return
         }
+//        else{
+//            print(storyCollection)
+//            return
+//        }
         
     }
     

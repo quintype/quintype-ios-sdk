@@ -65,18 +65,5 @@ open class CollectionItem:SafeJsonObject{
         else{
             super.setValue(value, forKey: key)
         }
-    }
-    required override public init(){
-        super.init()
-    }
-    required public init(item:CollectionItem) {
-        item.id = id
-        item.name = name
-        item.slug = slug
-        item.template = template
-        item.type = type
-        item.collection = collection
-        item.story = story
-    }
-    
+    }    
 }
