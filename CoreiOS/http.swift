@@ -10,7 +10,7 @@
 import Foundation
 import SystemConfiguration
 
-class Http{
+public class Http{
     
     var cacheKey:String?
     
@@ -129,7 +129,7 @@ class Http{
                 
                 do {
                     
-                    if let data = data,let json = try? JSONSerialization.jsonObject(with: data, options: []) as? [String: AnyObject] {
+                    if let data = data,let json = try? JSONSerialization.jsonObject(with: data, options: []){
                         
                         let httpResponse = response as? HTTPURLResponse
                         let status = httpResponse?.statusCode
@@ -148,12 +148,18 @@ class Http{
                                     print("Api call successfull",json)
                                 #endif
                                 
-                                Success(json as [String : AnyObject]?)
+                                if let jsond = json as? [String:AnyObject]{
+                                    Success(jsond)
+                                }
+                                else if let rootArray = json as? NSArray{
+                                    let mapperDict:[String:AnyObject] = ["result":rootArray]
+                                    Success(mapperDict)
+                                }
                                 
                             }
                         }else{
                             
-                            if let errorMessage = json?["error"]{
+                            if let errorMessage = (json as? [String:AnyObject])?["error"]{
                                 if let message =  errorMessage["message"] as? String{
                                     DispatchQueue.main.async {
                                         

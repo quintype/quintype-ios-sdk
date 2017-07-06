@@ -7,12 +7,23 @@
 //
 
 import Foundation
+import Unbox
 
-public class Entity:SafeJsonObject{
+open class Entity:SafeJsonObject, Unboxable{
     
     public var name:String?
-    public var id:NSNumber!
-    public var link:String?
-    public var images:[EntityPhoto]?
+    public var id:Int!
+    public var type:String!
+    
+    
+    required public override init() {
+        super.init()
+    }
+    
+    public required init(unboxer: Unboxer) throws{
+        self.id =  unboxer.unbox(key: "id")
+        self.name =  unboxer.unbox(key: "name")
+        self.type = unboxer.unbox(key: "type")
+    }
     
 }

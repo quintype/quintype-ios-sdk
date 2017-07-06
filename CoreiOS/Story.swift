@@ -49,6 +49,8 @@ public class Story:SafeJsonObject, NSCopying {
     public var sections: [Section] = []
     public var id:String?
     public var linkedStories:[String:LinkedStory] = [:]
+    public var storyMetadata:StoryMetadata?
+    public var linked_entities:[[String:AnyObject]]?
     
     
     public func copy(with zone: NSZone? = nil) -> Any {
@@ -149,7 +151,6 @@ public class Story:SafeJsonObject, NSCopying {
                 
             }
             
-            
         }
             
         else if key == "linked_stories"{
@@ -167,9 +168,22 @@ public class Story:SafeJsonObject, NSCopying {
                 }
             }
         }
+        else if key == "linked_entities"{
+            self.linked_entities = value as? [[String:AnyObject]]
+        }
+            
+        else if key == "metadata"{
+            if let valued = value as? [String:AnyObject]{
+                let storyMeta = StoryMetadata()
+                storyMeta.setValuesForKeys(valued)
+                self.storyMetadata = storyMeta
+            }
+        }
             
         else {
             super.setValue(value, forKey: key)
         }
     }
+    
+    
 }
