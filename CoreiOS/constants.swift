@@ -38,6 +38,7 @@ public struct Constants{
         static let getAuthor =  "/api/v1/authors"
         static let bulkCall = "/api/v1/bulk"
         static let collectionUrl = "/api/v1/collections"
+        static let entityBulkURL = "/api/v1/entity/bulk"
         
         //Function that return string
         static func relatedStories(storyId:String) -> String {return getStories + "/" + storyId + "/related-stories"}

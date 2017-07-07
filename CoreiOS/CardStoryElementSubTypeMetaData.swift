@@ -30,5 +30,24 @@ public class CardStoryElementSubTypeMetaData:SafeJsonObject {
     public var question:String?
     public var answer:String?
     public var type:String?
+    public var linkedStory:LinkedStory?
+    
+    public override func setValue(_ value: Any?, forKey key: String) {
+        if key == "linked_story"{
+            let linkedStoryd = LinkedStory()
+            
+            if let valued = value as? [String:AnyObject]{
+                linkedStoryd.setValuesForKeys(valued)
+                if valued.count > 0{
+                    self.linkedStory = linkedStoryd
+                    self.linkedStory?.story_content_id = valued["story-content-id"] as! String!
+                }
+            }
+          
+        }
+        else{
+            super.setValue(value, forKey: key)
+        }
+    }
     
 }
