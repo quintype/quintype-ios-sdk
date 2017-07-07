@@ -48,6 +48,8 @@ public class Story:SafeJsonObject, NSCopying {
     public var hero_image_metadata: ImageMetaData?
     public var sections: [Section] = []
     public var id:String?
+    public var subheadline :String?
+  
     public var linkedStories:[String:LinkedStory] = [:]
     public var storyMetadata:StoryMetadata?
     public var linked_entities:[[String:AnyObject]]?
@@ -90,8 +92,7 @@ public class Story:SafeJsonObject, NSCopying {
         story.updated_at = self.updated_at
         return story
     }
-    
-    
+
     
     override public func setValue(_ value: Any?, forKey key: String) {
         
@@ -120,7 +121,6 @@ public class Story:SafeJsonObject, NSCopying {
             if let focusPoint = data?["focus-point"] as? [NSNumber]{
                 image.focus_point = focusPoint
             }
-            print(image)
             hero_image_metadata = image
             
         }

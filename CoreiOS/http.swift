@@ -109,8 +109,7 @@ public class Http{
         URLSession.shared.dataTask(with: url as URLRequest) { (data, response, error) in
             
             #if DEBUG
-                print("error0",data?.description as Any,response as Any,error as Any)
-                if let data = data,let json = try? JSONSerialization.jsonObject(with: data, options: []) as? [String: AnyObject] { print(json as Any) }
+                if let data = data,let json = try? JSONSerialization.jsonObject(with: data, options: []) as? [String: AnyObject] {  }
             #endif
             
             if error != nil {
@@ -145,7 +144,7 @@ public class Http{
                             DispatchQueue.main.async {
                                 
                                 #if DEBUG
-                                    print("Api call successfull",json)
+                                    print("Api call successfull")
                                 #endif
                                 
                                 if let jsond = json as? [String:AnyObject]{
@@ -180,7 +179,6 @@ public class Http{
                         #endif
                         
                         DispatchQueue.main.async {
-                            print(data,url,response)
                             Error(Constants.HttpError.pageNotFound)
                         }
                     }
@@ -328,7 +326,6 @@ public class Http{
             
             Cache.retriveCacheData(keyName:  (url.url?.absoluteString)!, cachTimelimt: 0, oflineStatus: true, Success: { (data) in
                 
-                print(data)
                 let json = (data as? [String : AnyObject])?.first?.value as? [String:AnyObject]
                 
                 Success(json)

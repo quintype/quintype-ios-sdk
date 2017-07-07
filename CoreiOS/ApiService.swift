@@ -425,7 +425,11 @@ public class ApiService{
         
         api.call(method: "get", urlString: url, parameter: param,cache:cache, Success: { (data) in
             
-            DispatchQueue.main.async { Success(data) }
+          ApiParser.collectionParser(data: data, completion: { (collectionObject) in
+            
+              DispatchQueue.main.async { Success(collectionObject) }
+            
+          })
             
         }) { (err) in
             
@@ -435,4 +439,7 @@ public class ApiService{
         }
         
     }
+    
+    
+    
 }
