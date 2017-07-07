@@ -16,7 +16,7 @@ Pod::Spec.new do |s|
   #
 
   s.name         = "Quintype"
-  s.version      = "0.93"
+  s.version      = "0.94"
   s.summary      = "Main stream SDK for Quintype publishers"
 
   # This description is used to generate tags and improve search results.
