@@ -7,6 +7,7 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		5D16E7391F0D269900210AC4 /* BulkApi.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5DD4D6BF1F0D1E76004776F3 /* BulkApi.swift */; };
 		5D3C25901F0A23AA00B90D25 /* Collection.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5D3C258F1F0A23AA00B90D25 /* Collection.swift */; };
 		6104D7AD1E015C7B0082439C /* Cache.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6104D7AC1E015C7B0082439C /* Cache.swift */; };
 		6104D7AF1E015CB40082439C /* CacheOptions.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6104D7AE1E015CB40082439C /* CacheOptions.swift */; };
@@ -81,6 +82,7 @@
 
 /* Begin PBXFileReference section */
 		5D3C258F1F0A23AA00B90D25 /* Collection.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Collection.swift; sourceTree = "<group>"; };
+		5DD4D6BF1F0D1E76004776F3 /* BulkApi.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = BulkApi.swift; sourceTree = "<group>"; };
 		6104D7AC1E015C7B0082439C /* Cache.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Cache.swift; sourceTree = "<group>"; };
 		6104D7AE1E015CB40082439C /* CacheOptions.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = CacheOptions.swift; sourceTree = "<group>"; };
 		610EB6F51E60449F005D61AC /* Author.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Author.swift; sourceTree = "<group>"; };
@@ -272,6 +274,7 @@
 				6197880A1E7818EA0027478A /* Assets.xcassets */,
 				6197880C1E7818EA0027478A /* LaunchScreen.storyboard */,
 				6197880F1E7818EA0027478A /* Info.plist */,
+				5DD4D6BF1F0D1E76004776F3 /* BulkApi.swift */,
 			);
 			name = testApp;
 			path = testAPp;
@@ -473,6 +476,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				619788061E7818EA0027478A /* ViewController.swift in Sources */,
+				5D16E7391F0D269900210AC4 /* BulkApi.swift in Sources */,
 				619788041E7818EA0027478A /* AppDelegate.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
