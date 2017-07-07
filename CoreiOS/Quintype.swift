@@ -30,6 +30,7 @@ open class Quintype{
     private var _analytics:Analytics?
     private var _cache:Cache?
     private var _publisherConfig:Config?
+    private var _http:Http?
     private var _baseURL:String?
     
     
@@ -42,6 +43,16 @@ open class Quintype{
             return Quintype.sharedInstance._api!
         }
     }
+    
+    open static var http:Http{
+        get{
+            if Quintype.sharedInstance._http == nil{
+                Quintype.sharedInstance._http = Http()
+            }
+            return Quintype.sharedInstance._http!
+        }
+    }
+    
     
     //    public var isInternetActive = isInternetAvailable()
     

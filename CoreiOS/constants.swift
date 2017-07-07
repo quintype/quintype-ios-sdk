@@ -127,6 +127,7 @@ public struct Constants{
         static let template = "template"
         static let storyGroup = "story-group"
         static let storyOrder = "story-order"
+        static let storyAttribute = "story-attributes"
         
     }
     public struct payment{

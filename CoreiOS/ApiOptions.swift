@@ -19,7 +19,7 @@ public enum storiesOption {
     case storyGroup(storyGroupName:String)
     case storyGroupInSection(storyGroupName:String,sectionName:String)
     case storyOrder(storyIds:[String])
-    
+    case attribute(attributeKey:String,attributeValue:String)
     
     var value: [String:String]? {
         
@@ -40,6 +40,13 @@ public enum storiesOption {
         case .storyOrder(let storyIds):
             return [Constants.story.storyOrder: storyIds.joined(separator: ",")]
             
+        case .attribute(let attributeKey,let attributeValue):
+            
+            var newKey = Constants.story.storyAttribute
+            
+            newKey = newKey.appending("." + attributeKey)
+            
+            return [newKey:attributeValue]
         }
     }
 }
