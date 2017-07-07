@@ -8,8 +8,8 @@
 
 protocol Completion{
     func finished()
+    
 }
-
 
 import Foundation
 import SystemConfiguration
