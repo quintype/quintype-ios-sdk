@@ -41,6 +41,8 @@ public class InternalCardStoryElement:SafeJsonObject {
             image_metadata = image
             
         }
+            
+        
         else if key == "metadata" {
             metadata = CardStoryElementSubTypeMetaData()
             Converter.jsonKeyConverter(dictionaryArray: value as? [String : AnyObject], completion: { (data) in
@@ -86,7 +88,8 @@ public class CardStoryElement:SafeJsonObject {
     public var image_s3_key:String?
     public var metadata: CardStoryElementSubTypeMetaData?
     public var story_elements: [InternalCardStoryElement] = []
-    
+    public var tableData:TableData?
+    public var userData:Any?
     
     override public func setValue(_ value: Any?, forKey key: String) {
         
@@ -106,6 +109,23 @@ public class CardStoryElement:SafeJsonObject {
             }
             hero_image_metadata = image
         }
+            
+        else if key == "data"{
+            let tableData = TableData()
+            let data = value as? [String:AnyObject]
+            
+            if let content = data?["content"] as? String{
+                tableData.content = content
+            }
+            
+            if let contentType = data?["content-type"] as? String{
+                tableData.contentType = contentType
+            }
+            if tableData.content != nil{
+                self.tableData = tableData
+            }
+        }
+            
         else if key == "metadata" {
             
             metadata = CardStoryElementSubTypeMetaData()

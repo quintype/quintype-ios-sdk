@@ -16,6 +16,7 @@ public class Card:SafeJsonObject  {
     public var content_version_id: String!
     public var version: NSNumber?
     public var story_elements: [CardStoryElement] = []
+    public var metadata:CardMetadata?
     
     //TODO: - find where these are used and why these are used
     
@@ -38,6 +39,15 @@ public class Card:SafeJsonObject  {
                     //print(self.story_elements)
                 })
             }
+            
+        }
+        else if key == "metadata"{
+            if let valued = value as? [String:AnyObject]{
+                 let cardMetadata = CardMetadata()
+                 cardMetadata.setValuesForKeys(valued)
+                self.metadata = cardMetadata
+            }
+           
             
         }
         else {
