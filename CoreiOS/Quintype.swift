@@ -11,7 +11,6 @@ protocol Completion{
     
 }
 
-
 import Foundation
 import SystemConfiguration
 
