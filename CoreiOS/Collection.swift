@@ -9,7 +9,7 @@
 import UIKit
 import Quintype
 
-open class Collection: SafeJsonObject, NSCopying {
+open class CollectionModel: SafeJsonObject, NSCopying {
     
     open var id:NSNumber?
     open var slug:String?
@@ -44,7 +44,7 @@ open class Collection: SafeJsonObject, NSCopying {
         }
     }
     open func copy(with zone: NSZone? = nil) -> Any {
-        let collection =  Collection()
+        let collection =  CollectionModel()
         collection.id = id
         collection.slug = slug
         collection.summary = summary
@@ -67,7 +67,7 @@ open class CollectionItem:SafeJsonObject, NSCopying{
     open var slug:String?
     open var template:String?
     open var type:String?
-    open var collection:Collection?
+    open var collection:CollectionModel?
     open var story:Story?
     
     override open func setValue(_ value: Any?, forKey key: String) {
