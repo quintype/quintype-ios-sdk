@@ -203,26 +203,49 @@ open class ApiParser{
         
     }
     
-    open class func collectionParser(data:[String:AnyObject]?, completion:@escaping (CollectionModel) -> () ){
+    open class func collectionParser(data:[String:AnyObject]?, completion:@escaping(_ collection:Collection, _ error:Error?) -> Void){
         
-        
-        if var collectionArray = data{
-            
-            let collectionData = CollectionModel()
-            
-            for (_, enumeratedObject) in collectionArray.enumerated(){
+        if let someData = data{
+            let collection = Collection.init()
+            var collectionDict:[String:AnyObject] = [:]
+            for (_, enumeratedObject) in someData.enumerated(){
                 
                 let value = enumeratedObject.value
                 let key = ApiParser.sanitize(keyd: enumeratedObject.key)
-                collectionArray.removeValue(forKey: key)
-                collectionArray[key] = value
+                collectionDict.removeValue(forKey: key)
+                collectionDict[key] = value
             }
-            
-            collectionData.setValuesForKeys(collectionArray)
-            completion(collectionData)
-            
+            collection.setValuesForKeys(collectionDict)
+            completion(collection, nil)
         }
     }
+    
+    
+    open class func collectionBulkParser(data:Any?, completion:@escaping(_ collection:[String:Collection], _ error:Error?) -> Void){
+        
+        guard let someData = data as? [String:AnyObject] else {
+            return
+        }
+        
+        guard let results = someData["results"] as? [String:AnyObject] else{
+            return
+        }
+        var collectionMapping:Dictionary<String,Collection> = [:]
+        for (index, value) in Array(results.values).enumerated(){
+            
+            
+            ApiParser.collectionParser(data: value as? [String:AnyObject], completion: { (collection, error) in
+                print(collection)
+                
+                let keyArray = Array(results.keys)
+                collectionMapping[keyArray[index]] = collection
+            })
+        }
+        completion(collectionMapping, nil)
+        
+        
+    }
+
 }
 
 

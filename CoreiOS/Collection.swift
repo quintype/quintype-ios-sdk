@@ -1,28 +1,31 @@
 //
 //  Collection.swift
-//  Quintype
+//  CoreApp-iOS
 //
-//  Created by Albin.git on 7/3/17.
+//  Created by Arjun P A on 24/04/17.
 //  Copyright © 2017 Albin CR. All rights reserved.
 //
 
-import Foundation
+import UIKit
+import Quintype
 
-open class CollectionModel: SafeJsonObject {
+open class Collection: SafeJsonObject, NSCopying {
     
-    public var id:NSNumber?
-    public var slug:String?
-    public var summary:String?
-    public var total_count:NSNumber?
-    public  var automated:NSNumber?
-    public  var updated_at:NSNumber?
-    public  var created_at:NSNumber?
-    public var template:String?
-    public var items:[CollectionItem] = []
-    public var name:String?
+    open var id:NSNumber?
+    open var slug:String?
+    open var summary:String?
+    open var total_count:NSNumber?
+    open var automated:NSNumber?
+    open var updated_at:NSNumber?
+    open var created_at:NSNumber?
+    open var template:String?
+    open var items:[CollectionItem] = []
+  //  var originalItems:[CollectionItem] = []
+    open var name:String?
     
     override open func setValue(_ value: Any?, forKey key: String) {
         if key == "items"{
+            
             
             for itemDict in value as? [[String:AnyObject]] ?? []{
                 let collectionItem = CollectionItem()
@@ -39,20 +42,33 @@ open class CollectionModel: SafeJsonObject {
         else{
             super.setValue(value, forKey: key)
         }
-        
+    }
+    open func copy(with zone: NSZone? = nil) -> Any {
+        let collection =  Collection()
+        collection.id = id
+        collection.slug = slug
+        collection.summary = summary
+        collection.total_count = total_count
+        collection.automated = automated
+        collection.updated_at = updated_at
+        collection.created_at = created_at
+        collection.template = template
+        collection.items = items
+        collection.name = name
+        return collection
     }
     
-}
-
-open class CollectionItem:SafeJsonObject{
     
-    public var id:NSNumber?
-    public var name:String?
-    public var slug:String?
-    public var template:String?
-    public var type:String?
-    public var collection:CollectionModel?
-    public var story:Story?
+}
+open class CollectionItem:SafeJsonObject, NSCopying{
+    
+    open var id:NSNumber?
+    open var name:String?
+    open var slug:String?
+    open var template:String?
+    open var type:String?
+    open var collection:Collection?
+    open var story:Story?
     
     override open func setValue(_ value: Any?, forKey key: String) {
         
@@ -65,5 +81,30 @@ open class CollectionItem:SafeJsonObject{
         else{
             super.setValue(value, forKey: key)
         }
-    }    
+    }
+    required override public init(){
+        super.init()
+    }
+    required public init(item:CollectionItem) {
+        item.id = id
+        item.name = name
+        item.slug = slug
+        item.template = template
+        item.type = type
+        item.collection = collection
+        item.story = story
+    }
+    
+    open func copy(with zone: NSZone? = nil) -> Any{
+        //        let item = CollectionItem.init()
+        //        item.id = id
+        //        item.name = name
+        //        item.slug = slug
+        //        item.template = template
+        //        item.type = type
+        //        item.collection = collection
+        //        item.story = story
+        //        return item
+        return type(of:self).init(item: self)
+    }
 }
