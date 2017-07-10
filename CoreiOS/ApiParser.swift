@@ -203,10 +203,10 @@ open class ApiParser{
         
     }
     
-    open class func collectionParser(data:[String:AnyObject]?, completion:@escaping(_ collection:Collection, _ error:Error?) -> Void){
+    open class func collectionParser(data:[String:AnyObject]?, completion:@escaping(_ collection:CollectionModel, _ error:Error?) -> Void){
         
         if let someData = data{
-            let collection = Collection.init()
+            let collection = CollectionModel.init()
             var collectionDict:[String:AnyObject] = [:]
             for (_, enumeratedObject) in someData.enumerated(){
                 
@@ -221,7 +221,7 @@ open class ApiParser{
     }
     
     
-    open class func collectionBulkParser(data:Any?, completion:@escaping(_ collection:[String:Collection], _ error:Error?) -> Void){
+    open class func collectionBulkParser(data:Any?, completion:@escaping(_ collection:[String:CollectionModel], _ error:Error?) -> Void){
         
         guard let someData = data as? [String:AnyObject] else {
             return
@@ -230,7 +230,7 @@ open class ApiParser{
         guard let results = someData["results"] as? [String:AnyObject] else{
             return
         }
-        var collectionMapping:Dictionary<String,Collection> = [:]
+        var collectionMapping:Dictionary<String,CollectionModel> = [:]
         for (index, value) in Array(results.values).enumerated(){
             
             
