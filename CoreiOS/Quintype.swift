@@ -44,6 +44,7 @@ open class Quintype{
         }
     }
     
+    
     open static var http:Http{
         get{
             if Quintype.sharedInstance._http == nil{
