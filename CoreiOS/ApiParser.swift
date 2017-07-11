@@ -8,10 +8,20 @@
 
 import Foundation
 
-class ApiParser{
+open class ApiParser{
+    
+    
+    open class func sanitize(keyd:String) -> String{
+        var key = keyd
+        let letters = CharacterSet.alphanumerics
+        if (key.trimmingCharacters(in: letters) != ""){
+            key = key.replacingOccurrences(of: "-", with: "_").replacingOccurrences(of: "?", with: "_")
+        }
+        return key
+    }
     
     //MARK:- Stroy Parser -
-    class func storyParser(data:[String:AnyObject]?,completion:@escaping (Story) -> () ){
+    open class func storyParser(data:[String:AnyObject]?,completion:@escaping (Story) -> () ){
         if var storyDictionary = data?["story"] as? [String:AnyObject]{
             
             
@@ -41,7 +51,7 @@ class ApiParser{
     }
     
     //MARK:- Get stories parser-
-    class func StoriesParser(data:[String:AnyObject]?,parseKey:String = "stories",completion:@escaping ([Story]) -> () ){
+    open class func StoriesParser(data:[String:AnyObject]?,parseKey:String = "stories",completion:@escaping ([Story]) -> () ){
         var stories = [Story]()
         if let storyArray = data?[parseKey] as? [[String: AnyObject]] {
             
@@ -80,7 +90,7 @@ class ApiParser{
     
     
     //MARK:- Config parser -
-    class func configParser(data:[String:AnyObject]?,completion:@escaping (Config) -> () ){
+    open class func configParser(data:[String:AnyObject]?,completion:@escaping (Config) -> () ){
         let config = Config()
         if var configDetails = data{
             for (_,singleConfigDetails) in configDetails.enumerated(){
@@ -104,7 +114,7 @@ class ApiParser{
     
     
     //MARK:- Search parser -
-    class func searchParser(data:[String:AnyObject]?,completion:@escaping (Search) -> () ){
+    open class func searchParser(data:[String:AnyObject]?,completion:@escaping (Search) -> () ){
         
         if var searchDictionary = data?["results"] as? [String:AnyObject]{
             
@@ -133,7 +143,7 @@ class ApiParser{
     
     
     //MARK:- Comments parser -
-    class func commentsParser(data:[String:AnyObject]?,completion:@escaping ([Comment]) -> () ){
+    open class func commentsParser(data:[String:AnyObject]?,completion:@escaping ([Comment]) -> () ){
         
         var comments = [Comment]()
         if let commentArray = data?["comments"] as? [[String: AnyObject]] {
@@ -166,8 +176,77 @@ class ApiParser{
         }
     }
     
-}
+    open class func authorDetailParser(data:[String:AnyObject]?,completion:@escaping (Author) -> () ){
+        
+        if var autherArray = data?["author"] as? [String: AnyObject] {
+            
+            let autherDetails = Author()
+            
+            for (_,autherDetail) in autherArray.enumerated(){
+                
+                let key = autherDetail.key
+                let value = autherDetail.value
+                let letters = CharacterSet.alphanumerics
+                if (key.trimmingCharacters(in: letters) != "") {
+                    ////print(key)
+                    let newKey = key.replacingOccurrences(of: "-", with: "_").replacingOccurrences(of: "?", with: "_")
+                    autherArray.removeValue(forKey: key)
+                    autherArray[newKey] = value
+                    
+                }
+                
+            }
+            autherDetails.setValuesForKeys(autherArray)
+            completion(autherDetails)
+            
+        }
+        
+    }
+    
+    open class func collectionParser(data:[String:AnyObject]?, completion:@escaping(_ collection:CollectionModel, _ error:Error?) -> Void){
+        
+        if let someData = data{
+            let collection = CollectionModel.init()
+            var collectionDict:[String:AnyObject] = [:]
+            for (_, enumeratedObject) in someData.enumerated(){
+                
+                let value = enumeratedObject.value
+                let key = ApiParser.sanitize(keyd: enumeratedObject.key)
+                collectionDict.removeValue(forKey: key)
+                collectionDict[key] = value
+            }
+            collection.setValuesForKeys(collectionDict)
+            completion(collection, nil)
+        }
+    }
+    
+    
+    open class func collectionBulkParser(data:Any?, completion:@escaping(_ collection:[String:CollectionModel], _ error:Error?) -> Void){
+        
+        guard let someData = data as? [String:AnyObject] else {
+            return
+        }
+        
+        guard let results = someData["results"] as? [String:AnyObject] else{
+            return
+        }
+        var collectionMapping:Dictionary<String,CollectionModel> = [:]
+        for (index, value) in Array(results.values).enumerated(){
+            
+            
+            ApiParser.collectionParser(data: value as? [String:AnyObject], completion: { (collection, error) in
+                print(collection)
+                
+                let keyArray = Array(results.keys)
+                collectionMapping[keyArray[index]] = collection
+            })
+        }
+        completion(collectionMapping, nil)
+        
+        
+    }
 
+}
 
 
 

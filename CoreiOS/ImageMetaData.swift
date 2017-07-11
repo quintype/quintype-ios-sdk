@@ -12,6 +12,14 @@ public class ImageMetaData:SafeJsonObject {
     
     public var width: NSNumber?
     public var height: NSNumber?
-    public var focus_points: [NSNumber]?
+    public var focus_point: [NSNumber]?
     
+    override public func setValue(_ value: Any?, forKey key: String) {
+        if key == "focus_point" {
+            
+            focus_point?.append(value as! NSNumber)
+            
+        }
+    }
 }
+

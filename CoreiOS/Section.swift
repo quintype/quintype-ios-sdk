@@ -17,6 +17,7 @@ public class Section:SafeJsonObject {
     public var updated_at: NSNumber?
     public var story_order: [String]?
     public var publisher_id: String?
+    public var display_name:String?
     
     
 }

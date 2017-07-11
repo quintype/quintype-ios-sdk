@@ -13,25 +13,22 @@ public class Layout:SafeJsonObject{
     public var stories_between_stacks:NSNumber?
     public var menu:[Menu] = []
     public var stacks:[Stack] = []
-
-    
     override public func setValue(_ value: Any?, forKey key: String) {
-        
+    
         if key == "menu" {
-            let singleMenu = Menu()
+           
             for section in value as! [[String:AnyObject]]{
-                
+                 let singleMenu = Menu()
                 Converter.jsonKeyConverter(dictionaryArray: section, completion: { (data) in
                     singleMenu.setValuesForKeys(data)
                     self.menu.append(singleMenu)
                     
                 })
             }
+        }else  if key == "stacks" {
             
-        }else  if key == "sections" {
-            let singleStacks = Stack()
             for section in value as! [[String:AnyObject]]{
-                
+                let singleStacks = Stack()
                 Converter.jsonKeyConverter(dictionaryArray: section, completion: { (data) in
                     singleStacks.setValuesForKeys(data)
                     self.stacks.append(singleStacks)

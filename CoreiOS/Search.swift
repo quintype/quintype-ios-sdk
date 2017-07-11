@@ -15,16 +15,16 @@ public class Search:SafeJsonObject{
     public var total: NSNumber?
     public var stories: [Story] = []
     public var term: String?
-
+    
     override public func setValue(_ value: Any?, forKey key: String) {
         
         if key == "stories"{
             
-            var singleStory = Story()
-            for var section in value as! [[String:AnyObject]]{
-                
+            
+            for section in value as! [[String:AnyObject]]{
+                let singleStory = Story()
                 Converter.jsonKeyConverter(dictionaryArray: section, completion: { (data) in
-                    singleStory.setValuesForKeys(data as! [String: AnyObject])
+                    singleStory.setValuesForKeys(data)
                     self.stories.append(singleStory)
                     //print(self.stories)
                 })
