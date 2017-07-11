@@ -17,7 +17,7 @@ Pod::Spec.new do |s|
   #
 
   s.name         = "Quintype"
-  s.version      = "0.94"
+  s.version      = "1.0.10"
   s.summary      = "/........................./"
 
   # This description is used to generate tags and improve search results.
@@ -27,7 +27,7 @@ Pod::Spec.new do |s|
   #   * Finally, don't worry about the indent, CocoaPods strips it!
   s.description  = "...................................................."
 
-  s.homepage     = "https://github.com/Albinzr/Quintype"
+  s.homepage     = "https://github.com/quintype/quintype-ios-sdk"
   # s.screenshots  = "www.example.com/screenshots_1.gif", "www.example.com/screenshots_2.gif"
 
 
@@ -79,7 +79,7 @@ Pod::Spec.new do |s|
   #  Supports git, hg, bzr, svn and HTTP.
   #
 
-  s.source       = { :git => "https://github.com/arjunpa/Quintype.git", :tag => "#{s.version}" }
+  s.source       = { :git => "https://github.com/quintype/quintype-ios-sdk.git", :tag => "#{s.version}" }
 
 
   # ――― Source Code ―――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――― #
