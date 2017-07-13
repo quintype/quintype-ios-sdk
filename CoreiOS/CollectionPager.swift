@@ -16,19 +16,23 @@ public class CollectionPager: NSObject {
     var _slug:String
     typealias COMPLETION_HANDLER = (CollectionModel, Error?) -> ()
     var completion:COMPLETION_HANDLER?
+    lazy var serialQueue:DispatchQueue = {
+        let queue = DispatchQueue.init(label: "serialProcessQueue")
+        return queue
+    }()
     init(slug:String, offset:Int = 0, pagePara:Page?=nil){
         if let pageParaNotNil = pagePara{
             page = pageParaNotNil
         }
         else{
-            page = Page.init(offsetPara: offset, limitPara: 5)
+            page = Page.init(offsetPara: offset, limitPara: 10)
         }
         _slug = slug
         super.init()
     }
     
     func reset(offset:Int = 0){
-        page = Page.init(offsetPara: offset, limitPara: 5)
+        page = Page.init(offsetPara: offset, limitPara: 10)
     }
     
     func pageNext(){
@@ -48,31 +52,36 @@ public class CollectionPager: NSObject {
         }
         params?["story-fields"] = CollectionPager.bulkNecessaryFields.joined(separator: ",") as NSString
          self.updatePageStatus(status: Page.PAGING_STATUS.PAGING)
-        Quintype.api.collectionApiRequest(stack: _slug, cache: cacheOption.none,param:params, Success: { (collectionPara) in
+        Quintype.api.collectionApiRequest(stack: _slug, cache: cacheOption.none,param:params, Success: {[weak self] (collectionPara) in
             
             if let collectiond = collectionPara as? [String:AnyObject]{
-                ApiParser.collectionParser(data: collectiond, completion: { (collection, error) in
-                    
-                    if error != nil{
-
-                        self.updatePageStatus(status: Page.PAGING_STATUS.ERRORED)
-                    }
-                    else{
-              
-                        self.updatePageStatus(status: Page.PAGING_STATUS.NOT_PAGING)
-                        //TODO: -check with backend guys if the offset bug is fixed yet. Then change to limit vs offset comparison
-                        if collection.items.count == 0{
-                            
-                            self.updatePageStatus(status: Page.PAGING_STATUS.LAST_PAGE)
-                        }
+                
+                
+                    self?.serialQueue.async(execute: {
+                        ApiParser.collectionParser(data: collectiond, completion: { (collection, error) in
                         DispatchQueue.main.async(execute: {
-                            self.completion?(collection, nil)
+                            if error != nil{
+                                
+                                self?.self.updatePageStatus(status: Page.PAGING_STATUS.ERRORED)
+                            }
+                            else{
+                                
+                                self?.updatePageStatus(status: Page.PAGING_STATUS.NOT_PAGING)
+                                //TODO: -check with backend guys if the offset bug is fixed yet. Then change to limit vs offset comparison
+                                if collection.items.count == 0{
+                                    
+                                    self?.updatePageStatus(status: Page.PAGING_STATUS.LAST_PAGE)
+                                }
+                                
+                                self?.completion?(collection, nil)
+                                
+                            }
+                         })
+                   
+                            
+                            
                         })
-                        
-                    }
-                    
-                    
-                })
+                    })
             }
         }) { (error) in
             //  self.page.status = Page.PAGING_STATUS.ERRORED

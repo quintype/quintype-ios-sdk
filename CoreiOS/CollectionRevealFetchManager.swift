@@ -9,7 +9,7 @@
 import UIKit
 import Quintype
 
-open class CollectionRevealFetchManager: NSObject {
+public class CollectionRevealFetchManager: NSObject {
     
     let bulkLimit:Int = 5
     fileprivate var resultantCollections:[String:CollectionModel]?
@@ -18,9 +18,14 @@ open class CollectionRevealFetchManager: NSObject {
     var _slug:String
     fileprivate var _currentItems:[CollectionItem] = []
     public typealias COMPLETION_HANDLER = ([CollectionModel], Error?) -> ()
-    open var completion:COMPLETION_HANDLER?
+    public var completion:COMPLETION_HANDLER?
     fileprivate var _page:Page?
     fileprivate var _originalOffset:Int = 0
+
+    lazy var serialQueue:DispatchQueue = {
+        let queue = DispatchQueue.init(label: "serialProcessQueue")
+        return queue
+    }()
     fileprivate var page:Page!{
         get{
             return _page!
@@ -70,6 +75,7 @@ open class CollectionRevealFetchManager: NSObject {
             let areThereCollections =  collection.items.filter({$0.type == "collection"})
             if areThereCollections.count == 0{
                 self.completion?([collection], nil)
+                return
             }
             self._currentItems = collection.items
             self.recursiveBulkRequest(collectionItems: collection.items, completion: { (collectionMapping) in
@@ -112,106 +118,125 @@ open class CollectionRevealFetchManager: NSObject {
     }
     
     func recursiveBulkRequest(collectionItems:[CollectionItem], completion:@escaping (_ collections:[String:CollectionModel]) -> Void){
-        
-        self.bulkRequestMake(collectionItems: collectionItems) { (collections) in
-            if self.resultantCollections == nil{
-                self.resultantCollections = collections
-                
-                var items:[CollectionItem] = []
-                let filtered = Array(collections.values).filter({ (oneCollection) -> Bool in
-                    if oneCollection.items.first == nil{
-                        return false
-                    }
-                    var flag:Bool = false
-                    let filtered = oneCollection.items.filter({$0.type ?? "" == "collection"})
-                    if filtered.count > 0{
-                        flag = true
-                        items.append(contentsOf: filtered)
-                    }
-                    return flag
+          self.bulkRequestMake(collectionItems: collectionItems) { (collections) in
+             self.filterCollections(collections: collections, recursiveHandler: { (items) in
+                DispatchQueue.main.async(execute: { 
+                    self.recursiveBulkRequest(collectionItems: items, completion: completion)
                 })
                 
-                if filtered.count == 0{
-                    completion(self.resultantCollections!)
-                    return
-                }
-                for filter in filtered{
-                    for item in filter.items{
-                        self.keys[item.slug!] = filter.slug!
-                    }
-                }
-                if filtered.count > 0 {
-                    self.recursiveBulkRequest(collectionItems: items, completion: completion)
-                    
-                }
-            }
-            else{
-                
-                for (key,value) in collections{
-                    
-                    var keyCopy = key
-                    
-                    while self.keys[keyCopy] != nil{
-                        keyCopy = self.keys[keyCopy]!
-                    }
-                    if self.resultantCollections != nil && self.resultantCollections![keyCopy] != nil{
-                        
-                        let index = self.resultantCollections![keyCopy]!.items.index(where: {$0.slug == value.slug ?? "" && $0.type == "collection" })
-                        var parentSlug:String?
-                        var parentCollectionName:String?
-                        if index != nil{
-                            parentSlug = self.resultantCollections![keyCopy]!.items[index!].slug
-                            parentCollectionName = self.resultantCollections![keyCopy]!.items[index!].name
-                            self.resultantCollections![keyCopy]!.items.remove(at: index!)
-                        }
-                        value.items = value.items.map({ (item) -> CollectionItem in
-                            item.slug = parentSlug ?? keyCopy
-                            item.name = parentCollectionName
-                            return item
-                        })
-                        if index != nil{
-                            self.resultantCollections![keyCopy]!.items.insert(contentsOf: value.items, at: index!)
-                        }
-                        
-                      //  self.resultantCollections![keyCopy]!.items = value.items +  self.resultantCollections![keyCopy]!.items
-                    }
-                    
-                }
-                //prepare datasource for next bulk
-                
-                var items:[CollectionItem] = []
-                let filtered = Array(collections.values).filter({ (oneCollection) -> Bool in
-                    if oneCollection.items.first == nil{
-                        return false
-                    }
-                    var flag:Bool = false
-                    let filtered = oneCollection.items.filter({$0.type ?? "" == "collection"})
-                    if filtered.count > 0{
-                        flag = true
-                        items.append(contentsOf: filtered)
-                    }
-                    return flag
+             }, completionHandler: {
+                //self.resultCollections will nil after this callback. Maintain a reference to it
+                let resultCollections = self.resultantCollections!
+                DispatchQueue.main.async(execute: { 
+                     completion(resultCollections)
                 })
-                for filter in filtered{
-                    for item in filter.items{
-                        self.keys[item.slug!] = filter.slug!
-                    }
-                }
-                
-                if filtered.count > 0 {
-                    self.recursiveBulkRequest(collectionItems: items, completion: completion)
-                    
-                }
-                else{
-                    completion(self.resultantCollections!)
-                    self.keys.removeAll()
-                    self.resultantCollections = nil
-                    return
-                    
-                }
-            }
+               
+             })
         }
+       
     }
+    
+//    func recursiveBulkRequest(collectionItems:[CollectionItem], completion:@escaping (_ collections:[String:CollectionModel]) -> Void){
+//        
+//        self.bulkRequestMake(collectionItems: collectionItems) { (collections) in
+//            if self.resultantCollections == nil{
+//                self.resultantCollections = collections
+//                
+//                var items:[CollectionItem] = []
+//                let filtered = Array(collections.values).filter({ (oneCollection) -> Bool in
+//                    if oneCollection.items.first == nil{
+//                        return false
+//                    }
+//                    var flag:Bool = false
+//                    let filtered = oneCollection.items.filter({$0.type ?? "" == "collection"})
+//                    if filtered.count > 0{
+//                        flag = true
+//                        items.append(contentsOf: filtered)
+//                    }
+//                    return flag
+//                })
+//                
+//                if filtered.count == 0{
+//                    completion(self.resultantCollections!)
+//                    return
+//                }
+//                for filter in filtered{
+//                    for item in filter.items{
+//                        self.keys[item.slug!] = filter.slug!
+//                    }
+//                }
+//                if filtered.count > 0 {
+//                    self.recursiveBulkRequest(collectionItems: items, completion: completion)
+//                    
+//                }
+//            }
+//            else{
+//                
+//                for (key,value) in collections{
+//                    
+//                    var keyCopy = key
+//                    
+//                    while self.keys[keyCopy] != nil{
+//                        keyCopy = self.keys[keyCopy]!
+//                    }
+//                    if self.resultantCollections != nil && self.resultantCollections![keyCopy] != nil{
+//                        
+//                        let index = self.resultantCollections![keyCopy]!.items.index(where: {$0.slug == value.slug ?? "" && $0.type == "collection" })
+//                        var parentSlug:String?
+//                        var parentCollectionName:String?
+//                        if index != nil{
+//                            parentSlug = self.resultantCollections![keyCopy]!.items[index!].slug
+//                            parentCollectionName = self.resultantCollections![keyCopy]!.items[index!].name
+//                            self.resultantCollections![keyCopy]!.items.remove(at: index!)
+//                        }
+//                        value.items = value.items.map({ (item) -> CollectionItem in
+//                            item.slug = parentSlug ?? keyCopy
+//                            item.name = parentCollectionName
+//                            return item
+//                        })
+//                        if index != nil{
+//                            self.resultantCollections![keyCopy]!.items.insert(contentsOf: value.items, at: index!)
+//                        }
+//                        
+//                      //  self.resultantCollections![keyCopy]!.items = value.items +  self.resultantCollections![keyCopy]!.items
+//                    }
+//                    
+//                }
+//                //prepare datasource for next bulk
+//                
+//                var items:[CollectionItem] = []
+//                let filtered = Array(collections.values).filter({ (oneCollection) -> Bool in
+//                    if oneCollection.items.first == nil{
+//                        return false
+//                    }
+//                    var flag:Bool = false
+//                    let filtered = oneCollection.items.filter({$0.type ?? "" == "collection"})
+//                    if filtered.count > 0{
+//                        flag = true
+//                        items.append(contentsOf: filtered)
+//                    }
+//                    return flag
+//                })
+//                for filter in filtered{
+//                    for item in filter.items{
+//                        self.keys[item.slug!] = filter.slug!
+//                    }
+//                }
+//                
+//                if filtered.count > 0 {
+//                    self.recursiveBulkRequest(collectionItems: items, completion: completion)
+//                    
+//                }
+//                else{
+//                    completion(self.resultantCollections!)
+//                    self.keys.removeAll()
+//                    self.resultantCollections = nil
+//                    return
+//                    
+//                }
+//            }
+//        }
+//    }
     
     
     
@@ -236,18 +261,132 @@ open class CollectionRevealFetchManager: NSObject {
         }
         
         let requestDict = ["requests": outerDict]
-        Quintype.api.bulkCall(param: requestDict, cache: .none, Success: { (result) in
+        Quintype.api.bulkCall(param: requestDict, cache: .none, Success: {[weak self] (result) in
             
             // print(result)
-            ApiParser.collectionBulkParser(data: result, completion: { (collections, error) in
-                
-                completion(collections)
+            self?.serialQueue.async(execute: {
+                ApiParser.collectionBulkParser(data: result, completion: { (collections, error) in
+                    DispatchQueue.main.async(execute: {
+                        completion(collections)
+                    })
+                    
+                })
             })
+        
             
             
         }) { (error) in
             self.page.status = Page.PAGING_STATUS.ERRORED
         }
+        
+    }
+    
+    func filterCollections(collections:[String:CollectionModel], recursiveHandler:@escaping ((_ items:[CollectionItem]) -> ()), completionHandler:@escaping (() -> ())){
+        
+        
+        serialQueue.async { 
+            
+        
+                if self.resultantCollections == nil{
+                    self.resultantCollections = collections
+                    
+                    var items:[CollectionItem] = []
+                    let filtered = Array(collections.values).filter({ (oneCollection) -> Bool in
+                        if oneCollection.items.first == nil{
+                            return false
+                        }
+                        var flag:Bool = false
+                        let filtered = oneCollection.items.filter({$0.type ?? "" == "collection"})
+                        if filtered.count > 0{
+                            flag = true
+                            items.append(contentsOf: filtered)
+                        }
+                        return flag
+                    })
+                    
+                    if filtered.count == 0{
+                        //completion(self.resultantCollections!)
+                        completionHandler()
+                        return
+                    }
+                    for filter in filtered{
+                        for item in filter.items{
+                            self.keys[item.slug!] = filter.slug!
+                        }
+                    }
+                    if filtered.count > 0 {
+                        // self.recursiveBulkRequest(collectionItems: items, completion: completion)
+                        recursiveHandler(items)
+                    }
+                }
+                else{
+                    
+                    for (key,value) in collections{
+                        
+                        var keyCopy = key
+                        
+                        while self.keys[keyCopy] != nil{
+                            keyCopy = self.keys[keyCopy]!
+                        }
+                        if self.resultantCollections != nil && self.resultantCollections![keyCopy] != nil{
+                            
+                            let index = self.resultantCollections![keyCopy]!.items.index(where: {$0.slug == value.slug ?? "" && $0.type == "collection" })
+                            var parentSlug:String?
+                            var parentCollectionName:String?
+                            if index != nil{
+                                parentSlug = self.resultantCollections![keyCopy]!.items[index!].slug
+                                parentCollectionName = self.resultantCollections![keyCopy]!.items[index!].name
+                                self.resultantCollections![keyCopy]!.items.remove(at: index!)
+                            }
+                            value.items = value.items.map({ (item) -> CollectionItem in
+                                item.slug = parentSlug ?? keyCopy
+                                item.name = parentCollectionName
+                                return item
+                            })
+                            if index != nil{
+                                self.resultantCollections![keyCopy]!.items.insert(contentsOf: value.items, at: index!)
+                            }
+                            
+                            //  self.resultantCollections![keyCopy]!.items = value.items +  self.resultantCollections![keyCopy]!.items
+                        }
+                        
+                    }
+                    //prepare datasource for next bulk
+                    
+                    var items:[CollectionItem] = []
+                    let filtered = Array(collections.values).filter({ (oneCollection) -> Bool in
+                        if oneCollection.items.first == nil{
+                            return false
+                        }
+                        var flag:Bool = false
+                        let filtered = oneCollection.items.filter({$0.type ?? "" == "collection"})
+                        if filtered.count > 0{
+                            flag = true
+                            items.append(contentsOf: filtered)
+                        }
+                        return flag
+                    })
+                    for filter in filtered{
+                        for item in filter.items{
+                            self.keys[item.slug!] = filter.slug!
+                        }
+                    }
+                    
+                    if filtered.count > 0 {
+                        // self.recursiveBulkRequest(collectionItems: items, completion: completion)
+                        recursiveHandler(items)
+                    }
+                    else{
+                        //   completion(self.resultantCollections!)
+                        completionHandler()
+                        self.keys.removeAll()
+                        self.resultantCollections = nil
+                        return
+                        
+                    }
+                }
+        }
+    
         
     }
     
