@@ -25,14 +25,14 @@ public class CollectionPager: NSObject {
             page = pageParaNotNil
         }
         else{
-            page = Page.init(offsetPara: offset, limitPara: 10)
+            page = Page.init(offsetPara: offset, limitPara: 5)
         }
         _slug = slug
         super.init()
     }
     
     func reset(offset:Int = 0){
-        page = Page.init(offsetPara: offset, limitPara: 10)
+        page = Page.init(offsetPara: offset, limitPara: 5)
     }
     
     func pageNext(){

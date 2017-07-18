@@ -14,6 +14,13 @@ protocol Completion{
 import Foundation
 import SystemConfiguration
 
+open class CollectionApi{
+    
+    open var collectionFetch:CollectionFetchManager!
+    open var deepCollection:CollectionRevealFetchManager!
+    
+}
+
 open class Quintype{
     
     public init() {}
@@ -54,7 +61,7 @@ open class Quintype{
         }
     }
     
-    
+    open static var colletionsApi:CollectionApi!
     //    public var isInternetActive = isInternetAvailable()
     
     open class func isInternetAvailable() -> Bool {

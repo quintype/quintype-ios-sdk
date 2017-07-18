@@ -72,6 +72,10 @@ public class CollectionRevealFetchManager: NSObject {
             self.resultantCollections = nil
             self.keys.removeAll()
             
+            if collection.items.count == 0{
+                return
+            }
+            
             let areThereCollections =  collection.items.filter({$0.type == "collection"})
             if areThereCollections.count == 0{
                 self.completion?([collection], nil)

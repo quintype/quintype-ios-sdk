@@ -10,7 +10,6 @@ import Foundation
 
 public class Config:SafeJsonObject{
     
-    
     public var stripe_publishable_key:String?
     public var sketches_host:String?
     public var facebook:Facebook?
