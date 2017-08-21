@@ -12,18 +12,27 @@ import Quintype
 
 open class CollectionFetchManager: NSObject {
     
- 
-    
-    
-    let bulkLimit:Int = 5
-    fileprivate var _slug:String
     static var bulkNecessaryFields:Array<String> = ["id","headline","slug","url","hero-image-s3-key","hero-image-metadata","first-published-at","last-published-at","alternative","published-at","author-name","author-id","sections","story-template","summary","metadata"]
+    
+    
+    
+    var bulkLimit:Int = 5
+    var keys:Dictionary<String, String> = [:]
+    
+    fileprivate var _slug:String
     fileprivate var resultantCollections:[String:CollectionModel]?
     fileprivate var page:Page
-    var keys:Dictionary<String, String> = [:]
-    public init(slug:String, startImmediately:Bool) {
+    
+    
+    
+    public init(slug:String, startImmediately:Bool,storyLimit:Int=4) {
+        
+        
+        self.bulkLimit = storyLimit
+        
         _slug = slug
-        page = Page.init(offsetPara: 0, limitPara: 10)
+        page = Page.init(offsetPara: 0, limitPara: storyLimit)
+        
         super.init()
         startImmediately ? startFetch() : ()
     }
@@ -66,7 +75,7 @@ open class CollectionFetchManager: NSObject {
                             self.page.status = Page.PAGING_STATUS.LAST_PAGE
                         }
                         else{
-                          self.page.status = Page.PAGING_STATUS.NOT_PAGING
+                            self.page.status = Page.PAGING_STATUS.NOT_PAGING
                         }
                         self.completion?(collection, nil)
                         print(collection)
