@@ -33,13 +33,13 @@ public class Cache{
     //TODO: - pass currect url as key afer adding param
     public class func cacheData(data:Any,key:String, cacheTimeInMinute:Int,cacheType:String,oflineStatus:Bool = false){
         
-        var cacheTimeInMinute = cacheTimeInMinute
+        let cacheTimeInMinute = cacheTimeInMinute
         let time = NSDate.init()
         
         
         
-        var finalKey = !oflineStatus == false ?("oflineCacheData-\(key)") : ("cacheData-\(key)")
-        var cacheTime = !oflineStatus == false ?(cacheTimeInMinute * 60) : (cacheTimeInMinute)
+        let finalKey = !oflineStatus == false ?("oflineCacheData-\(key)") : ("cacheData-\(key)")
+        let cacheTime = !oflineStatus == false ?(cacheTimeInMinute * 60) : (cacheTimeInMinute)
         
         //        if finalKey == "oflineCacheData-\(key)"{
         //
@@ -154,13 +154,7 @@ public class Cache{
     private class func retriveDataFromCache(key:String,error:()->(),success:(Any)->()){
         
         if let data = cache.object(forKey: key as AnyObject) as? [String:AnyObject]{
-            
-            if data == nil{
-                error()
-            }else{
                 success(data as Any)
-            }
-            
         }else{
             error()
         }
@@ -172,18 +166,7 @@ public class Cache{
     
     //MARK: - Check if item is present
     private class func isPresent(keyName:String,oflineStatus:Bool,success:@escaping (Any?)->(),error:@escaping ()->()){
-        
-        var userDefaults = UserDefaults.standard
-        let time = NSDate()
-        let currentTime:Float = Float(time.timeIntervalSince1970 * 1000)
-        var counter = 0
-        
-        
-        for (key, value) in UserDefaults.standard.dictionaryRepresentation() {
-            print(key)
-        }
-        
-        
+    
         retriveDataFromCache(key: keyName, error: {
             retriveFromDisk(key: keyName, error: {
                 print("err from disk")
@@ -226,7 +209,7 @@ public class Cache{
         }else{
             
             userDefaults.remove(key)
-            Cache.cache.removeObject(forKey: key as! AnyObject)
+            Cache.cache.removeObject(forKey: key as AnyObject)
             print("data removed for ns")
             return false
             

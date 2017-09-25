@@ -7,9 +7,8 @@
 //
 
 import UIKit
-import Quintype
 
-open class CollectionModel: SafeJsonObject, NSCopying {
+open class CollectionModel: SafeJsonObject {
     
     open var id:NSNumber?
     open var slug:String?
@@ -20,7 +19,7 @@ open class CollectionModel: SafeJsonObject, NSCopying {
     open var created_at:NSNumber?
     open var template:String?
     open var items:[CollectionItem] = []
-  //  var originalItems:[CollectionItem] = []
+    //  var originalItems:[CollectionItem] = []
     open var name:String?
     
     override open func setValue(_ value: Any?, forKey key: String) {
@@ -96,15 +95,27 @@ open class CollectionItem:SafeJsonObject, NSCopying{
     }
     
     open func copy(with zone: NSZone? = nil) -> Any{
-        //        let item = CollectionItem.init()
-        //        item.id = id
-        //        item.name = name
-        //        item.slug = slug
-        //        item.template = template
-        //        item.type = type
-        //        item.collection = collection
-        //        item.story = story
-        //        return item
-        return type(of:self).init(item: self)
+        let item:CollectionItem = CollectionItem.init()
+        item.id = id
+        item.name = name
+        item.slug = slug
+        item.template = template
+        item.type = type
+        item.collection = collection
+        item.story = story
+        return item
+        
     }
 }
+
+class SomeBaseClass {
+    class func printClassName() {
+        print("SomeBaseClass")
+    }
+}
+class SomeSubClass: SomeBaseClass {
+    override class func printClassName() {
+        print("SomeSubClass")
+    }
+}
+

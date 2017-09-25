@@ -8,8 +8,8 @@
 
 import Foundation
 
-
-public class Story:SafeJsonObject, NSCopying {
+@objcMembers
+public class Story:SafeJsonObject {
     
     public var updated_at: NSNumber?
     public var assignee_id: NSNumber?
@@ -94,7 +94,7 @@ public class Story:SafeJsonObject, NSCopying {
     }
 
     
-    override public func setValue(_ value: Any?, forKey key: String) {
+override public func setValue(_ value: Any?, forKey key: String) {
         
         if key == "sections" {
             
@@ -159,7 +159,7 @@ public class Story:SafeJsonObject, NSCopying {
                 for (_,object) in valued.enumerated(){
                     if let innerObject = object.value as? [String:AnyObject]{
                          let linkedObject = LinkedStory()
-                         linkedObject.setValuesForKeys(innerObject as! [String:AnyObject])
+                         linkedObject.setValuesForKeys(innerObject)
                          linkedObjectMap[object.key] = linkedObject
                     }
                 }

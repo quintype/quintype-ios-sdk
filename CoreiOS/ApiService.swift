@@ -123,7 +123,7 @@ public class ApiService{
         
         api.call(method: "get", urlString: url, parameter: nil,cache:cache, Success: { (data) in
             
-            ApiParser.storyParser(data: data as! [String : AnyObject]?, completion: { (storiesObject) in
+            ApiParser.storyParser(data: data , completion: { (storiesObject) in
                 
                 DispatchQueue.main.async { Success(storiesObject) }
                 
@@ -144,7 +144,7 @@ public class ApiService{
         
         let stringURLFields = fields?.joined(separator: ",")
         
-        var param:[String:Any?] = [
+        let param:[String:Any?] = [
             
             "fields":stringURLFields,
             "section-id":SectionId
@@ -195,6 +195,7 @@ public class ApiService{
                 
             }
         }
+        print(searchKey)
         
         let url = baseUrl + Constants.urlConfig.search
         
@@ -202,7 +203,7 @@ public class ApiService{
         
         api.call(method: "get", urlString: url, parameter: param as [String : AnyObject]?,cache:cache, Success: { (data) in
             
-            ApiParser.searchParser(data: data as! [String : AnyObject]?, completion: { (searchObject) in
+            ApiParser.searchParser(data: data , completion: { (searchObject) in
                 
                 DispatchQueue.main.async { Success(searchObject) }
                 
@@ -225,7 +226,7 @@ public class ApiService{
         
         api.call(method: "get", urlString: url, parameter:nil,cache:cache, Success: { (data) in
             
-            ApiParser.commentsParser(data: data as! [String : AnyObject]?,completion: { (commentObject) in
+            ApiParser.commentsParser(data: data ,completion: { (commentObject) in
                 
                 DispatchQueue.main.async { Success(commentObject) }
                 
@@ -247,7 +248,7 @@ public class ApiService{
         
         api.call(method: "get", urlString: url, parameter:nil,cache:cache, Success: { (data) in
             
-            ApiParser.storyParser(data: data as! [String : AnyObject]?,completion: { (storyObject) in
+            ApiParser.storyParser(data: data ,completion: { (storyObject) in
                 
               //  DispatchQueue.main.async { Success(storyObject) }
                 
@@ -270,7 +271,7 @@ public class ApiService{
         
         let stringURLFields = fields?.joined(separator: ",")
         
-        var param:[String:Any?] = [
+        let param:[String:Any?] = [
             
             "fields":stringURLFields,
             "offset":offset,
@@ -281,7 +282,7 @@ public class ApiService{
         
         api.call(method: "get", urlString: url, parameter:param as [String : AnyObject]?,cache:cache, Success: { (data) in
             
-            ApiParser.StoriesParser(data: data as! [String : AnyObject]?, completion: { (storiesObject) in
+            ApiParser.StoriesParser(data: data , completion: { (storiesObject) in
                 
                 DispatchQueue.main.async { Success(storiesObject) }
                 
@@ -425,16 +426,15 @@ public class ApiService{
         
         api.call(method: "get", urlString: url, parameter: param,cache:cache, Success: { (data) in
             
-//          ApiParser.collectionParser(data: data, completion: { (collectionObject) in
-//            
+//          ApiParser.collectionParser(data: data, completion: { (collectionObject,_) in
+//
 //              DispatchQueue.main.async { Success(collectionObject) }
-//            
+//
 //          })
             Success(data)
             
         }) { (err) in
             
-            print(err)
             Error(err)
             
         }

@@ -61,7 +61,10 @@ open class BulkApi{
             }
             
             
-        }) { (errorMsg) in print( "error from collection call ")}
+        }) { (errorMsg) in
+            print( "error from collection call \(errorMsg ?? "")")
+            
+        }
     }
     
     func parseCollectionData(data:Any?) -> [String:[String:[String:Any]]]? {
@@ -129,7 +132,8 @@ open class BulkApi{
                 
                 for (_,value) in Array(results.values).enumerated(){
                     
-                    ApiParser.collectionParser(data: value as? [String:AnyObject], completion: { (collection) in
+                    ApiParser.collectionParser(data: value as? [String:AnyObject], completion: { (collection,_) in
+                        
                         
                         for (_,item) in collection.items.enumerated(){
                             

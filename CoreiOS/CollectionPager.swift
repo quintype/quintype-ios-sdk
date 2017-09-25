@@ -7,7 +7,6 @@
 //
 
 import UIKit
-import Quintype
 
 public class CollectionPager: NSObject {
     
