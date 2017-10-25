@@ -7,6 +7,8 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		1D378A941FA08D4D00573D67 /* CollectionItem.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1D378A931FA08D4D00573D67 /* CollectionItem.swift */; };
+		1D378A961FA08DA200573D67 /* CollectionBulkManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1D378A951FA08DA200573D67 /* CollectionBulkManager.swift */; };
 		5D16E7391F0D269900210AC4 /* BulkApi.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5DD4D6BF1F0D1E76004776F3 /* BulkApi.swift */; };
 		5D3C25901F0A23AA00B90D25 /* Collection.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5D3C258F1F0A23AA00B90D25 /* Collection.swift */; };
 		5D7104331F0F9CAA00EBBE93 /* CardMetadata.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5D71042C1F0F9CAA00EBBE93 /* CardMetadata.swift */; };
@@ -94,6 +96,8 @@
 /* End PBXCopyFilesBuildPhase section */
 
 /* Begin PBXFileReference section */
+		1D378A931FA08D4D00573D67 /* CollectionItem.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CollectionItem.swift; sourceTree = "<group>"; };
+		1D378A951FA08DA200573D67 /* CollectionBulkManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CollectionBulkManager.swift; sourceTree = "<group>"; };
 		2DC160886C4E4D4CE548EFE7 /* Pods_testAPp.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Pods_testAPp.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		5D3C258F1F0A23AA00B90D25 /* Collection.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Collection.swift; sourceTree = "<group>"; };
 		5D71042C1F0F9CAA00EBBE93 /* CardMetadata.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = CardMetadata.swift; sourceTree = "<group>"; };
@@ -190,6 +194,7 @@
 				5DFAB39E1F14878400AF9862 /* CollectionPager.swift */,
 				5DFAB39F1F14878400AF9862 /* CollectionRevealFetchManager.swift */,
 				5D71042E1F0F9CAA00EBBE93 /* EntityManager.swift */,
+				1D378A951FA08DA200573D67 /* CollectionBulkManager.swift */,
 			);
 			name = Managers;
 			sourceTree = "<group>";
@@ -265,6 +270,7 @@
 				61B364541DF94E2F00880B73 /* Config */,
 				61FFD0CC1DF97D4800B67E27 /* Search.swift */,
 				5D3C258F1F0A23AA00B90D25 /* Collection.swift */,
+				1D378A931FA08D4D00573D67 /* CollectionItem.swift */,
 			);
 			name = Models;
 			sourceTree = "<group>";
@@ -323,11 +329,11 @@
 			children = (
 				619788031E7818EA0027478A /* AppDelegate.swift */,
 				619788051E7818EA0027478A /* ViewController.swift */,
+				5DD4D6BF1F0D1E76004776F3 /* BulkApi.swift */,
 				619788071E7818EA0027478A /* Main.storyboard */,
 				6197880A1E7818EA0027478A /* Assets.xcassets */,
 				6197880C1E7818EA0027478A /* LaunchScreen.storyboard */,
 				6197880F1E7818EA0027478A /* Info.plist */,
-				5DD4D6BF1F0D1E76004776F3 /* BulkApi.swift */,
 			);
 			name = testApp;
 			path = testAPp;
@@ -623,6 +629,8 @@
 				615006611DD5C49F000E20B3 /* Tag.swift in Sources */,
 				5DFAB3A21F14878400AF9862 /* CollectionPager.swift in Sources */,
 				61FFD0C61DF9604D00B67E27 /* Stack.swift in Sources */,
+				1D378A941FA08D4D00573D67 /* CollectionItem.swift in Sources */,
+				1D378A961FA08DA200573D67 /* CollectionBulkManager.swift in Sources */,
 				6150066B1DD5D394000E20B3 /* ApiService.swift in Sources */,
 				6104D7AD1E015C7B0082439C /* Cache.swift in Sources */,
 				61FE6D441E079BAE007DA6FD /* Analytics.swift in Sources */,

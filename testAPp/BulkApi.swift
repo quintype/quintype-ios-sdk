@@ -1,191 +1,122 @@
 //
-//  BulkApi.swift
-//  Quintype
+//  CollectionSettrt.swift
+//  CoreApp-iOS
 //
-//  Created by Albin.git on 7/5/17.
+//  Created by Albin.git on 7/11/17.
 //  Copyright © 2017 Albin CR. All rights reserved.
 //
 
 import Foundation
 import Quintype
+import UIKit
 
-enum collectionTypes:String{
-    
-    case collection = "collection"
-    case story = "story"
-    
+protocol CollectionListLayoutDelegate:class {
+    func didFetchRenderableCollections(renderables:[RenderableCollection])
+    func errorOccurred(error:Error)
 }
 
-open class BulkApi{
+class CollectionListLayout: NSObject {
     
-    var deepDive:Int = 1
-    var bulkLimit:Int = 1
-    var bulkFields:[String] = []
-    var storyCollection:[String:[Story]] = [:]
-    var count = 1
+    fileprivate var _queue:OperationQueue?
+    var _slug:String
     
-    
-    public func BulkCall(Slug:String,deepDive:Int,bulkFields:[String],bulkLimit:Int,cache:cacheOption,Error:@escaping (String)->(),Success:@escaping ([String:[Story]]) -> ()){
-        self.deepDive = deepDive
-        self.bulkLimit = bulkLimit
-        self.bulkFields = bulkFields
-        
-        initCollectionCall(stack: Slug, cache: cache, Error: { (error) in
-            
-            Error(error)
-            
-        }) { (storyArray) in
-            
-            Success(storyArray)
-            
+    var queue:OperationQueue{
+        get{
+            if _queue == nil{
+                _queue = OperationQueue.init()
+            }
+            return _queue!
         }
+        set{
+            _queue = newValue
+        }
+    }
+    var manager:CollectionBulkManager
+    var _delegate:CollectionListLayoutDelegate
+    
+    init(managerPara:CollectionBulkManager? = nil,slug:String,delegate:CollectionListLayoutDelegate,storyLimit:Int=4) {
         
+        if managerPara != nil{
+            manager = managerPara!
+        }
+        else{
+            manager = CollectionBulkManager(slug: slug, startImmediately: false, storyLimit: storyLimit)
+        }
+        _delegate = delegate
+        _slug = slug
+        super.init()
+        configure()
     }
     
-    func initCollectionCall(stack:String,cache:cacheOption,Error:@escaping (String)->(),Success:@escaping ([String:[Story]]) -> ()){
+    func make(){
+        manager.startFetch()
+    }
+    
+    func reset(){
+        _queue?.cancelAllOperations()
+        manager = CollectionBulkManager.init(slug: _slug, startImmediately: false)
+        configure()
+    }
+    
+    
+    func configure(){
         
-        Quintype.api.collectionApiRequest(stack: stack, cache: cache, Success: { (data) in
+        manager.completion = {[weak self] collectionPara, error in
+            guard let weakSelf = self else {
+                return
+            }
             
-            if let parsedData = self.parseCollectionData(data: data){
-                
-                self.collectionBulkCall(requestDict: parsedData, Error: { (error) in
-                    
-                    Error(error)
-                    
-                }, Success: { (storyArray) in
-                    
-                    Success(storyArray)
-                    
+            if let someError = error{
+                weakSelf._delegate.errorOccurred(error: someError)
+                return
+            }
+            guard let collection = collectionPara else{return}
+            
+            let strongSelf = weakSelf
+            strongSelf.queue.addOperation({
+                let renderableCollections = strongSelf.makeRenderables(collectionPara: collection)
+                DispatchQueue.main.async(execute: {
+                    strongSelf._delegate.didFetchRenderableCollections(renderables: renderableCollections)
                 })
-                
-            }
+            })
             
-            
-        }) { (errorMsg) in
-            print( "error from collection call \(errorMsg ?? "")")
             
         }
     }
     
-    func parseCollectionData(data:Any?) -> [String:[String:[String:Any]]]? {
+    func makeRenderables(collectionPara:CollectionModel) -> [RenderableCollection]{
+        let stories = collectionPara.items.filter({$0.type ?? "" == "story"})
         
+        let collections = collectionPara.items.filter({$0.type ?? "" == "collection"})
         
-        if let collectionData = data as? CollectionModel{
-            
-            let collections = collectionData.items
-            var outerDict:[String:[String:Any]] = [:]
-            
-            for (_,collection) in collections.enumerated(){
-                
-                var innerDict:[String:Any] = [:]
-                
-                if collection.type == collectionTypes.collection.rawValue{
-                    
-                    innerDict["limit"] = "\(self.bulkLimit)"
-                    innerDict["slug"] = collection.slug ?? ""
-                    innerDict["story-fields"] = self.bulkFields.joined(separator: ",")
-                    innerDict["_type"] = collection.type ?? ""
-                    outerDict[collection.slug ?? ""] = innerDict
-                    
-                }else if collection.type == collectionTypes.story.rawValue{
-                    
-                    
-                    if storyCollection[collection.name!] == nil {
-                        
-                        storyCollection[collection.name!] = [collection.story!]
-                        
-                    }else{
-                        storyCollection[collection.name!]?.append(collection.story!)
-                        
-                    }
-                    
-                }
-            }
-            let requestDict = ["requests": outerDict]
-            
-            return requestDict
-            
-        }else{
-            return nil
+        var renderableCollections:[RenderableCollection] = []
+        
+        for (_, collection) in collections.enumerated(){
+            let renderableCollection = RenderableCollection.init(slug: collection.slug, name: collection.name, type: collection.type, items: collection.collection?.items ?? [], originalCollectionPara:collection.collection)
+            renderableCollections.append(renderableCollection)
         }
         
-    }
-    
-    
-    func collectionBulkCall(requestDict:[String:[String:[String:Any]]],internalCall:Bool = false,Error:@escaping (String)->(),Success:@escaping ([String:[Story]])->()){
-        
-        self.count = self.count + 1
-        
-        if count < deepDive {
-            
-            Quintype.api.bulkCall(param: requestDict, cache: cacheOption.none, Success: { (data) in
-                
-                guard let someData = data as? [String:AnyObject] else {
-                    return
-                }
-                
-                guard let results = someData["results"] as? [String:AnyObject] else{
-                    return
-                }
-                
-                let mergedCollection:CollectionModel = CollectionModel()
-                
-                for (_,value) in Array(results.values).enumerated(){
-                    
-                    ApiParser.collectionParser(data: value as? [String:AnyObject], completion: { (collection,_) in
-                        
-                        
-                        for (_,item) in collection.items.enumerated(){
-                            
-                            if item.type == collectionTypes.collection.rawValue{
-                                
-                                mergedCollection.items.append(item)
-                                
-                            }else if item.type == collectionTypes.story.rawValue{
-                                
-                                
-                                if self.storyCollection[collection.name!] == nil {
-                                    
-                                    self.storyCollection[collection.name!] = [item.story!]
-                                    
-                                }else{
-                                    
-                                    self.storyCollection[collection.name!]?.append(item.story!)
-                                    
-                                }
-                            }
-                        }
-                    })
-                }
-                
-                if requestDict["requests"]?.count == 0 || mergedCollection.items.count == 0{
-                    
-                    if internalCall{
-                        Success(self.storyCollection)
-                    }
-                    return
-                    
-                }
-                
-                //TODO:- just parse data needed
-                if let parsedData = self.parseCollectionData(data: mergedCollection){
-                    
-                    self.collectionBulkCall(requestDict: parsedData,internalCall: true, Error: { (error) in
-                        
-                    }, Success: { (data) in
-                            Success(self.storyCollection)
-                    })
-                    
-                }
-                
-            }, Error: { (error) in print("error from collection bulk call")})
-            
-        }else{
-            
-            Success(self.storyCollection)
-            
+        if stories.count > 0{
+            let renderableCollectionForStories = RenderableCollection.init(slug: nil, name: "", type: "collection", items: stories, originalCollectionPara:collectionPara)
+            renderableCollections.append(renderableCollectionForStories)
         }
+        return renderableCollections
     }
-    
-    
 }
+
+class RenderableCollection:NSObject{
+    var slug:String?
+    var name:String?
+    var type:String?
+    var items:[CollectionItem] = []
+    var originalCollection:CollectionModel?
+    convenience init(slug:String?, name:String?, type:String?, items:[CollectionItem], originalCollectionPara:CollectionModel?=nil){
+        self.init()
+        self.slug = slug
+        self.name = name
+        self.type = type
+        self.items = items
+        self.originalCollection = originalCollectionPara
+    }
+}
+

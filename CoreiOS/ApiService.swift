@@ -250,7 +250,7 @@ public class ApiService{
             
             ApiParser.storyParser(data: data ,completion: { (storyObject) in
                 
-              //  DispatchQueue.main.async { Success(storyObject) }
+                //  DispatchQueue.main.async { Success(storyObject) }
                 
                 self.entityManager.getStoryEntitiesSerialized(story: storyObject, completion: { (storyd) in
                     DispatchQueue.main.async { Success(storyObject) }
@@ -426,11 +426,6 @@ public class ApiService{
         
         api.call(method: "get", urlString: url, parameter: param,cache:cache, Success: { (data) in
             
-//          ApiParser.collectionParser(data: data, completion: { (collectionObject,_) in
-//
-//              DispatchQueue.main.async { Success(collectionObject) }
-//
-//          })
             Success(data)
             
         }) { (err) in
@@ -441,6 +436,18 @@ public class ApiService{
         
     }
     
+    public func getBulkCollectionCall(queryParams:[String:Any]?,cacheOption:cacheOption,Success:@escaping (Any?)->(),Error:@escaping (String?)->()){
+        
+        let urlString = baseUrl + Constants.urlConfig.getBulkCollection
+        api.call(method: "get", urlString: urlString, parameter: queryParams as [String : AnyObject]?, cache: cacheOption, Success: { (data) in
+            Success(data)
+        }) { (errorMessage) in
+            
+            print(errorMessage ?? "error messahe is nil")
+            Error(errorMessage)
+        }
+        
+    }
     
     
 }

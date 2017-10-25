@@ -39,6 +39,7 @@ public struct Constants{
         static let bulkCall = "/api/v1/bulk"
         static let collectionUrl = "/api/v1/collections"
         static let entityBulkURL = "/api/v1/entity/bulk"
+        static let getBulkCollection = "/api/v1/bulk/collection"
         
         //Function that return string
         static func relatedStories(storyId:String) -> String {return getStories + "/" + storyId + "/related-stories"}
@@ -95,6 +96,7 @@ public struct Constants{
         public static let razorpayId = UserDefaults.standard.string(forKey: Constants.publisherConfig.razorpayKey)
         
     }
+    
     public struct user{
         
         //MARK: - User detaisl -
@@ -103,8 +105,6 @@ public struct Constants{
         
         //Constants from user default storage
         static let memberId = UserDefaults.standard.integer(forKey: Constants.user.memberkey)
-        
-        
         
     }
     

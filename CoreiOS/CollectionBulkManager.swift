@@ -1,14 +1,16 @@
 //
-//  CollectionFetchManager.swift
-//  CoreApp-iOS
+//  CollectionBulkManager.swift
+//  Quintype
 //
-//  Created by Arjun P A on 24/04/17.
+//  Created by Pavan Gopal on 10/25/17.
 //  Copyright © 2017 Albin CR. All rights reserved.
 //
 
+
 import UIKit
 import Foundation
-open class CollectionFetchManager: NSObject {
+
+open class CollectionBulkManager: NSObject {
     
     static var bulkNecessaryFields:Array<String> = ["id","headline","slug","url","hero-image-s3-key","hero-image-metadata","first-published-at","last-published-at","alternative","published-at","author-name","author-id","sections","story-template","summary","metadata"]
     
@@ -52,6 +54,7 @@ open class CollectionFetchManager: NSObject {
         page.status = Page.PAGING_STATUS.PAGING
         page.kick()
         let param:[String:AnyObject] = ["story-fields":CollectionFetchManager.bulkNecessaryFields.joined(separator: ",") as NSString, "limit":NSNumber.init(value: page.limit), "offset":NSNumber.init(value: page.offset)]
+        
         Quintype.api.collectionApiRequest(stack: _slug, cache: cacheOption.none,param: param,Success: { (collection) in
             
             if let collectiond = collection as? [String:AnyObject]{
@@ -59,8 +62,10 @@ open class CollectionFetchManager: NSObject {
                     print(collection)
                     self.resultantCollections = nil
                     self.keys.removeAll()
+                    
+                    
+                    
                     self.recursiveBulkRequest(collectionItems: collection.items, completion: { (collectionMapping) in
-                        
                         collection.items = collection.items.map({ (item) -> CollectionItem in
                             if item.type ?? "" == "collection"{
                                 item.collection = collectionMapping[item.slug ?? ""]
@@ -80,6 +85,11 @@ open class CollectionFetchManager: NSObject {
                         print(collection)
                         
                     })
+                    
+                    
+                    
+                    
+                    
                 })
             }
         }) { (error) in
@@ -91,7 +101,7 @@ open class CollectionFetchManager: NSObject {
     
     func recursiveBulkRequest(collectionItems:[CollectionItem], completion:@escaping (_ collections:[String:CollectionModel]) -> Void){
         
-        self.bulkRequestMake(collectionItems: collectionItems) { (collectionsPara) in
+        self.makeGetBulkRequest(collectionItems: collectionItems) { (collectionsPara) in
             let collections = collectionsPara
             
             
@@ -115,42 +125,44 @@ open class CollectionFetchManager: NSObject {
                     completion(self.resultantCollections!)
                     return
                 }
+                
                 for filter in filtered{
                     //    self.keys[filter.slug!] = filter.items.first!.slug!
                     self.keys[filter.items.first!.slug!] = filter.slug!
                 }
+                
                 if filtered.count > 0 {
                     self.recursiveBulkRequest(collectionItems: items, completion: completion)
-                    
                 }
             }
             else{
                 
-                for (key,value) in collections{
+                for (slugKey,value) in collections{
                     
-                    var keyCopy = key
+                    var parentSlugKey = slugKey
                     
-                    while self.keys[keyCopy] != nil{
-                        keyCopy = self.keys[keyCopy]!
+                    while self.keys[parentSlugKey] != nil{
+                        parentSlugKey = self.keys[parentSlugKey]!
                     }
-                    if self.resultantCollections != nil && self.resultantCollections![keyCopy] != nil{
+                    
+                    if self.resultantCollections != nil && self.resultantCollections![parentSlugKey] != nil{
                         
-                        let index = self.resultantCollections![keyCopy]!.items.index(where: {$0.slug == value.slug ?? "" && $0.type == "collection" })
+                        let index = self.resultantCollections![parentSlugKey]!.items.index(where: {$0.slug == value.slug ?? "" && $0.type == "collection" })
                         var parentSlug:String?
                         var parentCollectionName:String?
                         if index != nil{
-                            parentSlug = self.resultantCollections![keyCopy]!.items[index!].slug
-                            parentCollectionName = self.resultantCollections![keyCopy]!.items[index!].name
-                            self.resultantCollections![keyCopy]!.items.remove(at: index!)
+                            parentSlug = self.resultantCollections![parentSlugKey]!.items[index!].slug
+                            parentCollectionName = self.resultantCollections![parentSlugKey]!.items[index!].name
+                            self.resultantCollections![parentSlugKey]!.items.remove(at: index!)
                         }
                         value.items = value.items.map({ (item) -> CollectionItem in
-                            item.slug = parentSlug ?? keyCopy
+                            item.slug = parentSlug ?? parentSlugKey
                             item.name = parentCollectionName
                             return item
                         })
                         
-                        self.resultantCollections![keyCopy]!.items = value.items +  self.resultantCollections![keyCopy]!.items
-                        self.resultantCollections![keyCopy]!.items = Array(self.resultantCollections![keyCopy]!.items.prefix(self.bulkLimit))
+                        self.resultantCollections![parentSlugKey]!.items = value.items +  self.resultantCollections![parentSlugKey]!.items
+                        self.resultantCollections![parentSlugKey]!.items = Array(self.resultantCollections![parentSlugKey]!.items.prefix(self.bulkLimit))
                     }
                     
                 }
@@ -167,7 +179,6 @@ open class CollectionFetchManager: NSObject {
                     return flag
                 })
                 for filter in filtered{
-                    //  self.keys[filter.slug!] = filter.items.first!.slug!
                     self.keys[filter.items.first!.slug!] = filter.slug!
                 }
                 
@@ -186,37 +197,40 @@ open class CollectionFetchManager: NSObject {
         }
     }
     
-    func bulkRequestMake(collectionItems:[CollectionItem], completion:@escaping (_ collections:[String:CollectionModel]) -> Void){
+    func makeGetBulkRequest(collectionItems:[CollectionItem], completion:@escaping (_ collections:[String:CollectionModel]) -> Void){
         
         let filteredCollections = collectionItems.filter({$0.type ?? "" == "collection"})
         
-        var outerDict:Dictionary<String,Dictionary<String,Any>> = [:]
         
-        for (_,item) in filteredCollections.enumerated(){
-            var innerDict:Dictionary<String,Any> = [:]
+        var innerDict:Dictionary<String,Any> = [:]
+        
+        for (index,item) in filteredCollections.enumerated(){
             
-            innerDict["limit"] = "\(bulkLimit)"
-            innerDict["slug"] = item.slug ?? ""
-            innerDict["story-fields"] = CollectionFetchManager.bulkNecessaryFields.joined(separator: ",")
-            innerDict["_type"] = item.type ?? ""
+            let indexToUse = index + 1
+            let slugToUse = item.slug?.replacingOccurrences(of: "---", with: "-")
             
-            outerDict[item.slug ?? ""] = innerDict
+            innerDict["slug\(indexToUse)"] = slugToUse
+            innerDict["limit\(indexToUse)"] = "\(bulkLimit)"
+            //            innerDict["cards\(indexToUse)"] = "\(true)"//if you need cards as well
+            
         }
         
-        let requestDict = ["requests": outerDict]
-        Quintype.api.bulkCall(param: requestDict, cache: .none, Success: { (result) in
-            
-            // print(result)
-            ApiParser.collectionBulkParser(data: result, completion: { (collections, error) in
-                
-                completion(collections)
+        Quintype.api.getBulkCollectionCall(queryParams: innerDict, cacheOption: .none, Success: { (bulkCallResponse) in
+            ApiParser.collectionBulkParser(data: bulkCallResponse, completion: { (collectionArray, error) in
+                completion(collectionArray)
             })
-            
-            
-        }) { (error) in
-            
+        }) { (errorMessage) in
+            print(errorMessage ?? "Error message is nil")
         }
-        
     }
     
 }
+
+
+
+
+
+
+
+
+
