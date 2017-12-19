@@ -17,6 +17,7 @@ public class Card:SafeJsonObject  {
     public var version: NSNumber?
     public var story_elements: [CardStoryElement] = []
     public var metadata:CardMetadata?
+    public var card_added_at: NSNumber?
     
     //TODO: - find where these are used and why these are used
     

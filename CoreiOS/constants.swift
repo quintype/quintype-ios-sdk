@@ -46,7 +46,8 @@ public struct Constants{
         static func getComments(storyId:String) -> String {return getStories + "/" + storyId + "/comments"}
         static func getBaseUrl() -> String {return storage.getBaseUrl()!}
         static func collectionRequest(stack:String) ->String { return collectionUrl + "/" + stack }
-        
+        static func getStoryEngagmentUrl(storyId:String) -> String{return "/api/stories" + "/" + storyId + "/" + "engagement"}
+
     }
     
     public struct analyticConfig{

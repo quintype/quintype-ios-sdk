@@ -143,9 +143,6 @@ public class Http{
                             
                             DispatchQueue.main.async {
                                 
-                                #if DEBUG
-                                    print("Api call successfull")
-                                #endif
                                 
                                 if let jsond = json as? [String:AnyObject]{
                                     Success(jsond)
@@ -199,9 +196,17 @@ public class Http{
             
             }.resume()
     }
-    
+ 
     
     public func call(method:String,urlString: String,parameter:[String:AnyObject]?,cache:cacheOption,Success: @escaping ([String: AnyObject]?) -> (),Error:@escaping (String?) -> ()) {
+        
+        print("--------------------URL--------------------")
+        print(urlString)
+        
+        if let parameterD = parameter{
+            print("--------------------Parameters--------------------")
+            print(parameterD)
+        }
         
         var cacheType:String?
         var cacheTime:Int?

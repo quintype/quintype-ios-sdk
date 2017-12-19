@@ -199,13 +199,12 @@ public class ApiService{
         
         let url = baseUrl + Constants.urlConfig.search
         
-        
-        
         api.call(method: "get", urlString: url, parameter: param as [String : AnyObject]?,cache:cache, Success: { (data) in
             
             ApiParser.searchParser(data: data , completion: { (searchObject) in
                 
                 DispatchQueue.main.async { Success(searchObject) }
+                
                 
             })
             
@@ -250,11 +249,12 @@ public class ApiService{
             
             ApiParser.storyParser(data: data ,completion: { (storyObject) in
                 
-                //  DispatchQueue.main.async { Success(storyObject) }
+                DispatchQueue.main.async { Success(storyObject) }
                 
-                self.entityManager.getStoryEntitiesSerialized(story: storyObject, completion: { (storyd) in
-                    DispatchQueue.main.async { Success(storyObject) }
-                })
+                //TODO: uncomment this
+                //                self.entityManager.getStoryEntitiesSerialized(story: storyObject, completion: { (storyd) in
+                //                    DispatchQueue.main.async { Success(storyObject) }
+                //                })
                 
             })
             
@@ -445,6 +445,44 @@ public class ApiService{
             
             print(errorMessage ?? "error messahe is nil")
             Error(errorMessage)
+        }
+        
+    }
+    
+    
+    public func getStoryEngagmentForStoryId(storyID:String,Success:@escaping (Engagement)->(),Error:@escaping (String?)->()){
+        let urlString = baseUrl + Constants.urlConfig.getStoryEngagmentUrl(storyId: storyID)
+        
+        let parameters = ["fields":"facebook,shrubbery"]
+        
+        api.call(method: "get", urlString: urlString, parameter: parameters as [String : AnyObject], cache: .none, Success: { (data) in
+            
+            ApiParser.engagmentParser(data: data, completion: { (engagment, error) in
+                if error != nil{
+                    DispatchQueue.main.async {
+                        Error("Parsing Failed")
+                    }
+                }
+                if let engagmentD = engagment{
+                    DispatchQueue.main.async {
+                        Success(engagmentD)
+                    }
+                    
+                }else{
+                    DispatchQueue.main.async {
+                        Error("Parsing Failed")
+                    }
+                }
+                
+            })
+            
+        }) { (errorMessage) in
+            
+            DispatchQueue.main.async {
+                Error(errorMessage)
+            }
+            
+            
         }
         
     }

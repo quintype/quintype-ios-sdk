@@ -1,4 +1,4 @@
-//
+
 //  Quintype.swift
 //  CoreiOS
 //

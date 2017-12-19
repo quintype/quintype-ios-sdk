@@ -59,7 +59,7 @@ open class CollectionBulkManager: NSObject {
             
             if let collectiond = collection as? [String:AnyObject]{
                 ApiParser.collectionParser(data: collectiond, completion: { (collection, error) in
-                    print(collection)
+                    
                     self.resultantCollections = nil
                     self.keys.removeAll()
                     
@@ -82,7 +82,7 @@ open class CollectionBulkManager: NSObject {
                             self.page.status = Page.PAGING_STATUS.NOT_PAGING
                         }
                         self.completion?(collection, nil)
-                        print(collection)
+                
                         
                     })
                     

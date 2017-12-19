@@ -25,9 +25,11 @@ public class EntityManager:NSObject{
     func getStoryEntitiesSerialized(story:Story, completion:@escaping (Story) -> Void){
         
         let filteredCards = story.cards.filter({$0.metadata != nil && $0.metadata?.storyAttributes != nil && $0.metadata!.storyAttributes!.count > 0})
+        
         if filteredCards.count == 0{
             let managedStory = manageStoryLevelEntities(storyObject: story)
             completion(managedStory)
+            return
             
         }
         
@@ -45,6 +47,7 @@ public class EntityManager:NSObject{
             }
             return card
         }
+        
         let allKeys = Array(cardIDEntityIDMapping.keys)
         
         getEntitiesSerialized(ids: allKeys, endpoint: nil) { (entityModels) in
@@ -67,7 +70,7 @@ public class EntityManager:NSObject{
             }
             let handledStory = self.manageStoryLevelEntities(storyObject: story)
             completion(handledStory)
-            print(entityModels)
+            
         }
     }
     

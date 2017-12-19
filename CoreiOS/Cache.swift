@@ -59,7 +59,7 @@ public class Cache{
         }else if cacheType == Constants.cache.cacheToMemoryWithTime{
             
             storeToCache(data: data as AnyObject, finalKey: finalKey)
-            storeToDisk(data: data as AnyObject, finalKey: finalKey)
+//            storeToDisk(data: data as AnyObject, finalKey: finalKey)
             
         }else if cacheType == Constants.cache.cacheToMemoryAndDiskWithTime{
             
@@ -173,7 +173,7 @@ public class Cache{
                 error()
                 return
             }, success: { (reteivedData) in
-                print("succ from disk")
+                
                 success(reteivedData)
                 return
             })
