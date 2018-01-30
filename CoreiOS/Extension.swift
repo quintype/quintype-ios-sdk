@@ -64,7 +64,7 @@ public extension UIButton {
 public extension UILabel{
     public func addTextSpacing(spacing: CGFloat){
         let attributedString = NSMutableAttributedString(string: self.text!)
-        attributedString.addAttribute(NSKernAttributeName, value: spacing, range: NSRange(location: 0, length: self.text!.characters.count))
+        attributedString.addAttribute(NSAttributedStringKey.kern, value: spacing, range: NSRange(location: 0, length: self.text!.characters.count))
         self.attributedText = attributedString
     }
 }

@@ -8,8 +8,8 @@
 
 import Foundation
 
-
-public class Story:SafeJsonObject, NSCopying {
+@objcMembers
+public class Story:SafeJsonObject {
     
     public var updated_at: NSNumber?
     public var assignee_id: NSNumber?
@@ -40,7 +40,9 @@ public class Story:SafeJsonObject, NSCopying {
     public var push_notification: String?
     public var version: NSNumber?
     public var bullet_type: String?
-    public var story_template: String?
+    public var story_template: StoryTemplet? = StoryTemplet.Default
+    public var story_templateString:String?
+    
     public var content_type:String?
     
     public var cards: [Card] = []
@@ -49,11 +51,18 @@ public class Story:SafeJsonObject, NSCopying {
     public var sections: [Section] = []
     public var id:String?
     public var subheadline :String?
-  
+    
     public var linkedStories:[String:LinkedStory] = [:]
     public var storyMetadata:StoryMetadata?
     public var linked_entities:[[String:AnyObject]]?
+    public var authors : [Author] = []
     
+    public var hero_image_attribution : String?
+    
+    public var engagment:Engagement?
+    public var imageAttributtedCaptionText:NSAttributedString?
+    
+    public var storyReadTime:String?
     
     public func copy(with zone: NSZone? = nil) -> Any {
         let story =  Story()
@@ -64,6 +73,7 @@ public class Story:SafeJsonObject, NSCopying {
         story.cards = self.cards
         story.content_type = self.content_type
         story.story_template = self.story_template
+        story.story_templateString = self.story_templateString
         story.bullet_type = self.bullet_type
         story.version = self.version
         story.push_notification = self.push_notification
@@ -92,7 +102,7 @@ public class Story:SafeJsonObject, NSCopying {
         story.updated_at = self.updated_at
         return story
     }
-
+    
     
     override public func setValue(_ value: Any?, forKey key: String) {
         
@@ -151,16 +161,29 @@ public class Story:SafeJsonObject, NSCopying {
                 
             }
             
-        }
+        }else if key == "authors"{
+            guard let unwrappedAuthorsArray = value as? [[String:AnyObject]] else{
+                return 
+            }
+            for authorsJson in unwrappedAuthorsArray {
+                
+                let author = Author()
+                Converter.jsonKeyConverter(dictionaryArray: authorsJson, completion: { (data) in
+                    author.setValuesForKeys(data )
+                    self.authors.append(author)
+                })
+                
+            }
             
+        }
         else if key == "linked_stories"{
             if let valued = value as? [String:AnyObject]{
                 var linkedObjectMap:[String:LinkedStory] = [:]
                 for (_,object) in valued.enumerated(){
                     if let innerObject = object.value as? [String:AnyObject]{
-                         let linkedObject = LinkedStory()
-                         linkedObject.setValuesForKeys(innerObject as! [String:AnyObject])
-                         linkedObjectMap[object.key] = linkedObject
+                        let linkedObject = LinkedStory()
+                        linkedObject.setValuesForKeys(innerObject)
+                        linkedObjectMap[object.key] = linkedObject
                     }
                 }
                 if linkedObjectMap.count > 0{
@@ -178,12 +201,37 @@ public class Story:SafeJsonObject, NSCopying {
                 storyMeta.setValuesForKeys(valued)
                 self.storyMetadata = storyMeta
             }
-        }
+        }else if key == "story_template"{
+            if let unwrappedValue = value as? String{
+                self.story_templateString = unwrappedValue
+                self.story_template = StoryTemplet(value: unwrappedValue)
+            }else{
+                self.story_template = StoryTemplet.Default
+            }
             
+        }   
         else {
             super.setValue(value, forKey: key)
         }
     }
+}
+
+
+public enum StoryTemplet:String{
     
+    case Default
+    case Video = "video"
+    case LiveBlog = "live-blog"
+    case Review = "review"
+    case Elsewhere = "news-elsewhere"
+    case Photo = "photo"
+    case Explainer
+    case LongForm
+    case ViewCounterView
+    case Unknown
+    
+    init(value : String?){
+        self =  StoryTemplet(rawValue: value ?? "") ?? .Unknown
+    }
     
 }

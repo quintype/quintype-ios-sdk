@@ -91,7 +91,7 @@ open class Downloader:NSObject,URLSessionDelegate,URLSessionDownloadDelegate{
                     
                     for story in stories{
                         
-                        if let image = story.hero_image_s3_key{
+                        if story.hero_image_s3_key != nil{
                             
                            // get image pass to KF
                             //get story id

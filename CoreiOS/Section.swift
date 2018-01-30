@@ -19,6 +19,10 @@ public class Section:SafeJsonObject {
     public var publisher_id: String?
     public var display_name:String?
     
+    public var parent_id:NSNumber?
+    public var slug:String?
+    
+    
     
 }
 

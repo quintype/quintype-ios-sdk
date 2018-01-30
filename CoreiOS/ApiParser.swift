@@ -24,7 +24,6 @@ open class ApiParser{
     open class func storyParser(data:[String:AnyObject]?,completion:@escaping (Story) -> () ){
         if var storyDictionary = data?["story"] as? [String:AnyObject]{
             
-            
             let story = Story()
             
             for (_,storyDetail) in storyDictionary.enumerated(){
@@ -235,7 +234,7 @@ open class ApiParser{
             
             
             ApiParser.collectionParser(data: value as? [String:AnyObject], completion: { (collection, error) in
-                print(collection)
+             
                 
                 let keyArray = Array(results.keys)
                 collectionMapping[keyArray[index]] = collection
@@ -243,6 +242,15 @@ open class ApiParser{
         }
         completion(collectionMapping, nil)
         
+        
+    }
+    
+    open class func engagmentParser(data:Any?,completion:@escaping(_ engagment:Engagement?,_ error:Error?)->()){
+        
+        guard let dataD = data as? [String:Any] else { return completion(nil, nil)}
+        let engagment = Engagement()
+        engagment.setValuesForKeys(dataD)
+        completion(engagment, nil)
         
     }
 

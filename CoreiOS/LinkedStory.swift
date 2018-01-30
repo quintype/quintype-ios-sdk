@@ -15,8 +15,10 @@ public class LinkedStory:SafeJsonObject {
     public var slug:String?
     
     public override func setValue(_ value: Any?, forKey key: String) {
-        if key == "story_content_id"{
-            
+        if key == "story-content-id"{
+            if let valueD =  value as? String{
+                self.story_content_id = valueD
+            }
         }
         super.setValue(value, forKey: key)
     }

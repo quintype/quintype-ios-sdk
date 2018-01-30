@@ -123,7 +123,7 @@ public class ApiService{
         
         api.call(method: "get", urlString: url, parameter: nil,cache:cache, Success: { (data) in
             
-            ApiParser.storyParser(data: data as! [String : AnyObject]?, completion: { (storiesObject) in
+            ApiParser.storyParser(data: data , completion: { (storiesObject) in
                 
                 DispatchQueue.main.async { Success(storiesObject) }
                 
@@ -144,7 +144,7 @@ public class ApiService{
         
         let stringURLFields = fields?.joined(separator: ",")
         
-        var param:[String:Any?] = [
+        let param:[String:Any?] = [
             
             "fields":stringURLFields,
             "section-id":SectionId
@@ -195,16 +195,16 @@ public class ApiService{
                 
             }
         }
+        print(searchKey)
         
         let url = baseUrl + Constants.urlConfig.search
         
-        
-        
         api.call(method: "get", urlString: url, parameter: param as [String : AnyObject]?,cache:cache, Success: { (data) in
             
-            ApiParser.searchParser(data: data as! [String : AnyObject]?, completion: { (searchObject) in
+            ApiParser.searchParser(data: data , completion: { (searchObject) in
                 
                 DispatchQueue.main.async { Success(searchObject) }
+                
                 
             })
             
@@ -225,7 +225,7 @@ public class ApiService{
         
         api.call(method: "get", urlString: url, parameter:nil,cache:cache, Success: { (data) in
             
-            ApiParser.commentsParser(data: data as! [String : AnyObject]?,completion: { (commentObject) in
+            ApiParser.commentsParser(data: data ,completion: { (commentObject) in
                 
                 DispatchQueue.main.async { Success(commentObject) }
                 
@@ -247,13 +247,14 @@ public class ApiService{
         
         api.call(method: "get", urlString: url, parameter:nil,cache:cache, Success: { (data) in
             
-            ApiParser.storyParser(data: data as! [String : AnyObject]?,completion: { (storyObject) in
+            ApiParser.storyParser(data: data ,completion: { (storyObject) in
                 
-              //  DispatchQueue.main.async { Success(storyObject) }
+                DispatchQueue.main.async { Success(storyObject) }
                 
-                self.entityManager.getStoryEntitiesSerialized(story: storyObject, completion: { (storyd) in
-                    DispatchQueue.main.async { Success(storyObject) }
-                })
+                //TODO: uncomment this
+                //                self.entityManager.getStoryEntitiesSerialized(story: storyObject, completion: { (storyd) in
+                //                    DispatchQueue.main.async { Success(storyObject) }
+                //                })
                 
             })
             
@@ -270,7 +271,7 @@ public class ApiService{
         
         let stringURLFields = fields?.joined(separator: ",")
         
-        var param:[String:Any?] = [
+        let param:[String:Any?] = [
             
             "fields":stringURLFields,
             "offset":offset,
@@ -281,7 +282,7 @@ public class ApiService{
         
         api.call(method: "get", urlString: url, parameter:param as [String : AnyObject]?,cache:cache, Success: { (data) in
             
-            ApiParser.StoriesParser(data: data as! [String : AnyObject]?, completion: { (storiesObject) in
+            ApiParser.StoriesParser(data: data , completion: { (storiesObject) in
                 
                 DispatchQueue.main.async { Success(storiesObject) }
                 
@@ -425,22 +426,66 @@ public class ApiService{
         
         api.call(method: "get", urlString: url, parameter: param,cache:cache, Success: { (data) in
             
-//          ApiParser.collectionParser(data: data, completion: { (collectionObject) in
-//            
-//              DispatchQueue.main.async { Success(collectionObject) }
-//            
-//          })
             Success(data)
             
         }) { (err) in
             
-            print(err)
             Error(err)
             
         }
         
     }
     
+    public func getBulkCollectionCall(queryParams:[String:Any]?,cacheOption:cacheOption,Success:@escaping (Any?)->(),Error:@escaping (String?)->()){
+        
+        let urlString = baseUrl + Constants.urlConfig.getBulkCollection
+        api.call(method: "get", urlString: urlString, parameter: queryParams as [String : AnyObject]?, cache: cacheOption, Success: { (data) in
+            Success(data)
+        }) { (errorMessage) in
+            
+            print(errorMessage ?? "error messahe is nil")
+            Error(errorMessage)
+        }
+        
+    }
+    
+    
+    public func getStoryEngagmentForStoryId(storyID:String,Success:@escaping (Engagement)->(),Error:@escaping (String?)->()){
+        let urlString = baseUrl + Constants.urlConfig.getStoryEngagmentUrl(storyId: storyID)
+        
+        let parameters = ["fields":"facebook,shrubbery"]
+        
+        api.call(method: "get", urlString: urlString, parameter: parameters as [String : AnyObject], cache: .none, Success: { (data) in
+            
+            ApiParser.engagmentParser(data: data, completion: { (engagment, error) in
+                if error != nil{
+                    DispatchQueue.main.async {
+                        Error("Parsing Failed")
+                    }
+                }
+                if let engagmentD = engagment{
+                    DispatchQueue.main.async {
+                        Success(engagmentD)
+                    }
+                    
+                }else{
+                    DispatchQueue.main.async {
+                        Error("Parsing Failed")
+                    }
+                }
+                
+            })
+            
+        }) { (errorMessage) in
+            
+            DispatchQueue.main.async {
+                Error(errorMessage)
+            }
+            
+            
+        }
+        
+    }
     
     
 }

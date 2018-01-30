@@ -10,7 +10,7 @@ import Foundation
 import Unbox
 
 public class EntityManager:NSObject{
-    
+
     var httpInstance:Http!
     var mapper:[String:Entity.Type] = [:]
     
@@ -24,88 +24,54 @@ public class EntityManager:NSObject{
     
     func getStoryEntitiesSerialized(story:Story, completion:@escaping (Story) -> Void){
         
-        //        let filteredCards = story.cards.filter({$0.metadata != nil && $0.metadata?.storyAttributes != nil && $0.metadata!.storyAttributes!.count > 0})
-        //        if filteredCards.count == 0{
-        //            let managedStory = manageStoryLevelEntities(storyObject: story)
-        //            completion(managedStory)
-        //
-        //        }
-        //
-        //        var cardIDEntityIDMapping:[Int:String] = [:]
-        //
-        //        filteredCards.map { (card) -> Card in
-        //            let storyAttributes = card.metadata!.storyAttributes!
-        //            for (key, value) in storyAttributes{
-        //                if let keyValueAttribute = value as? [AnyObject]{
-        //                    for object in keyValueAttribute{
-        //                        let id = object["id"] as! NSNumber
-        //                        cardIDEntityIDMapping[id.intValue] = card.id ?? ""
-        //                    }
-        //                }
-        //            }
-        //            return card
-        //        }
-        //        let allKeys = Array(cardIDEntityIDMapping.keys)
+        let filteredCards = story.cards.filter({$0.metadata != nil && $0.metadata?.storyAttributes != nil && $0.metadata!.storyAttributes!.count > 0})
         
-        //        getEntitiesSerialized(ids: allKeys, endpoint: nil) { (entityModels) in
-        //
-        //            for entityModel in entityModels{
-        //                if let cardID = cardIDEntityIDMapping[entityModel.id]{
-        //
-        //                    story.cards = story.cards.map({ (targetCard) -> Card in
-        //                        if targetCard.id ?? "" == cardID{
-        //                            let entityStoryElement = self.renderEntityAsStoryElement(model: entityModel)
-        //                            targetCard.story_elements.insert(entityStoryElement, at: 0)
-        //                            cardIDEntityIDMapping[entityModel.id] = nil
-        //                        }
-        //                        return targetCard
-        //                    })
-        //                }
-        //                else{
-        //                    continue
-        //                }
-        //            }
-        //            let handledStory = self.manageStoryLevelEntities(storyObject: story)
-        //            completion(handledStory)
-        //            print(entityModels)
-        //        }
-        
-        let cardManaged = manageCardLevelEntities(storyObjet: story)
-        let storyMangedEntity = manageStoryLevelEntities(storyObject: cardManaged)
-        completion(storyMangedEntity)
-    }
-    
-    func manageCardLevelEntities(storyObjet:Story) -> Story{
-        storyObjet.cards.map { (card) -> Card in
-            if card.metadata == nil || card.metadata?.storyAttributes == nil || card.metadata!.storyAttributes!.count == 0{
-                return card
-            }
-            guard let linkedEntties = storyObjet.linked_entities else{return card}
-            let cardAttributes = card.metadata!.storyAttributes!
+        if filteredCards.count == 0{
+            let managedStory = manageStoryLevelEntities(storyObject: story)
+            completion(managedStory)
+            return
             
-            for (key, attr) in cardAttributes{
-                if let entityArray = attr as? [[String:AnyObject]]{
-                    for entityAttr in entityArray{
-                        let id = (entityAttr["id"] as! NSNumber).intValue
-                        let filteredEntity = linkedEntties.filter({ (unserializedEntity) -> Bool in
-                            let idEn = unserializedEntity["id"] as! NSNumber
-                            return idEn.intValue == id
-                        })
-                        if let firstEntity = filteredEntity.first{
-                            guard let modeledEntity = self.modelEntityWithJSONObject(object: firstEntity) else{continue}
-                            
-                            card.story_elements.insert(renderEntityAsStoryElement(model: modeledEntity), at: 0)
-                        }
-                        else{
-                            continue
-                        }
+        }
+        
+        var cardIDEntityIDMapping:[Int:String] = [:]
+        
+       _ = filteredCards.map { (card) -> Card in
+            let storyAttributes = card.metadata!.storyAttributes!
+            for (_, value) in storyAttributes{
+                if let keyValueAttribute = value as? [AnyObject]{
+                    for object in keyValueAttribute{
+                        let id = object["id"] as! NSNumber
+                        cardIDEntityIDMapping[id.intValue] = card.id ?? ""
                     }
                 }
             }
             return card
         }
-        return storyObjet
         
+        let allKeys = Array(cardIDEntityIDMapping.keys)
+        
+        getEntitiesSerialized(ids: allKeys, endpoint: nil) { (entityModels) in
+            
+            for entityModel in entityModels{
+                if let cardID = cardIDEntityIDMapping[entityModel.id]{
+                    
+                    story.cards = story.cards.map({ (targetCard) -> Card in
+                        if targetCard.id ?? "" == cardID{
+                            let entityStoryElement = self.renderEntityAsStoryElement(model: entityModel)
+                            targetCard.story_elements.insert(entityStoryElement, at: 0)
+                            cardIDEntityIDMapping[entityModel.id] = nil
+                        }
+                        return targetCard
+                    })
+                }
+                else{
+                    continue
+                }
+            }
+            let handledStory = self.manageStoryLevelEntities(storyObject: story)
+            completion(handledStory)
+            
+        }
     }
     
     fileprivate func manageStoryLevelEntities(storyObject:Story) -> Story{
@@ -113,7 +79,7 @@ public class EntityManager:NSObject{
         guard let storyAttributes = metadata.story_attributes else{return storyObject}
         guard let linkedEntties = storyObject.linked_entities else{return storyObject}
         
-        for (key, attr) in storyAttributes{
+        for (_, attr) in storyAttributes{
             if let entityArray = attr as? [[String:AnyObject]]{
                 for entityAttr in entityArray{
                     let id = (entityAttr["id"] as! NSNumber).intValue
@@ -152,7 +118,6 @@ public class EntityManager:NSObject{
     
     
     public func getEntitiesSerialized(ids:[Int], endpoint:String? = nil, completion: @escaping (_ data:[Entity]) -> Void){
-        
         getEntities(ids: ids, endpoint: endpoint) { (entityObjects) in
             var allEntities:[Entity] = []
             for entityObject in entityObjects{
@@ -167,13 +132,13 @@ public class EntityManager:NSObject{
     }
     
     fileprivate func modelEntityWithJSONObject(object:[String:AnyObject]) -> Entity?{
-        if let entityModel:Entity = try? unbox(dictionary: object as! [String:AnyObject]){
+        if let entityModel:Entity = try? unbox(dictionary: object){
             
             let type = entityModel.type
             
             if let mappingExist = self.mapper[type!]{
-                if let actualModel = try? mappingExist.init(unboxer: Unboxer.init(dictionary: object as! [String:AnyObject])){
-                    return actualModel
+                if let actualModel = try? mappingExist.init(unboxer: Unboxer.init(dictionary: object )){
+                   return actualModel
                 }
                 else{
                     return entityModel
@@ -190,9 +155,10 @@ public class EntityManager:NSObject{
     
     
     public func getEntities(ids:[Int], endpoint:String? = nil, completion: @escaping (_ data:[AnyObject]) -> Void){
-        var allIds = ids.map({"\($0)"}).joined(separator: ",") as NSString
+        let allIds = ids.map({"\($0)"}).joined(separator: ",") as NSString
         
-        var endPointURL = endpoint ?? (Constants.urlConfig.getBaseUrl() + Constants.urlConfig.entityBulkURL)
+        let endPointURL = endpoint ?? (Constants.urlConfig.getBaseUrl() + Constants.urlConfig.entityBulkURL)
+        
         self.httpInstance.call(method: "get", urlString: endPointURL, parameter: ["ids":allIds], cache: cacheOption.none, Success: { (result) in
             if let entityArray = result?["result"] as? [AnyObject]{
                 completion(entityArray)

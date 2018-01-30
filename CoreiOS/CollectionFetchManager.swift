@@ -8,22 +8,29 @@
 
 import UIKit
 import Foundation
-import Quintype
-
 open class CollectionFetchManager: NSObject {
     
- 
-    
-    
-    let bulkLimit:Int = 5
-    fileprivate var _slug:String
     static var bulkNecessaryFields:Array<String> = ["id","headline","slug","url","hero-image-s3-key","hero-image-metadata","first-published-at","last-published-at","alternative","published-at","author-name","author-id","sections","story-template","summary","metadata"]
+    
+    
+    
+    var bulkLimit:Int = 5
+    var keys:Dictionary<String, String> = [:]
+    var onlyCollection:Bool = false
+    fileprivate var _slug:String
     fileprivate var resultantCollections:[String:CollectionModel]?
     fileprivate var page:Page
-    var keys:Dictionary<String, String> = [:]
-    public init(slug:String, startImmediately:Bool) {
+    
+    
+    
+    public init(slug:String, startImmediately:Bool,storyLimit:Int=4, onlyCollection:Bool=false) {
+        
+        
+        self.bulkLimit = storyLimit
+        self.onlyCollection = onlyCollection
         _slug = slug
-        page = Page.init(offsetPara: 0, limitPara: 10)
+        page = Page.init(offsetPara: 0, limitPara: storyLimit)
+        
         super.init()
         startImmediately ? startFetch() : ()
     }
@@ -32,7 +39,6 @@ open class CollectionFetchManager: NSObject {
     open var completion:COMPLETION_HANDLER?
     
     public func startFetch(){
-        
         
         if  page.status == Page.PAGING_STATUS.PAGING || page.status == Page.PAGING_STATUS.LAST_PAGE{
             return
@@ -52,26 +58,41 @@ open class CollectionFetchManager: NSObject {
                     print(collection)
                     self.resultantCollections = nil
                     self.keys.removeAll()
-                    self.recursiveBulkRequest(collectionItems: collection.items, completion: { (collectionMapping) in
-                        collection.items = collection.items.map({ (item) -> CollectionItem in
-                            if item.type ?? "" == "collection"{
-                                item.collection = collectionMapping[item.slug ?? ""]
+                    if !self.onlyCollection{
+                        self.recursiveBulkRequest(collectionItems: collection.items, completion: { (collectionMapping) in
+                            
+                            collection.items = collection.items.map({ (item) -> CollectionItem in
+                                if item.type ?? "" == "collection"{
+                                    
+                                    item.collection = collectionMapping[item.slug ?? ""]
+                                    
+                                }
                                 
+                                
+                                return item
+                            })
+                            if collection.items.count == 0{
+                                self.page.status = Page.PAGING_STATUS.LAST_PAGE
                             }
+                            else{
+                                self.page.status = Page.PAGING_STATUS.NOT_PAGING
+                            }
+                            self.completion?(collection, nil)
                             
-                            
-                            return item
                         })
+                    }
+                    else{
+                        
                         if collection.items.count == 0{
                             self.page.status = Page.PAGING_STATUS.LAST_PAGE
                         }
                         else{
-                          self.page.status = Page.PAGING_STATUS.NOT_PAGING
+                            self.page.status = Page.PAGING_STATUS.NOT_PAGING
                         }
                         self.completion?(collection, nil)
-                        print(collection)
                         
-                    })
+                    }
+                    
                 })
             }
         }) { (error) in
@@ -86,95 +107,8 @@ open class CollectionFetchManager: NSObject {
         self.bulkRequestMake(collectionItems: collectionItems) { (collectionsPara) in
             let collections = collectionsPara
             
+            completion(collectionsPara)
             
-            if self.resultantCollections == nil{
-                self.resultantCollections = collections
-                
-                var items:[CollectionItem] = []
-                let filtered = Array(collections.values).filter({ (oneCollection) -> Bool in
-                    if oneCollection.items.first == nil{
-                        return false
-                    }
-                    let flag = oneCollection.items.first!.type ?? "" == "collection"
-                    if flag{
-                        items.append( oneCollection.items.first!)
-                    }
-                    return flag
-                })
-                
-                if filtered.count == 0{
-                    
-                    completion(self.resultantCollections!)
-                    return
-                }
-                for filter in filtered{
-                    //    self.keys[filter.slug!] = filter.items.first!.slug!
-                    self.keys[filter.items.first!.slug!] = filter.slug!
-                }
-                if filtered.count > 0 {
-                    self.recursiveBulkRequest(collectionItems: items, completion: completion)
-                    
-                }
-            }
-            else{
-                
-                for (key,value) in collections{
-                    
-                    var keyCopy = key
-                    
-                    while self.keys[keyCopy] != nil{
-                        keyCopy = self.keys[keyCopy]!
-                    }
-                    if self.resultantCollections != nil && self.resultantCollections![keyCopy] != nil{
-                        
-                        let index = self.resultantCollections![keyCopy]!.items.index(where: {$0.slug == value.slug ?? "" && $0.type == "collection" })
-                        var parentSlug:String?
-                        var parentCollectionName:String?
-                        if index != nil{
-                            parentSlug = self.resultantCollections![keyCopy]!.items[index!].slug
-                            parentCollectionName = self.resultantCollections![keyCopy]!.items[index!].name
-                            self.resultantCollections![keyCopy]!.items.remove(at: index!)
-                        }
-                        value.items = value.items.map({ (item) -> CollectionItem in
-                            item.slug = parentSlug ?? keyCopy
-                            item.name = parentCollectionName
-                            return item
-                        })
-                        
-                        self.resultantCollections![keyCopy]!.items = value.items +  self.resultantCollections![keyCopy]!.items
-                        self.resultantCollections![keyCopy]!.items = Array(self.resultantCollections![keyCopy]!.items.prefix(self.bulkLimit))
-                    }
-                    
-                }
-                
-                var items:[CollectionItem] = []
-                let filtered = Array(collections.values).filter({ (oneCollection) -> Bool in
-                    if oneCollection.items.first == nil{
-                        return false
-                    }
-                    let flag = oneCollection.items.first!.type ?? "" == "collection"
-                    if flag{
-                        items.append( oneCollection.items.first!)
-                    }
-                    return flag
-                })
-                for filter in filtered{
-                    //  self.keys[filter.slug!] = filter.items.first!.slug!
-                    self.keys[filter.items.first!.slug!] = filter.slug!
-                }
-                
-                if filtered.count > 0 {
-                    self.recursiveBulkRequest(collectionItems: items, completion: completion)
-                    
-                }
-                else{
-                    completion(self.resultantCollections!)
-                    self.keys.removeAll()
-                    self.resultantCollections = nil
-                    return
-                    
-                }
-            }
         }
     }
     
@@ -212,3 +146,4 @@ open class CollectionFetchManager: NSObject {
     }
     
 }
+

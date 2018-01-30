@@ -7,7 +7,6 @@
 //
 
 import UIKit
-import Quintype
 
 open class CollectionRevealFetchManager: NSObject {
     
@@ -173,7 +172,7 @@ open class CollectionRevealFetchManager: NSObject {
                             self.resultantCollections![keyCopy]!.items.insert(contentsOf: value.items, at: index!)
                         }
                         
-                      //  self.resultantCollections![keyCopy]!.items = value.items +  self.resultantCollections![keyCopy]!.items
+                        //  self.resultantCollections![keyCopy]!.items = value.items +  self.resultantCollections![keyCopy]!.items
                     }
                     
                 }

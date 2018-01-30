@@ -14,7 +14,7 @@ public class Http{
     
     var cacheKey:String?
     
-    static let sharedInstance = Http()
+   open static let sharedInstance = Http()
     let defaults = UserDefaults.standard
     
     public class func isInternetAvailable() -> Bool {
@@ -109,7 +109,7 @@ public class Http{
         URLSession.shared.dataTask(with: url as URLRequest) { (data, response, error) in
             
             #if DEBUG
-                if let data = data,let json = try? JSONSerialization.jsonObject(with: data, options: []) as? [String: AnyObject] {  }
+                if let data = data,let _ = try? JSONSerialization.jsonObject(with: data, options: []) as? [String: AnyObject] {  }
             #endif
             
             if error != nil {
@@ -143,9 +143,6 @@ public class Http{
                             
                             DispatchQueue.main.async {
                                 
-                                #if DEBUG
-                                    print("Api call successfull")
-                                #endif
                                 
                                 if let jsond = json as? [String:AnyObject]{
                                     Success(jsond)
@@ -199,9 +196,17 @@ public class Http{
             
             }.resume()
     }
-    
+ 
     
     public func call(method:String,urlString: String,parameter:[String:AnyObject]?,cache:cacheOption,Success: @escaping ([String: AnyObject]?) -> (),Error:@escaping (String?) -> ()) {
+        
+        print("--------------------URL--------------------")
+        print(urlString)
+        
+        if let parameterD = parameter{
+            print("--------------------Parameters--------------------")
+            print(parameterD)
+        }
         
         var cacheType:String?
         var cacheTime:Int?
@@ -230,7 +235,7 @@ public class Http{
             cacheTime = 0
         }
         
-        var url = createUrlFromParameter(method: method, urlString: urlString, param: parameter)
+        let url = createUrlFromParameter(method: method, urlString: urlString, param: parameter)
         
         if Http.isInternetAvailable(){
             
