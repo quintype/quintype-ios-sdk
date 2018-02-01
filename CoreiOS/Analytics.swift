@@ -41,10 +41,10 @@ public class Analytics{
         storyVisitPageViewEventId = NSUUID().uuidString
         
         parameter = [
-            "session-event-id":sessionId as Any,
+            "session-event-id":sessionId ?? "",
             "id":UUID().uuidString,
-            "device-tracker-id":deviceId as Any,
-            "publisher-id":publisherId as Any,
+            "device-tracker-id":deviceId ?? "",
+            "publisher-id":publisherId ?? "",
             "referrer":"",
             "device-type":deviceType,
             "device-maker":deviceMaker,
@@ -258,3 +258,4 @@ public class Analytics{
     }
     
 }
+
