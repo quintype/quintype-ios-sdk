@@ -23,9 +23,10 @@ public class Analytics{
     var software: String?
     var deviceModel: String!
     var storyVisitPageViewEventId:String?
-    let deviceType:String = "iOS"
-    var deviceMaker:String = "Apple"
-    let deviceIsMobile:Bool = true
+    let deviceType:String = "iOS"//
+    var deviceMaker:String = "Apple"//
+    let deviceIsMobile:Bool = true//
+    //os
     var parameter:[String:Any] = [:]
     
     public init(){}
@@ -45,7 +46,19 @@ public class Analytics{
             "device-tracker-id":deviceId as Any,
             "publisher-id":publisherId as Any,
             "referrer":"",
+            "device-type":deviceType,
+            "device-maker":deviceMaker,
+            "device-is-mobile":deviceIsMobile,
+            "os": "iOS - " + UIDevice.current.systemVersion.description
+            
         ]
+        print("------------------------------------------------------ parameter---------------------------------------------")
+        
+        print(parameter)
+        
+        print( "------------------------------------------------------ parameter---------------------------------------------")
+        
+        
         if Constants.user.memberId != 0{
             memberId = Constants.user.memberId
             parameter["member-id"] = memberId
@@ -55,7 +68,7 @@ public class Analytics{
     private func checkConfig(complete:@escaping ()->()){
         if (defaults.string(forKey: Constants.analyticConfig.analyticKey) != nil){
             
-           paramInit()
+            paramInit()
             
             complete()
         }else{
