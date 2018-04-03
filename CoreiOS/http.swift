@@ -12,10 +12,22 @@ import SystemConfiguration
 
 public class Http{
     
-    var cacheKey:String?
+    //    var cacheKey:String?{
+    //        didSet{
+    //            print("CACHE-KEY:\(cacheKey)")
+    //            if cacheKey == oldValue{
+    //                print("same Value being Set")
+    //            }
+    //        }
+    //    }
     
-   open static let sharedInstance = Http()
+    open static let sharedInstance = Http()
     let defaults = UserDefaults.standard
+    var serialQueue =  OperationQueue()
+    
+    init(){
+        serialQueue.maxConcurrentOperationCount = 1
+    }
     
     public class func isInternetAvailable() -> Bool {
         
@@ -72,7 +84,7 @@ public class Http{
                     
                 })
                 
-                cacheKey = url.url!.description
+                
                 
                 return url
                 
@@ -91,13 +103,13 @@ public class Http{
                     url.addValue(defaults.value(forKey: Constants.login.auth) as! String, forHTTPHeaderField: Constants.login.auth)
                 }
                 
-                cacheKey = url.url!.description + parameter.description
+                
                 
                 return url
                 
             }
         }else{
-            cacheKey = url.url!.description
+            
             return url
         }
         
@@ -181,22 +193,11 @@ public class Http{
                     }
                     
                 }
-                //                #if DEBUG
-                //                    catch let error {
-                //                        print("entered json parsing error",error)
-                //                        //print(error)
-                //                        DispatchQueue.main.async {
-                //                            ////print("Api call successfull but cannot parse")
-                //                            Error("Api call successfull but cannot parse")
-                //                        }
-                //
-                //                    }
-                //                #endif
             }
             
             }.resume()
     }
- 
+    
     
     public func call(method:String,urlString: String,parameter:[String:AnyObject]?,cache:cacheOption,Success: @escaping ([String: AnyObject]?) -> (),Error:@escaping (String?) -> ()) {
         
@@ -256,8 +257,9 @@ public class Http{
                 })
                 
             }else if cacheType == Constants.cache.loadOldCacheAndReplaceWithNew{
+                let key = self.generateCachingKey(method: method, urlString: urlString, param: parameter)
                 
-                Cache.retriveCacheData(keyName: self.cacheKey!,cachTimelimt:Double(expiryTime), Success: { (data) in
+                Cache.retriveCacheData(keyName: key,cachTimelimt:Double(expiryTime), Success: { (data) in
                     
                     let info = data as? [String:Any]
                     
@@ -276,10 +278,14 @@ public class Http{
                 }, error: {
                     
                     self.getData(url: url, Success: { (data) in
-                        
-                        Cache.cacheData(data: data!, key: self.cacheKey!, cacheTimeInMinute: cacheTime ?? 0, cacheType: cacheType!)
-                        
                         Success(data)
+                        
+                        //                        self.serialQueue.addOperation {
+                        
+                        let key = self.generateCachingKey(method: method, urlString: urlString, param: parameter)
+                        
+                        Cache.cacheData(data: data!, key: key, cacheTimeInMinute: cacheTime ?? 0, cacheType: cacheType!)
+                        //                        }
                         
                     }, Error: { (error) in
                         
@@ -292,10 +298,14 @@ public class Http{
             }else if cacheType == Constants.cache.oflineCacheToDisk{
                 
                 self.getData(url: url, Success: { (data) in
-                    
-                    Cache.cacheData(data: data!, key: self.cacheKey!, cacheTimeInMinute: cacheTime ?? 0, cacheType: cacheType!, oflineStatus: true)
-                    
                     Success(data)
+                    
+                    self.serialQueue.addOperation {
+                        let key = self.generateCachingKey(method: method, urlString: urlString, param: parameter)
+                        
+                        Cache.cacheData(data: data!, key: key, cacheTimeInMinute: cacheTime ?? 0, cacheType: cacheType!, oflineStatus: true)
+                    }
+                    
                     
                 }, Error: { (error) in
                     
@@ -305,7 +315,9 @@ public class Http{
                 
             }else{
                 
-                Cache.retriveCacheData(keyName: self.cacheKey!,cachTimelimt:Double(expiryTime), Success: { (data) in
+                let key = self.generateCachingKey(method: method, urlString: urlString, param: parameter)
+                
+                Cache.retriveCacheData(keyName: key,cachTimelimt:Double(expiryTime), Success: { (data) in
                     
                     let info = data as? [String:Any]
                     
@@ -315,10 +327,13 @@ public class Http{
                     
                     self.getData(url: url, Success: { (data) in
                         
-                        Cache.cacheData(data: data!, key: self.cacheKey!, cacheTimeInMinute: cacheTime ?? 0, cacheType: cacheType!)
-                        
                         Success(data)
                         
+                        //                        self.serialQueue.addOperation {
+                        let key = self.generateCachingKey(method: method, urlString: urlString, param: parameter)
+                        
+                        Cache.cacheData(data: data!, key: key, cacheTimeInMinute: cacheTime ?? 0, cacheType: cacheType!)
+                        //                        }
                     }, Error: { (error) in
                         
                         Error(error)
@@ -344,4 +359,26 @@ public class Http{
         
     }
     
+    func generateCachingKey(method:String,urlString: String,param:[String:AnyObject]?)->String{
+        let urlString = urlString.addingPercentEncoding(withAllowedCharacters: CharacterSet.urlFragmentAllowed)!
+        let url = NSMutableURLRequest(url: URL(string: urlString)!)
+        
+        url.httpMethod = method.capitalized
+        var keyToCache = ""
+        
+        if let parameter = param{
+            
+            if method.capitalized == "Get"{
+                keyToCache = url.url!.description
+            }else{
+                keyToCache = url.url!.description + parameter.description
+            }
+        }else{
+            keyToCache = url.url!.description
+        }
+        
+        return keyToCache
+    }
+    
 }
+

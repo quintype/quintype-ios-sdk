@@ -26,7 +26,7 @@ public extension UIColor {
         
         // If you wanted a random alpha, just create another
         // random number for that too.
-        return UIColor(red: r, green: g, blue: b, alpha: 0.2)
+        return UIColor(red: r, green: g, blue: b, alpha: 1)
     }
 }
 

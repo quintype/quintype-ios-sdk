@@ -174,7 +174,7 @@ public class ApiService{
     }
     
     //MARK:- Search
-    public func search(searchBy:searchOption,fields: [String]?,offset:Int?,limit:Int?,cache:cacheOption,Success:@escaping (Search?)->(),Error:@escaping (String?)->()) {
+    public func search(searchBy:searchOption,sortType:String?=nil,fields: [String]?,offset:Int?,limit:Int?,cache:cacheOption,Success:@escaping (Search?)->(),Error:@escaping (String?)->()) {
         
         let stringURLFields = fields?.joined(separator: ",")
         var searchKey:String = ""
@@ -183,8 +183,12 @@ public class ApiService{
             
             "fields":stringURLFields,
             "offset":offset,
-            "limit":limit,
+            "limit":limit
             ]
+        
+        if let sortTypeD = sortType{
+            param["sort"] = sortTypeD
+        }
         
         if let opt = searchBy.value{
             
@@ -443,7 +447,6 @@ public class ApiService{
             Success(data)
         }) { (errorMessage) in
             
-            print(errorMessage ?? "error messahe is nil")
             Error(errorMessage)
         }
         
@@ -486,6 +489,73 @@ public class ApiService{
         }
         
     }
+    
+    public func getBulkStoryEngagmentForStoryIdArray(storyIDArray:[String],Success:@escaping ([String:Engagement])->(),Error:@escaping (String?)->()){
+        
+        let urlString = baseUrl + Constants.urlConfig.getBulkStoryEngagmentUrl(storyIdArray: storyIDArray)
+        
+        api.call(method: "get", urlString: urlString, parameter: nil, cache: .none, Success: { (data) in
+            
+            ApiParser.engagmentBulkParser(data: data, completion: { (engagmentDict, error) in
+                if error != nil{
+                    DispatchQueue.main.async {
+                        Error("Parsing Failed")
+                    }
+                }
+                
+                if let engagmentD = engagmentDict{
+                    
+                    DispatchQueue.main.async {
+                        Success(engagmentD)
+                    }
+                    
+                }else{
+                    DispatchQueue.main.async {
+                        Error("Parsing Failed")
+                    }
+                }
+                
+            })
+            
+        }) { (errorMessage) in
+            
+            DispatchQueue.main.async {
+                Error(errorMessage)
+            }
+            
+            
+        }
+        
+    }
+    
+    public func getAuthorDetails(authorId:String,Success:@escaping (Author)->(),Error:@escaping (String?)->()){
+        
+        let urlString = baseUrl + Constants.urlConfig.getAuhtorUrl + "/\(authorId)"
+        
+        api.call(method: "get", urlString: urlString, parameter: nil , cache: .none, Success: { (data) in
+            
+            let parserData:[String:AnyObject] = ["author": data as AnyObject]
+            
+            ApiParser.authorDetailParser(data: parserData, completion: { (author) in
+                
+                DispatchQueue.main.async {
+                    Success(author)
+                }
+                
+                
+            })
+
+        }) { (errorMessage) in
+
+            DispatchQueue.main.async {
+                Error(errorMessage)
+            }
+
+
+        }
+        
+    }
+    
     
     
 }

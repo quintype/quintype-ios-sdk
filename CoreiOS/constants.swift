@@ -40,6 +40,7 @@ public struct Constants{
         static let collectionUrl = "/api/v1/collections"
         static let entityBulkURL = "/api/v1/entity/bulk"
         static let getBulkCollection = "/api/v1/bulk/collection"
+        static let getAuhtorUrl = "/api/author"
         
         //Function that return string
         static func relatedStories(storyId:String) -> String {return getStories + "/" + storyId + "/related-stories"}
@@ -47,8 +48,32 @@ public struct Constants{
         static func getBaseUrl() -> String {return storage.getBaseUrl()!}
         static func collectionRequest(stack:String) ->String { return collectionUrl + "/" + stack }
         static func getStoryEngagmentUrl(storyId:String) -> String{return "/api/stories" + "/" + storyId + "/" + "engagement"}
+        
+        static func getBulkStoryEngagmentUrl(storyIdArray:[String]) -> String {
+            var components = URLComponents()
+            
+            var queryItems = [URLQueryItem]()
+            
+            for (index,id) in storyIdArray.enumerated() {
+                if index == 5 { break }
+                queryItems.append(URLQueryItem(name: "id\(index+1)", value: id))
+            }
+            
+            components.queryItems = queryItems
+            
+            let urlString = "/api/v1/bulk/engagement"
+            
+            if let parameters = (components.url?.absoluteString){
+                return urlString + parameters
+            }else {
+                return ""
+            }
+            
+
+        }
 
     }
+
     
     public struct analyticConfig{
         
@@ -143,10 +168,10 @@ public struct Constants{
         
     }
     
-    struct HttpError{
+   public struct HttpError{
         
-        static let pageNotFound = "Unable to retrive data. Please try again after sometime"
-        static let noInternetConnection = "No internet connection. Please try again after sometime"
+       public static let pageNotFound = "Unable to retrive data. Please try again after sometime"
+       public static let noInternetConnection = "No internet connection. Please try again after sometime"
         
     }
     

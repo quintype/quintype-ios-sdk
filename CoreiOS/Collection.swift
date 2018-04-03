@@ -17,14 +17,30 @@ open class CoverImageMetadata:SafeJsonObject{
 
 open class CoverImage:SafeJsonObject{
     open var cover_image_url:String?
-    open var cover_image_metadata:CoverImageMetadata?
+    open var cover_image_metadata:ImageMetaData?
+    
+    open var caption:String?
+    open var cover_image_s3_key:String?
+    
     override open func setValue(_ value: Any?, forKey key: String) {
         if key == "cover_image_metadata"{
             
             if let valued = value as? [String:AnyObject]{
-                let coverImageMeta = CoverImageMetadata()
-                coverImageMeta.setValuesForKeys(valued)
-                self.cover_image_metadata = coverImageMeta
+                let image = ImageMetaData()
+               
+                
+                if let width = valued["width"] as? NSNumber{
+                    image.width = width
+                }
+                if let height = valued["height"] as? NSNumber{
+                    image.height = height
+                }
+                if let focusPoint = valued["focus-point"] as? [NSNumber]{
+                    image.focus_point = focusPoint
+                }
+                
+                cover_image_metadata = image
+                
             }
             
         }else{
@@ -42,10 +58,14 @@ open class ColectionMetaData:SafeJsonObject{
     open var cover_image_s3_key:String?
     open var design_template:DesignTemplate?
     
+    open var parentSection:String?
+    
+    open var snapshot:[String] = []
+    open var cover_image_metadata:ImageMetaData?
+    
     override open func setValue(_ value: Any?, forKey key: String) {
         
-        print(key)
-        if key == "sections" {
+        if (key == "section") || (key == "sections") {
             
             for  section in value as! [[String:AnyObject]]{
                 let singleSection = Section()
@@ -55,11 +75,19 @@ open class ColectionMetaData:SafeJsonObject{
                 })
             }
             
+            if sections.count > 0 {
+             self.parentSection = self.getParentSectionName(sectionId: sections[0].id?.intValue)
+            }
+            
+            
         }else if key == "cover_image"{
             
             if let valued = value as? [String:AnyObject]{
                 let coverImage = CoverImage()
-                coverImage.setValuesForKeys(valued)
+                Converter.jsonKeyConverter(dictionaryArray: valued, completion: { (data) in
+                    coverImage.setValuesForKeys(data)
+                })
+                
                 self.cover_image = coverImage
             }
             
@@ -72,11 +100,43 @@ open class ColectionMetaData:SafeJsonObject{
                 self.design_template = designTemplate
             }
             
+        }else if key == "snapshot"{
+            if let valueD = value as? [String:Any],let body = valueD["body"] as? String{
+                
+                let newString = body.replacingOccurrences(of: "<p>", with: "")
+                let array = newString.components(separatedBy: "</p>")
+                
+                self.snapshot = array.filter({!$0.isEmpty})
+            }
         }else{
             super.setValue(value, forKey: key)
         }
     }
     
+    func getParentSectionName(sectionId:Int?) -> String? {
+        guard let subSectionId =  sectionId else{
+            return nil
+        }
+        
+        guard let config = Quintype.publisherConfig ,config.sections.count > 0 else{
+            return nil
+        }
+        
+        let parentSections = config.sections.filter({$0.parent_id?.intValue == nil})
+        let sectionFromId = config.sections.first(where: {$0.id?.intValue == subSectionId})
+        
+        if let _ = sectionFromId?.parent_id?.intValue {
+            
+            let parentSectionName = parentSections.first(where: {$0.id?.intValue == sectionFromId?.parent_id?.intValue})?.name?.lowercased()
+            
+            return parentSectionName
+            
+        }else{
+            return sectionFromId?.name?.lowercased()
+        }
+        
+        
+    }
     
 }
 
@@ -99,6 +159,7 @@ open class CollectionModel: SafeJsonObject {
     open var name:String?
     open var metadata:ColectionMetaData?
 
+    
     
     override open func setValue(_ value: Any?, forKey key: String) {
         if key == "items"{

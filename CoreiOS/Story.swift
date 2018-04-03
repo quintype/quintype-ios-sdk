@@ -41,7 +41,6 @@ public class Story:SafeJsonObject {
     public var version: NSNumber?
     public var bullet_type: String?
     public var story_template: StoryTemplet? = StoryTemplet.Default
-    public var story_templateString:String?
     
     public var content_type:String?
     
@@ -61,6 +60,9 @@ public class Story:SafeJsonObject {
     
     public var engagment:Engagement?
     public var imageAttributtedCaptionText:NSAttributedString?
+    public var parentSection:String?
+    
+    
     
     public var storyReadTime:String?
     
@@ -73,7 +75,6 @@ public class Story:SafeJsonObject {
         story.cards = self.cards
         story.content_type = self.content_type
         story.story_template = self.story_template
-        story.story_templateString = self.story_templateString
         story.bullet_type = self.bullet_type
         story.version = self.version
         story.push_notification = self.push_notification
@@ -115,6 +116,10 @@ public class Story:SafeJsonObject {
                     self.sections.append(singleSection)
                     //print(self.sections)
                 })
+            }
+            
+            if self.sections.count > 0{
+                self.parentSection =  self.getParentSection(section: self.sections[0])
             }
             
         }else if key == "hero_image_metadata"{
@@ -203,7 +208,6 @@ public class Story:SafeJsonObject {
             }
         }else if key == "story_template"{
             if let unwrappedValue = value as? String{
-                self.story_templateString = unwrappedValue
                 self.story_template = StoryTemplet(value: unwrappedValue)
             }else{
                 self.story_template = StoryTemplet.Default
@@ -212,6 +216,34 @@ public class Story:SafeJsonObject {
         }   
         else {
             super.setValue(value, forKey: key)
+        }
+    }
+    
+    func getParentSection(section:Section) -> String? {
+        guard let sectionID =  section.parent_id?.intValue else{
+            return section.name?.lowercased()
+        }
+        
+        guard let config = Quintype.publisherConfig ,config.sections.count > 0 else{
+            return nil
+        }
+        
+        let parentSections = config.sections.filter({$0.parent_id?.intValue == nil})
+        
+        let parentSection = parentSections.filter { (section) -> Bool in
+            if let parentId = section.id?.intValue{
+                return parentId == sectionID
+            }else{
+                return false
+            }
+        }
+        
+        if parentSection.count > 0{
+            
+            return parentSection.first?.name?.lowercased()
+            
+        }else{
+            return nil
         }
     }
 }
@@ -225,7 +257,7 @@ public enum StoryTemplet:String{
     case Review = "review"
     case Elsewhere = "news-elsewhere"
     case Photo = "photo"
-    case Explainer
+    case Explainer = "explainer"
     case LongForm
     case ViewCounterView
     case Unknown

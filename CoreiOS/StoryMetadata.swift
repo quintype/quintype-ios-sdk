@@ -14,10 +14,8 @@ public class StoryMetadata:SafeJsonObject{
     public var is_closed : Bool = false
     public var viewType:ViewConterViewType = .Unknown
     public var storyTheme:StoryTheme = .Unknown
-    
+    public var sponsored_by:String?
     public var linkedStory:LinkedStory?
-    
-    
     
     override public func setValue(_ value: Any?, forKey key: String) {
         if key == "story-attributes"{
@@ -50,8 +48,11 @@ public class StoryMetadata:SafeJsonObject{
             if let unwrappedValue = value as? Bool{
                 self.is_closed = unwrappedValue
             }
-        }
-        else{
+        }else if  key == "sponsored-by"{
+            if let newValue = value as? String{
+                self.sponsored_by = newValue
+            }
+        }else{
             super.setValue(value, forKey: key)
         }
     }

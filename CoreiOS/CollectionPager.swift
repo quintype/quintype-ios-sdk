@@ -88,17 +88,17 @@ public class CollectionPager: NSObject {
     
 }
 
-struct Page{
+public struct Page{
     public enum PAGING_STATUS:Int{
         case NOT_PAGING
         case PAGING
         case LAST_PAGE
         case ERRORED
     }
-    var offset:Int = 0
-    var limit:Int = 0
-    var status:PAGING_STATUS = PAGING_STATUS.NOT_PAGING
-    init(offsetPara:Int = 0, limitPara:Int = 0) {
+   public var offset:Int = 0
+   public var limit:Int = 0
+   public var status:PAGING_STATUS = PAGING_STATUS.NOT_PAGING
+   public init(offsetPara:Int = 0, limitPara:Int = 0) {
         
         self.limit = limitPara
         if offsetPara == 0{
@@ -109,12 +109,12 @@ struct Page{
             self.offset += offsetPara
         }
     }
-    mutating func kick(){
+   public mutating func kick(){
         
         self.offset += self.limit
     }
     
-    mutating func minus(){
+  public  mutating func minus(){
         self.offset -= self.limit
     }
 }

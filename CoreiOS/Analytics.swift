@@ -103,7 +103,7 @@ public class Analytics{
         checkConfig {
             self.parameter["page-type"] = pageType.home.rawValue
             self.parameter["url"] = Constants.storage.getBaseUrl()
-            
+           
             self.Track(eventName: eventType.viewPage.rawValue, parameter: self.parameter as [String : AnyObject])
         }
     }
@@ -116,6 +116,31 @@ public class Analytics{
             self.parameter["url"] = ""
             
             self.Track(eventName: eventType.viewPage.rawValue, parameter: self.parameter as [String : AnyObject])
+        }
+    }
+    open func trackSearchItemClick(storySlug: String){//3
+        checkConfig {
+            self.parameter["page-type"] = pageType.searchResults.rawValue
+            self.parameter["url"] = storySlug
+            
+            self.Track(eventName: eventType.viewPage.rawValue, parameter: self.parameter as [String : AnyObject])
+        }
+    }
+    
+    //MARK: - Track author page visit -
+    
+    /**
+     - parameter authorId: authorId instance that is visited
+     */
+    
+    open func trackAuthorProfileVisit(authorId: Int){//4
+        
+        checkConfig {
+            self.parameter["page-type"] = pageType.story.rawValue
+            self.parameter["author-id"] = authorId
+            
+            
+            self.Track(eventName: eventType.viewStory.rawValue, parameter: self.parameter as [String : AnyObject])
         }
     }
     
@@ -147,6 +172,24 @@ public class Analytics{
         checkConfig {
             self.parameter["page-type"] = pageType.story.rawValue
             self.parameter["url"] = story.slug
+            self.parameter["page-view-event-id"] = self.storyVisitPageViewEventId
+            self.parameter["story-content-id"] = story.story_content_id
+            
+            self.Track(eventName: eventType.viewStory.rawValue, parameter: self.parameter as [String : AnyObject])
+        }
+    }
+    
+    
+    //MARK: - Tracka story visit -
+    
+    /**
+     - parameter story: story that has been visited
+     */
+    
+    open func trackCommentVisit(story: Story){//5
+        checkConfig {
+            self.parameter["page-type"] = pageType.comment.rawValue
+            self.parameter["story-id"] = story.slug
             self.parameter["page-view-event-id"] = self.storyVisitPageViewEventId
             self.parameter["story-content-id"] = story.story_content_id
             

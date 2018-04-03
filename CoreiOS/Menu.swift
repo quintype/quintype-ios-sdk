@@ -23,10 +23,7 @@ public class Menu:SafeJsonObject{
     public var created_at:NSNumber?
     public var section_name:String?
     public var data:MenuMeta?
-    
-    
- 
-    
+    public var url:String?
     
     override public func setValue(_ value: Any?, forKey key: String) {
         

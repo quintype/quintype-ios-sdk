@@ -24,6 +24,8 @@ public enum pageType:String{
     case home = "home"
     case story = "story"
     case section = "section"
+    case comment = "comment"
+    case profile = "profile"
     case searchResults = "story-search-results"
     
 }

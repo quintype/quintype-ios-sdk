@@ -32,6 +32,10 @@ public class CardStoryElementSubTypeMetaData:SafeJsonObject {
     public var type:String?
     public var linkedStory:LinkedStory?
     
+    //BrightCove
+    public var poster_url: String?
+    public var account_id: String?
+    
     public override func setValue(_ value: Any?, forKey key: String) {
         if key == "linked_story"{
             let linkedStoryd = LinkedStory()

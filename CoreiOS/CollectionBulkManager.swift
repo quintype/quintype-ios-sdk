@@ -12,18 +12,15 @@ import Foundation
 
 open class CollectionBulkManager: NSObject {
     
-    static var bulkNecessaryFields:Array<String> = ["id","headline","slug","url","hero-image-s3-key","hero-image-metadata","first-published-at","last-published-at","alternative","published-at","author-name","author-id","sections","story-template","summary","metadata"]
+   open static var bulkNecessaryFields:Array<String> = ["id","headline","slug","url","hero-image-s3-key","hero-image-metadata","first-published-at","last-published-at","alternative","published-at","author-name","author-id","sections","story-template","summary","metadata"]
     
     
+   public  var bulkLimit:Int = 5
+   public var keys:Dictionary<String, String> = [:]
     
-    var bulkLimit:Int = 5
-    var keys:Dictionary<String, String> = [:]
-    
-    fileprivate var _slug:String
-    fileprivate var resultantCollections:[String:CollectionModel]?
-    fileprivate var page:Page
-    
-    
+    public var _slug:String
+    public var resultantCollections:[String:CollectionModel]?
+    public var page:Page
     
     public init(slug:String, startImmediately:Bool,storyLimit:Int=4) {
         
@@ -40,7 +37,7 @@ open class CollectionBulkManager: NSObject {
     public typealias COMPLETION_HANDLER = (CollectionModel?, Error?) -> ()
     open var completion:COMPLETION_HANDLER?
     
-    public func startFetch(){
+    open func startFetch(){
         
         
         if  page.status == Page.PAGING_STATUS.PAGING || page.status == Page.PAGING_STATUS.LAST_PAGE{
@@ -53,7 +50,16 @@ open class CollectionBulkManager: NSObject {
         
         page.status = Page.PAGING_STATUS.PAGING
         page.kick()
-        let param:[String:AnyObject] = ["story-fields":CollectionFetchManager.bulkNecessaryFields.joined(separator: ",") as NSString, "limit":NSNumber.init(value: page.limit), "offset":NSNumber.init(value: page.offset)]
+        
+        var necessaryFields = CollectionBulkManager.bulkNecessaryFields//.joined(separator: ",") as NSString
+        
+        if _slug == "explainers" {
+            necessaryFields.append("cards")
+        }
+        
+        let fields = necessaryFields.joined(separator: ",") as NSString
+        
+        let param:[String:AnyObject] = ["story-fields": fields, "limit":NSNumber.init(value: page.limit), "offset":NSNumber.init(value: page.offset)]
         
         Quintype.api.collectionApiRequest(stack: _slug, cache: cacheOption.none,param: param,Success: { (collection) in
             
@@ -82,14 +88,8 @@ open class CollectionBulkManager: NSObject {
                             self.page.status = Page.PAGING_STATUS.NOT_PAGING
                         }
                         self.completion?(collection, nil)
-                
-                        
+                  
                     })
-                    
-                    
-                    
-                    
-                    
                 })
             }
         }) { (error) in
@@ -142,6 +142,10 @@ open class CollectionBulkManager: NSObject {
                     var parentSlugKey = slugKey
                     
                     while self.keys[parentSlugKey] != nil{
+                        if parentSlugKey == self.keys[parentSlugKey]!{
+                            break
+                        }
+                        
                         parentSlugKey = self.keys[parentSlugKey]!
                     }
                     
@@ -207,11 +211,20 @@ open class CollectionBulkManager: NSObject {
         for (index,item) in filteredCollections.enumerated(){
             
             let indexToUse = index + 1
-            let slugToUse = item.slug?.replacingOccurrences(of: "---", with: "-")
+            let slugToUse = item.slug//?.replacingOccurrences(of: "---", with: "-")
             
             innerDict["slug\(indexToUse)"] = slugToUse
-            innerDict["limit\(indexToUse)"] = "\(bulkLimit)"
-            //            innerDict["cards\(indexToUse)"] = "\(true)"//if you need cards as well
+            innerDict["limit\(indexToUse)"] = "\(8)"
+            
+            let templet = item.template ?? ""
+            
+            if templet == "quint-lens" || templet == "photos" || templet == "deqoded"{
+                innerDict["cards\(indexToUse)"] = "\(true)"//if you need cards as well
+            }
+//            else{
+//                innerDict["card\(indexToUse)"] = "\(false)"//cards not required you need cards as well
+//            }
+            
             
         }
         

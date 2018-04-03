@@ -131,7 +131,7 @@ open class BulkApi{
                     
                     ApiParser.collectionParser(data: value as? [String:AnyObject], completion: { (collection) in
                         
-                        for (_,item) in collection.items.enumerated(){
+                        for (_,item) in collection.0.items.enumerated(){
                             
                             if item.type == collectionTypes.collection.rawValue{
                                 
@@ -140,13 +140,13 @@ open class BulkApi{
                             }else if item.type == collectionTypes.story.rawValue{
                                 
                                 
-                                if self.storyCollection[collection.name!] == nil {
+                                if self.storyCollection[collection.0.name!] == nil {
                                     
-                                    self.storyCollection[collection.name!] = [item.story!]
+                                    self.storyCollection[collection.0.name!] = [item.story!]
                                     
                                 }else{
                                     
-                                    self.storyCollection[collection.name!]?.append(item.story!)
+                                    self.storyCollection[collection.0.name!]?.append(item.story!)
                                     
                                 }
                             }

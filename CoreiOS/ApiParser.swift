@@ -201,6 +201,7 @@ open class ApiParser{
         }
         
     }
+
     
     open class func collectionParser(data:[String:AnyObject]?, completion:@escaping(_ collection:CollectionModel, _ error:Error?) -> Void){
         
@@ -251,6 +252,24 @@ open class ApiParser{
         let engagment = Engagement()
         engagment.setValuesForKeys(dataD)
         completion(engagment, nil)
+        
+    }
+    
+    open class func engagmentBulkParser(data:Any?,completion:@escaping(_ engagmentDict:[String:Engagement]?,_ error:Error?)->()){
+        
+        guard let dataD = data as? [String:Any],let resultDict = dataD["results"] as? [String:Any] else { return completion(nil, nil)}
+        
+        var engagmentDict:[String:Engagement] = [:]
+        
+        for (key,value) in resultDict {
+            if let valueD = value as? [String:Any]{
+                let engagment = Engagement()
+                engagment.setValuesForKeys(valueD)
+                engagmentDict[key] = engagment
+            }
+        }
+        
+        completion(engagmentDict, nil)
         
     }
 
