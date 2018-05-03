@@ -529,7 +529,7 @@ public class ApiService{
     }
     public func getBulkEngagmentForStoryIdsPostCall(storyIDArray:[String],Success:@escaping ([String:Engagement])->(),Error:@escaping (String?)->()){
         
-        let urlString = baseUrl + Constants.urlConfig.getBulkUserEngagmentPostUrl
+        let urlString = baseUrl + Constants.urlConfig.getBulkUserEngagmentForPost
         
         var requestDictArray = [String:Any]()
         
@@ -545,24 +545,18 @@ public class ApiService{
         api.call(method: "post", urlString: urlString, parameter: parameter as [String : AnyObject], cache: .none, Success: { (data) in
             
             ApiParser.engagmentBulkParser(data: data, completion: { (engagmentDict, error) in
-                if error != nil{
-                    DispatchQueue.main.async {
+                
+                DispatchQueue.main.async {
+                    if error != nil{
                         Error("Parsing Failed")
                     }
-                }
-                
-                if let engagmentD = engagmentDict{
                     
-                    DispatchQueue.main.async {
+                    if let engagmentD = engagmentDict{
                         Success(engagmentD)
-                    }
-                    
-                }else{
-                    DispatchQueue.main.async {
+                    }else{
                         Error("Parsing Failed")
                     }
                 }
-                
             })
             
         }) { (errorMessage) in
