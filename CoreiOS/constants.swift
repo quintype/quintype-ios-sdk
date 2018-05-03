@@ -40,6 +40,7 @@ public struct Constants{
         static let collectionUrl = "/api/v1/collections"
         static let entityBulkURL = "/api/v1/entity/bulk"
         static let getBulkCollection = "/api/v1/bulk/collection"
+        static let getBulkUserEngagmentPostUrl = "/api/v1/bulk-request"
         
         //Function that return string
         static func relatedStories(storyId:String) -> String {return getStories + "/" + storyId + "/related-stories"}
@@ -47,7 +48,7 @@ public struct Constants{
         static func getBaseUrl() -> String {return storage.getBaseUrl()!}
         static func collectionRequest(stack:String) ->String { return collectionUrl + "/" + stack }
         static func getStoryEngagmentUrl(storyId:String) -> String{return "/api/stories" + "/" + storyId + "/" + "engagement"}
-
+        
     }
     
     public struct analyticConfig{
