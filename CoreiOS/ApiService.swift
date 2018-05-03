@@ -527,7 +527,54 @@ public class ApiService{
         }
         
     }
-    
+    public func getBulkEngagmentForStoryIdsPostCall(storyIDArray:[String],Success:@escaping ([String:Engagement])->(),Error:@escaping (String?)->()){
+        
+        let urlString = baseUrl + Constants.urlConfig.getBulkUserEngagmentPostUrl
+        
+        var requestDictArray = [String:Any]()
+        
+        for storyId in storyIDArray{
+            let dict = ["_type":"engagement",
+                        "story-id":storyId,
+                        "fields":"shrubbery,facebook"]
+            requestDictArray[storyId] = dict
+        }
+        
+        let parameter = ["requests":requestDictArray]
+        
+        api.call(method: "post", urlString: urlString, parameter: parameter as [String : AnyObject], cache: .none, Success: { (data) in
+            
+            ApiParser.engagmentBulkParser(data: data, completion: { (engagmentDict, error) in
+                if error != nil{
+                    DispatchQueue.main.async {
+                        Error("Parsing Failed")
+                    }
+                }
+                
+                if let engagmentD = engagmentDict{
+                    
+                    DispatchQueue.main.async {
+                        Success(engagmentD)
+                    }
+                    
+                }else{
+                    DispatchQueue.main.async {
+                        Error("Parsing Failed")
+                    }
+                }
+                
+            })
+            
+        }) { (errorMessage) in
+            
+            DispatchQueue.main.async {
+                Error(errorMessage)
+            }
+            
+            
+        }
+        
+    }
     public func getAuthorDetails(authorId:String,Success:@escaping (Author)->(),Error:@escaping (String?)->()){
         
         let urlString = baseUrl + Constants.urlConfig.getAuhtorUrl + "/\(authorId)"
