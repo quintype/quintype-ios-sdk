@@ -15,6 +15,7 @@ public class StoryMetadata:SafeJsonObject{
     public var viewType:ViewConterViewType = .Unknown
     public var storyTheme:StoryTheme = .Unknown
     public var sponsored_by:String?
+    public var reference_url:String?
     public var linkedStory:LinkedStory?
     
     override public func setValue(_ value: Any?, forKey key: String) {
@@ -51,6 +52,11 @@ public class StoryMetadata:SafeJsonObject{
         }else if  key == "sponsored-by"{
             if let newValue = value as? String{
                 self.sponsored_by = newValue
+            }
+        }
+        else if key == "reference-url"{
+            if let newValue = value as? String{
+                self.reference_url = newValue
             }
         }else{
             super.setValue(value, forKey: key)
