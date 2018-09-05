@@ -14,6 +14,8 @@ public enum storiesOption {
     
     case topStories
     case section(sectionName:String)
+    case sectionID(sectionID:Int)
+    
     case tag(tagName:String)
     case template(templateName:String)
     case storyGroup(storyGroupName:String)
@@ -29,6 +31,8 @@ public enum storiesOption {
             return nil
         case .section(let sectionName):
             return [Constants.story.section: sectionName]
+        case .sectionID(let sectionID):
+            return [Constants.story.sectionID: "\(sectionID)"]
         case .tag(let tagName):
             return [Constants.story.tag: tagName]
         case .template(let templateName):
