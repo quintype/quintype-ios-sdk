@@ -41,6 +41,7 @@ public class Story:SafeJsonObject {
     public var version: NSNumber?
     public var bullet_type: String?
     public var story_template: StoryTemplet? = StoryTemplet.Default
+    public var storyTemplateString: String?
     
     public var content_type:String?
     
@@ -75,6 +76,7 @@ public class Story:SafeJsonObject {
         story.cards = self.cards
         story.content_type = self.content_type
         story.story_template = self.story_template
+        story.storyTemplateString = self.storyTemplateString
         story.bullet_type = self.bullet_type
         story.version = self.version
         story.push_notification = self.push_notification
@@ -168,7 +170,7 @@ public class Story:SafeJsonObject {
             
         }else if key == "authors"{
             guard let unwrappedAuthorsArray = value as? [[String:AnyObject]] else{
-                return 
+                return
             }
             for authorsJson in unwrappedAuthorsArray {
                 
@@ -208,12 +210,14 @@ public class Story:SafeJsonObject {
             }
         }else if key == "story_template"{
             if let unwrappedValue = value as? String{
+                self.storyTemplateString = unwrappedValue
                 self.story_template = StoryTemplet(value: unwrappedValue)
             }else{
+                self.storyTemplateString = "text"
                 self.story_template = StoryTemplet.Default
             }
             
-        }   
+        }
         else {
             super.setValue(value, forKey: key)
         }
