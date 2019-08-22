@@ -89,8 +89,12 @@ open class ApiParser{
     
     
     //MARK:- Config parser -
-    open class func configParser(data:[String:AnyObject]?,completion:@escaping (Config) -> () ){
+    open class func configParser(data:[String:AnyObject]?,completion:@escaping (Config) -> () )
+    {
+
         let config = Config()
+        
+        
         if var configDetails = data{
             for (_,singleConfigDetails) in configDetails.enumerated(){
                 
@@ -115,7 +119,7 @@ open class ApiParser{
     //MARK:- Search parser -
     open class func searchParser(data:[String:AnyObject]?,completion:@escaping (Search) -> () ){
         
-        if var searchDictionary = data?["results"] as? [String:AnyObject]{
+        if var searchDictionary = data {
             
             let search = Search()
             
@@ -138,7 +142,6 @@ open class ApiParser{
             
         }
     }
-    
     
     
     //MARK:- Comments parser -
@@ -271,6 +274,42 @@ open class ApiParser{
         
         completion(engagmentDict, nil)
         
+    }
+    
+    open class func magazineDetailsParser(data: [String: AnyObject]?, completion: @escaping (_ collection: CollectionModel,_ imageArray: [ImageModel],_ collectionDict: [String: AnyObject], _ error: Error?)->()) {
+        if let collectionData = data?["collection"] as? [String: AnyObject], let imageData = data?["images"] as? [[String: AnyObject]] {
+            
+            let collection = CollectionModel.init()
+            var collectionDict:[String:AnyObject] = [:]
+            for (_, enumeratedObject) in collectionData.enumerated(){
+                
+                let value = enumeratedObject.value
+                let key = ApiParser.sanitize(keyd: enumeratedObject.key)
+                collectionDict.removeValue(forKey: key)
+                collectionDict[key] = value
+            }
+            collection.setValuesForKeys(collectionDict)
+            
+            var arrayOfImages = [ImageModel]()
+            
+            for image in imageData {
+                
+                let imageModel = ImageModel.init()
+                var imageDict: [String: AnyObject] = [:]
+                for (_, object) in image.enumerated() {
+                    
+                    let value = object.value
+                    let key = ApiParser.sanitize(keyd: object.key)
+                    imageDict.removeValue(forKey: key)
+                    imageDict[key] = value
+                }
+                imageModel.setValuesForKeys(imageDict)
+                arrayOfImages.append(imageModel)
+            }
+            
+            completion(collection, arrayOfImages, collectionDict, nil)
+            
+        }
     }
 
 }

@@ -31,7 +31,11 @@ public class CardStoryElementSubTypeMetaData:SafeJsonObject {
     public var answer:String?
     public var type:String?
     public var linkedStory:LinkedStory?
-    
+    public var interviewer:QuestionAndAnswerAttribute?
+    public var interviewee:QuestionAndAnswerAttribute?
+    //Reference
+    public var name:String?
+    public var url:String?
     //BrightCove
     public var poster_url: String?
     public var account_id: String?
@@ -49,9 +53,53 @@ public class CardStoryElementSubTypeMetaData:SafeJsonObject {
             }
           
         }
+        else if key == "interviewer"
+        {
+            let attributer = QuestionAndAnswerAttribute()
+            
+            if let valued = value as? [String:AnyObject]{
+                attributer.setValuesForKeys(valued)
+                if valued.count > 0{
+                    interviewer = attributer
+                }
+            }
+        }
+        else if key == "interviewee"
+        {
+            let attributer = QuestionAndAnswerAttribute()
+            
+            if let valued = value as? [String:AnyObject]{
+                attributer.setValuesForKeys(valued)
+                if valued.count > 0{
+                    interviewee = attributer
+                }
+            }
+        }
         else{
             super.setValue(value, forKey: key)
         }
     }
     
+}
+
+public class QuestionAndAnswerAttribute:SafeJsonObject
+{
+    public var updated_at:NSNumber?
+    public var slug:String?
+    public var name:String?
+    public var type:String?
+    
+    public override func setValue(_ value: Any?, forKey key: String) {
+        if key == "updated-at"
+        {
+            if let valueD =  value as? NSNumber
+            {
+                self.updated_at = valueD
+            }
+        }
+        else
+        {
+            super.setValue(value, forKey: key)
+        }
+    }
 }

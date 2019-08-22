@@ -350,7 +350,8 @@ public class Http{
                 
                 Success(json)
                 
-            }, error: {
+            }, error:
+                {
                 Error(Constants.HttpError.noInternetConnection)
                 
             })

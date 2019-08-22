@@ -33,11 +33,7 @@ public class Config:SafeJsonObject{
     public var razorpay_gateway_key:String?
     public var story_attributes:[StoryAttributes] = []
     public var mins_between_refreshes:NSNumber?
-    
-    
-    
-    
-    
+    public var static_page_urls:[String] = []
     override public func setValue(_ value: Any?, forKey key: String) {
         
         
@@ -89,6 +85,14 @@ public class Config:SafeJsonObject{
                 self.layout?.setValuesForKeys(value as! [String: AnyObject])
             })
             
+        }
+        else if key == "static_page_urls"
+        {
+            if let valueD = value as? [String] {
+                self.static_page_urls = valueD
+            }
+        
+           
         }
         else {
             super.setValue(value, forKey: key)

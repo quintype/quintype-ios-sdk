@@ -161,6 +161,14 @@ public class Analytics{
             self.Track(eventName: eventType.viewStory.rawValue, parameter: self.parameter as [String : AnyObject])
         }
     }
+    open func trackPageViewCollectionVisit(collectionSlug: String)
+    {
+        checkConfig {
+            self.parameter["page-type"] = pageType.collection.rawValue
+            self.parameter["url"] = collectionSlug
+            self.Track(eventName: eventType.viewPage.rawValue, parameter: self.parameter as [String: AnyObject])
+        }
+    }
     
     //MARK: - Tracka story visit -
     
@@ -289,7 +297,7 @@ public class Analytics{
             
             let param:[String:Any] = [
                 "event":parameter,
-                "event-type":"page-view"
+                "event-type":eventName
             ]
             api.call(method: "post", urlString: baseUrl + Constants.analyticConfig.analyticEvent, parameter: param as [String : AnyObject]?,cache:cacheOption.none, Success: { (data) in
                 

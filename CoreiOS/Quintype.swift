@@ -82,6 +82,7 @@ open class Quintype{
     }
     
     open static var publisherConfig:Config?
+    public static var menuGroupConfig:AnyObject?
     
     //MARK: - Open variable for direct access - Analytic
     open static var analytics:Analytics{

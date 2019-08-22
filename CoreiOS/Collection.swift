@@ -15,7 +15,7 @@ open class CoverImageMetadata:SafeJsonObject{
     open var mime_type:String?
 }
 
-open class CoverImage:SafeJsonObject{
+open class CoverImage:SafeJsonObject {
     open var cover_image_url:String?
     open var cover_image_metadata:ImageMetaData?
     
@@ -26,8 +26,7 @@ open class CoverImage:SafeJsonObject{
         if key == "cover_image_metadata"{
             
             if let valued = value as? [String:AnyObject]{
-                let image = ImageMetaData()
-               
+                let image = ImageMetaData()               
                 
                 if let width = valued["width"] as? NSNumber{
                     image.width = width
@@ -50,22 +49,80 @@ open class CoverImage:SafeJsonObject{
     }
 }
 
+open class ColletionSubTypeMetaData: SafeJsonObject {
+    open var id: Int?
+    open var name: String?
+    open var key: String?
+}
+
 open class ColectionMetaData:SafeJsonObject{
     
+    open class PDFSource: SafeJsonObject {
+        open var s3_key: String?
+        open var pdf_file_url: String?
+    }
+    
+    open class Entity: SafeJsonObject {
+        open var id: NSNumber?
+        open var name: String?
+        open var type: String?
+        open var entity_type_id: NSNumber?
+        open var slug: String?
+        
+        open override func setValue(_ value: Any?, forKey key: String) {
+            if key == "entity-type-id" {
+                if let val = value as? NSNumber {
+                    self.entity_type_id = val
+                }
+            } else {
+                super.setValue(value, forKey: key)
+            }
+        }
+        
+    }
+    
     open var sections:[Section] = []
+    open var type:[ColletionSubTypeMetaData] = []
     open var cover_image:CoverImage?
     open var caprion:String?
     open var cover_image_s3_key:String?
     open var design_template:DesignTemplate?
+    open var issue_date: String?
+    open var issue_id: NSNumber?
+    
+    open var pdf_upload_timestamp: String?
     
     open var parentSection:String?
     
     open var snapshot:[String] = []
     open var cover_image_metadata:ImageMetaData?
     
+    open var pdf_src_key: PDFSource?
+    
+    open var entities: Entity?
+    
     override open func setValue(_ value: Any?, forKey key: String) {
-        
-        if (key == "section") || (key == "sections") {
+        if key == "entities" {
+            if let dictVal = value as? [String: AnyObject] {
+                if let collEntity = dictVal["collectionEntities"] as? [String: AnyObject] {
+                    if let magArray = collEntity["magazine"] as? [[String: AnyObject]], magArray.count > 0 {
+                        if let magObj = magArray.first {
+                            let entityObj = Entity()
+                            entityObj.setValuesForKeys(magObj)
+                            self.entities = entityObj
+                        }
+                    }
+                }
+            }
+        } else if key == "pdf_src_key" {
+            if let pdf = value as? [String: AnyObject] {
+                Converter.jsonKeyConverter(dictionaryArray: pdf) { (pdfdict) in
+                    let pdfObj = PDFSource()
+                    pdfObj.setValuesForKeys(pdfdict)
+                    self.pdf_src_key = pdfObj
+                }
+            }
+        } else if (key == "section") || (key == "sections") {
             
             for  section in value as! [[String:AnyObject]]{
                 let singleSection = Section()
@@ -80,7 +137,15 @@ open class ColectionMetaData:SafeJsonObject{
             }
             
             
-        }else if key == "cover_image"{
+        } else if key == "type" && value != nil {
+            if let valueD = value as? [[String:AnyObject]] {
+                for obj in valueD {
+                    let singleType = ColletionSubTypeMetaData()
+                    singleType.setValuesForKeys(obj)
+                    self.type.append(singleType)
+                }
+            }            
+        } else if key == "cover_image"{
             
             if let valued = value as? [String:AnyObject]{
                 let coverImage = CoverImage()
@@ -145,7 +210,7 @@ open class DesignTemplate:SafeJsonObject{
     open var name:String?
 }
 
-open class CollectionModel: SafeJsonObject {
+open class CollectionModel: SafeJsonObject, NSCopying {
     
     open var id:NSNumber?
     open var slug:String?
@@ -154,7 +219,9 @@ open class CollectionModel: SafeJsonObject {
     open var automated:NSNumber?
     open var updated_at:NSNumber?
     open var created_at:NSNumber?
+    open var collection_date: NSNumber?
     open var template:String?
+    open var access:Bool?
     open var items:[CollectionItem] = []
     open var name:String?
     open var metadata:ColectionMetaData?
@@ -174,32 +241,41 @@ open class CollectionModel: SafeJsonObject {
                     self.items.append(collectionItem)
                 })
             }
-        }else if key == "metadata"{
+        } else if key == "metadata"{
             
              metadata = ColectionMetaData()
             Converter.jsonKeyConverter(dictionaryArray: value as? [String : AnyObject], completion: { (data) in
                 self.metadata?.setValuesForKeys(data)
             })
+        } else if key == "access"{
+            if let val = value as? Bool {
+                self.access = val
+            }
         }
-            
         else{
             super.setValue(value, forKey: key)
         }
     }
+    
+    
     open func copy(with zone: NSZone? = nil) -> Any {
         let collection =  CollectionModel()
-        collection.id = id
-        collection.slug = slug
-        collection.summary = summary
-        collection.total_count = total_count
-        collection.automated = automated
-        collection.updated_at = updated_at
-        collection.created_at = created_at
-        collection.template = template
-        collection.items = items
-        collection.name = name
+        collection.id = self.id
+        collection.slug = self.slug
+        collection.summary = self.summary
+        collection.total_count =  self.total_count
+        collection.automated = self.automated
+        collection.updated_at = self.updated_at
+        collection.created_at = self.created_at
+        collection.template = self.template
+        collection.items = self.items.map{ $0.copy() as! CollectionItem }
+        collection.name = self.name
+        collection.metadata = self.metadata
         return collection
     }
+    
+   
+    
     
 }
 

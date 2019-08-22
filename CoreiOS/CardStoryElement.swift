@@ -43,9 +43,9 @@ public class CardStoryElement:SafeJsonObject {
     public var userData:Any?
     public var image_attribution:String?
     public var displayText:NSAttributedString?
-    
+    public var displayLinkedImage:String?
     public var galleryImageArray:[GalleryImage] = []
-    
+
     override public func setValue(_ value: Any?, forKey key: String) {
         
         if key == "image_metadata" {
@@ -92,7 +92,7 @@ public class CardStoryElement:SafeJsonObject {
         }
         else if key == "story_elements" {
             
-            
+            self.galleryImageArray.removeAll()
             for section in value as! [[String:AnyObject]]{
                 let singleCardStoryElement = CardStoryElement()
                 Converter.jsonKeyConverter(dictionaryArray: section, completion: { (data) in
@@ -107,6 +107,7 @@ public class CardStoryElement:SafeJsonObject {
                     imageDataHolder.imageDescription = singleCardStoryElement.title
                     
                     self.galleryImageArray.append(imageDataHolder)
+//                    self.galleryImageArray.append(nil)
                 })
             }
      

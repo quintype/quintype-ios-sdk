@@ -17,9 +17,30 @@ public class StoryMetadata:SafeJsonObject{
     public var sponsored_by:String?
     public var reference_url:String?
     public var linkedStory:LinkedStory?
+    public var review_title:String?
+    public var story_group: String?
+    public var linked_story_slug: String?
+    public var page_no: NSNumber?
     
     override public func setValue(_ value: Any?, forKey key: String) {
-        if key == "story-attributes"{
+        if key == "page-no" {
+            if let val = value as? NSNumber {
+                self.page_no = val
+            } else if let val = value as? String {
+                self.page_no = NSNumber.init(integerLiteral: Int(val) ?? 0)
+            }
+        }
+        else  if key == "story-group"{
+            if let val = value as? String {
+                self.story_group = val
+            }
+        } else if key == "linked-story-slug" {
+            
+            if let val = value as? String {
+                self.linked_story_slug = val
+            }
+            
+        } else if key == "story-attributes"{
             if let valued = value as? [String:AnyObject]{
                 
                 if let viewTypeString = valued["view-counterview-type"] as? String{
@@ -58,7 +79,14 @@ public class StoryMetadata:SafeJsonObject{
             if let newValue = value as? String{
                 self.reference_url = newValue
             }
-        }else{
+        }
+        else if key == "review-title"{
+            if let newValue = value as? String{
+                    self.review_title = newValue
+                }
+            }
+        else
+        {
             super.setValue(value, forKey: key)
         }
     }

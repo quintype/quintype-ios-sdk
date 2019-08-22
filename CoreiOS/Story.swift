@@ -8,8 +8,51 @@
 
 import Foundation
 
+
+
+
 @objcMembers
-public class Story:SafeJsonObject {
+public final class Alternative: SafeJsonObject {
+    public var hero_image_s3_key: String?
+    public var hero_image_caption: String?
+    public var hero_image_metadata: ImageMetaData?
+    public var hero_image_attribution : String?
+    public var hero_image_url: String?
+    public var headline: String?
+    
+    override public func setValue(_ value: Any?, forKey key: String) {
+        if key == "headline" {
+            if let unwrappedVal = value as? String {
+                self.headline = unwrappedVal
+            }
+        } else if key == "hero_image" {
+            if let unwrappedVal = value as? [String: AnyObject] {
+                Converter.jsonKeyConverter(dictionaryArray: unwrappedVal) { (data) in
+                    for (_, obj) in data.enumerated() {
+                        if obj.key == "hero_image_s3_key", let val = obj.value as? String {
+                            self.hero_image_s3_key = val
+                        } else if obj.key == "hero_image_url", let val = obj.value as? String {
+                            self.hero_image_url = val
+                        } else if obj.key == "hero_image_caption", let val = obj.value as? String {
+                            self.hero_image_caption = val
+                        } else if obj.key == "hero_image_attribution", let val = obj.value as? String {
+                            self.hero_image_attribution = val
+                        } else if obj.key == "hero_image_metadata", let val = obj.value as? [String: AnyObject] {
+                            Converter.jsonKeyConverter(dictionaryArray: val, completion: { (data) in
+                                let meta = ImageMetaData()
+                                meta.setValuesForKeys(data)
+                                self.hero_image_metadata = meta
+                            })
+                        }
+                    }
+                }
+            }
+        }
+    }
+}
+
+@objcMembers
+public class Story:SafeJsonObject, NSCopying {
     
     public var updated_at: NSNumber?
     public var assignee_id: NSNumber?
@@ -44,6 +87,8 @@ public class Story:SafeJsonObject {
     public var storyTemplateString: String?
     
     public var content_type:String?
+    public var access_level_value: NSNumber?
+    public var access: Access?
     
     public var cards: [Card] = []
     public var tags: [Tag] = []
@@ -56,6 +101,7 @@ public class Story:SafeJsonObject {
     public var storyMetadata:StoryMetadata?
     public var linked_entities:[[String:AnyObject]]?
     public var authors : [Author] = []
+    public var contributors:[Contributors] = []
     
     public var hero_image_attribution : String?
     
@@ -63,9 +109,11 @@ public class Story:SafeJsonObject {
     public var imageAttributtedCaptionText:NSAttributedString?
     public var parentSection:String?
     
+    public var alternative: Alternative?
     
-    
+    public var associated_series_collection_ids:[String] = []
     public var storyReadTime:String?
+    public var url:String?
     
     public func copy(with zone: NSZone? = nil) -> Any {
         let story =  Story()
@@ -103,6 +151,11 @@ public class Story:SafeJsonObject {
         story.publisher_id = self.publisher_id
         story.author_name = self.author_name
         story.updated_at = self.updated_at
+        story.alternative = self.alternative
+        story.access_level_value = self.access_level_value
+        story.access = self.access
+        story.associated_series_collection_ids = self.associated_series_collection_ids
+        story.url = self.url
         return story
     }
     
@@ -143,18 +196,18 @@ public class Story:SafeJsonObject {
         }
         else if key == "tags"{
             
-            
-            for tag in value as! [[String:AnyObject]]{
-                let singleTag = Tag()
-                Converter.jsonKeyConverter(dictionaryArray: tag, completion: { (data) in
-                    singleTag.setValuesForKeys(data )
-                    self.tags.append(singleTag)
-                    //print(self.tags)
-                })
-                
+            for tag in value as! [AnyObject]{
+                if !(tag is NSNull) {
+                    if let unwrappedTag = tag as? [String: AnyObject] {
+                        let singleTag = Tag()
+                        Converter.jsonKeyConverter(dictionaryArray: unwrappedTag, completion: { (data) in
+                            singleTag.setValuesForKeys(data )
+                            self.tags.append(singleTag)
+                            //print(self.tags)
+                        })
+                    }
+                }
             }
-            
-            
         }
         else if key == "cards"{
             
@@ -178,6 +231,21 @@ public class Story:SafeJsonObject {
                 Converter.jsonKeyConverter(dictionaryArray: authorsJson, completion: { (data) in
                     author.setValuesForKeys(data )
                     self.authors.append(author)
+                })
+                
+            }
+            
+        }
+        else if key == "contributors"{
+            guard let unwrappedAuthorsArray = value as? [[String:AnyObject]] else{
+                return
+            }
+            for authorsJson in unwrappedAuthorsArray {
+                
+                let contributor = Contributors()
+                Converter.jsonKeyConverter(dictionaryArray: authorsJson, completion: { (data) in
+                    contributor.setValuesForKeys(data )
+                    self.contributors.append(contributor)
                 })
                 
             }
@@ -216,7 +284,21 @@ public class Story:SafeJsonObject {
                 self.storyTemplateString = "text"
                 self.story_template = StoryTemplet.Default
             }
-            
+        } else if key == "access" {
+            self.access = Access(value: value as? String)
+        } else if key == "alternative" {
+            if let unwrappedValue = value as? [String: AnyObject] {
+                if let homeDict = unwrappedValue["home"] as? [String: AnyObject] {
+                    if let defaultDict = homeDict["default"] as? [String: AnyObject] {
+                        Converter.jsonKeyConverter(dictionaryArray: defaultDict) { (data) in
+                            let alternativeObj = Alternative()
+                            alternativeObj.setValuesForKeys(data)
+                            self.alternative = alternativeObj
+                        }
+                        
+                    }
+                }
+            }
         }
         else {
             super.setValue(value, forKey: key)
@@ -253,6 +335,17 @@ public class Story:SafeJsonObject {
 }
 
 
+public enum Access: String {
+    case Public = "public"
+    case Login = "login"
+    case Subscription = "subscription"
+    case Unknown
+    
+    init(value: String?) {
+        self = Access(rawValue: value ?? "") ?? .Unknown
+    }
+}
+
 public enum StoryTemplet:String{
     
     case Default
@@ -261,13 +354,20 @@ public enum StoryTemplet:String{
     case Review = "review"
     case Elsewhere = "news-elsewhere"
     case Photo = "photo"
+    case Listicle = "listicle"
     case Explainer = "explainer"
+    case PhotoAlbum = "photo-album"
+    case Rasipalan = "Rasi-Palan"
+    case Gurupeyarchi = "Gurupeyrachi"
+    case Episode = "Episode"
+    case Text = "text"
     case LongForm
-    case ViewCounterView
+//    case ViewCounterView
     case Unknown
     
     init(value : String?){
         self =  StoryTemplet(rawValue: value ?? "") ?? .Unknown
+        
     }
     
 }

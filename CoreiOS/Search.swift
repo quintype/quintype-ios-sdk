@@ -18,7 +18,7 @@ public class Search:SafeJsonObject{
     
     override public func setValue(_ value: Any?, forKey key: String) {
         
-        if key == "stories"{
+        if key == "items"{
             
             
             for section in value as! [[String:AnyObject]]{

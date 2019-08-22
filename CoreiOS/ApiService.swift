@@ -45,24 +45,40 @@ public class ApiService{
     
     //MARK:- Get publisher details -
     public func getPublisherConfig(cache:cacheOption,Success:@escaping (Config?)->(),Error:@escaping (String?)->()) {
+
+        let url = baseUrl + Constants.urlConfig.configUrl
+
+        api.call(method: "get", urlString: url, parameter: nil,cache:cache, Success:
+            {(data) in
+            ApiParser.configParser(data: data , completion: { (configObject) in
+            Quintype.publisherConfig = configObject
+                DispatchQueue.main.async { Success(configObject)
+
+                }
+
+            })
+
+        }) { (error) in
+
+            Error(error)
+
+        }
+    }
+    //MARK:- Get publisher details -
+    public func getPublisherConfigApi(cache:cacheOption,Success:@escaping ([String:AnyObject])->(),Error:@escaping (String?)->()) {
         
         let url = baseUrl + Constants.urlConfig.configUrl
         
-        api.call(method: "get", urlString: url, parameter: nil,cache:cache, Success: { (data) in
-            
-            ApiParser.configParser(data: data , completion: { (configObject) in
-                Quintype.publisherConfig = configObject
-                
-                DispatchQueue.main.async { Success(configObject) }
-                
-            })
-            
+        api.call(method: "get", urlString: url, parameter: nil,cache:cache, Success:
+            {(data) in
+                Success(data!)
         }) { (error) in
             
             Error(error)
             
         }
     }
+    
     
     public typealias json = ([String:AnyObject]?) ->()
     public var json: json?
@@ -201,7 +217,7 @@ public class ApiService{
         }
         print(searchKey)
         
-        let url = baseUrl + Constants.urlConfig.search
+        let url = baseUrl + Constants.urlConfig.advancedSearch
         
         api.call(method: "get", urlString: url, parameter: param as [String : AnyObject]?,cache:cache, Success: { (data) in
             
@@ -419,6 +435,21 @@ public class ApiService{
         }) { (err) in
             
             Error(err)
+            
+        }
+    }
+    
+    //MARK: - Get Menu Groups -
+    
+    public func getmenuGroups(cache:cacheOption,completion:@escaping([String:AnyObject]) ->() ,Error:@escaping(String?)->())
+    {
+        let url = baseUrl + Constants.urlConfig.menuGroups
+        api.call(method:"get", urlString: url, parameter: nil, cache: cache, Success: {
+            (data) in
+        
+            completion(data!)
+            
+        }) { (error) in
             
         }
     }
