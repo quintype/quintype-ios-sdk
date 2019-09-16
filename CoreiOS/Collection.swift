@@ -229,17 +229,15 @@ open class CollectionModel: SafeJsonObject, NSCopying {
     
     
     override open func setValue(_ value: Any?, forKey key: String) {
+        
         if key == "items"{
-            
             for itemDict in value as? [[String:AnyObject]] ?? []{
-                let collectionItem = CollectionItem()
-                Converter.jsonKeyConverter(dictionaryArray: itemDict, completion: { (mappedKeyValues) in
-                    collectionItem.setValuesForKeys(mappedKeyValues)
-                    if collectionItem.type ?? "" == "story"{
-                        collectionItem.slug = self.slug
-                    }
+                do {
+                    let collectionItem = try ApiParser.parseCollectionItem(data: itemDict)
                     self.items.append(collectionItem)
-                })
+                } catch {
+                    print(error)
+                }
             }
         } else if key == "metadata"{
             

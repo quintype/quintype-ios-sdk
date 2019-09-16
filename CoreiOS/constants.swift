@@ -28,7 +28,7 @@ public struct Constants{
         
         //MARK: - urlConfig -
         static let getStories = "/api/v1/stories"
-        static let configUrl = "/api/v1/config"
+        static let configUrl = "/v1/mobile/config"
         static let search = "/api/v1/search"
         static let advancedSearch = "/api/v1/advanced-search"
         static let getStoryFromSlug = "/api/v1/stories-by-slug"
@@ -43,7 +43,7 @@ public struct Constants{
         static let getBulkCollection = "/api/v1/bulk/collection"
         static let getAuhtorUrl = "/api/author"
         static let getBulkUserEngagmentForPost = "/api/v1/bulk-request"
-        static let menuGroups = "/api/v1/menu-groups"
+        static let menuGroups = "/v1/mobile/menu-groups?title=mobile-menu"
         
         //Function that return string
         static func relatedStories(storyId:String) -> String {return getStories + "/" + storyId + "/related-stories"}

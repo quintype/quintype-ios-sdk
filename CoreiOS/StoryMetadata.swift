@@ -12,7 +12,7 @@ public class StoryMetadata:SafeJsonObject{
     public var story_attributes:[String:AnyObject]?
     public var review_rating : ReviewRating?
     public var is_closed : Bool = false
-    public var viewType:ViewConterViewType = .Unknown
+    public var viewType:ViewCounterViewType = .Unknown
     public var storyTheme:StoryTheme = .Unknown
     public var sponsored_by:String?
     public var reference_url:String?
@@ -44,7 +44,7 @@ public class StoryMetadata:SafeJsonObject{
             if let valued = value as? [String:AnyObject]{
                 
                 if let viewTypeString = valued["view-counterview-type"] as? String{
-                    self.viewType = ViewConterViewType(value: viewTypeString)
+                    self.viewType = ViewCounterViewType(value: viewTypeString)
                 }
                 
                 if let theme = valued["theme"] as? [String],theme.count > 0{
@@ -96,7 +96,6 @@ public class ReviewRating:SafeJsonObject{
     public var label:String?
     public var value:Double = 0.0
     
-    
     override public func setValue(_ value: Any?, forKey key: String) {
         if key == "value"{
             if let valueString = value as? String , let valueDouble = Double(valueString){
@@ -112,22 +111,18 @@ public class ReviewRating:SafeJsonObject{
 public enum StoryTheme:String{
     case Longform = "longform"
     case Parallax = "parallax"
-    
     case Unknown
     
     init(value:String){
         self = StoryTheme(rawValue: value) ?? .Unknown
-        
     }
 }
-public enum ViewConterViewType:String{
+public enum ViewCounterViewType:String{
     case View = "view"
     case CounterView = "counter-view"
     case Unknown
     
     init(value:String){
-        self = ViewConterViewType(rawValue: value) ?? .Unknown
-        
+        self = ViewCounterViewType(rawValue: value) ?? .Unknown
     }
-    
 }

@@ -223,6 +223,57 @@ open class ApiParser{
         }
     }
     
+    //MARK:- Synchronous story parser for parsing new flattened collection-item structure in new API responses
+    
+    open class func parseStory(data: [String: AnyObject]?) throws -> Story {
+        guard let data = data else { throw ParsingError.invalidStory }
+        let story = Story()
+        var storyDict: [String: AnyObject] = [:]
+        for (key, value) in data {
+            let newKey = ApiParser.sanitize(keyd: key)
+            storyDict[newKey] = value
+        }
+        story.setValuesForKeys(storyDict)
+        return story
+    }
+    
+    //MARK:- Synchronous collection parser for parsing new flattened collection-item structure in new API responses
+    
+    open class func parseCollection(data: [String: AnyObject]?) throws -> CollectionModel {
+        guard let data = data else { throw ParsingError.invalidCollection }
+        let collection = CollectionModel()
+        var collectionDict: [String: AnyObject] = [:]
+        for (key, value) in data {
+            let newKey = ApiParser.sanitize(keyd: key)
+            collectionDict[newKey] = value
+        }
+        collection.setValuesForKeys(collectionDict)
+        return collection
+    }
+    
+    //MARK:- CollectionItem parser for synchronously parsing items in collection at multiple depths
+    
+    open class func parseCollectionItem(data: [String: AnyObject]?) throws -> CollectionItem {
+        guard let data = data else { throw ParsingError.invalidCollectionItem }
+        let collectionItem = CollectionItem()
+        var collectionItemDict: [String: AnyObject] = [:]
+        for (key, value) in data {
+            let newKey = ApiParser.sanitize(keyd: key)
+            collectionItemDict[newKey] = value
+        }
+        collectionItem.setValuesForKeys(collectionItemDict)
+        guard let type = collectionItem.type else { throw ParsingError.typeNotAvailable }
+        if type == "story" {
+            try collectionItem.story = ApiParser.parseStory(data: data)
+        } else if type == "collection" {
+            try collectionItem.collection = ApiParser.parseCollection(data: data)
+        } else {
+            throw ParsingError.invalidCollectionItem
+        }
+        return collectionItem
+    }
+    
+    //MARK:- Old parsers:
     
     open class func collectionBulkParser(data:Any?, completion:@escaping(_ collection:[String:CollectionModel], _ error:Error?) -> Void){
         
@@ -314,5 +365,12 @@ open class ApiParser{
 
 }
 
+//MARK: Used for propagating errors in the new synchronous parsers
 
-
+enum ParsingError: String, Error {
+    case noDataAvailable
+    case invalidStory
+    case invalidCollection
+    case invalidCollectionItem
+    case typeNotAvailable
+}

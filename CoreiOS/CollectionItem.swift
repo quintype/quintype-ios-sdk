@@ -18,19 +18,22 @@ open class CollectionItem:SafeJsonObject, NSCopying{
     open var type:String?
     open var collection:CollectionModel?
     open var story:Story?
+    open var items: [CollectionItem] = []
     open var limit: Int = 5
     public var associatedMetadata: AssociatedMetadata?
-    
     public var metaData: ColectionMetaData?
-    
     
     override open func setValue(_ value: Any?, forKey key: String) {
         
-        if key == "story"{
-            let datad = ["story":value]
-            ApiParser.storyParser(data: datad as [String : AnyObject]?, completion: { (story) in
-                self.story = story
-            })
+        if key == "items" {
+            for itemDict in value as? [[String: AnyObject]] ?? [] {
+                do {
+                    let collectionItem = try ApiParser.parseCollectionItem(data: itemDict)
+                    self.items.append(collectionItem)
+                } catch {
+                    print(error)
+                }
+            }
         } else if key == "associated_metadata" {
             let associatedMetadata = AssociatedMetadata()
             
@@ -231,17 +234,22 @@ public class AssociatedMetadata:SafeJsonObject {
             
         case .some(.sevenMediaStories7s),
              .some(.amoebaSliderNs),
+             .some(.sliderOneStory),
              .some(.fourStoryHalfFeatured4s),
+             .some(.fourStory4s),
              .some(.gradientCardsFourStory4s),
              .some(.fiveStory1AD1Wid),
+             .some(.sixStort1Ad1Wid),
              .some(.oneCarouselTwoStoriesOneAdOneWidget7s),
              .some(.fiveStoryOneAd),
+             .some(.sevenStories1Ad),
              .some(.fourStoryPhotoGallery),
              .some(.twelveStory1AD1Wid),
              .some(.sliderFocusedCardNs),
              .some(.threeStroySliderRound),
              .some(.ninteenStories1Ad),
              .some(.invertedFourStoryHalfFeatured),
+             .some(.sevenStory7s),
              .some(.twelveStoriesOneAd12s),
              .some(.vikatanTV):
             limit = number_of_stories_to_show != 0 ? number_of_stories_to_show : number_of_child_stories_to_show
@@ -255,7 +263,8 @@ public class AssociatedMetadata:SafeJsonObject {
         
         case .some(.twoCollection4Story),
              .some(.fourStoryTwoCol_FourStoryOneAdOneWidget),
-             .some(.sixteenStory4c):
+             .some(.sixteenStory4c),
+             .some(.twentyStory4c):
             limit = number_of_collections_to_show + number_of_stories_to_show
             return limit
         
@@ -266,29 +275,31 @@ public class AssociatedMetadata:SafeJsonObject {
     
     private enum CollectionLayout:String {
         
-        case mainRowWithBundle12s5c1ad = "main-row-with-bundle-12s-5c-1ad"
+        case mainRowWithBundle12s5c1ad = "MainRow"
         case sevenMediaStories7s = "seven-media-stories-7s"
         case amoebaSliderNs = "amoeba-slider-ns"
-        case sixteenStory4c = "sixteen-story-4c"
-        case sliderFocusedCardNs = "slider-focused-card-ns"
-        
-        case fourStoryHalfFeatured4s = "four-story-half-featured-4s"
+        case sliderOneStory = "SliderOneStory"
+        case sixteenStory4c = "SixteenStory4c"
+        case twentyStory4c = "TwentyStory4c"
+        case sliderFocusedCardNs = "SliderFocusedCard"
+        case fourStoryHalfFeatured4s = "FourStoryHalfFeatured"
+        case fourStory4s = "FourStory4s"
         case invertedFourStoryHalfFeatured = "inverted-four-story-half-featured-4s"
+        case sevenStory7s = "SevenStory7s"
         case gradientCardsFourStory4s = "gradient-cards-four-story-4s"
         case magazineSubscriptionSliderNc = "magazine-subscription-slider-nc"
-        case oneCarouselTwoStoriesOneAdOneWidget7s = "one-carousel-two-stories-one-ad-one-widget-7s"
-        
-        case fiveStoryOneAd = "five-story-one-ad"
+        case oneCarouselTwoStoriesOneAdOneWidget7s = "OneCarouselTwoStoriesOneAdOneWidget"
+        case fiveStoryOneAd = "FiveStoryOneAd"
+        case sevenStories1Ad = "SevenStoriesOneAd"
         case twoCollection4Story = "two-collection-four-story"
-        case ninteenStories1Ad = "nineteen-stories-one-ad-19s"
+        case ninteenStories1Ad = "NineteenStoriesOneAd"
         case fiveStory1AD1Wid = "five-story-one-ad-one-widget"
-        
-        case threeStroySliderRound = "three-story-slider-round"
-        case fourStoryPhotoGallery = "four-story-photo-gallery"
-        case twelveStory1AD1Wid = "twelve-stories-one-ad-one-widget-12s"
+        case sixStort1Ad1Wid = "SixStoryOneAdOneWidget"
+        case threeStroySliderRound = "ThreeStoryAutoSlider"
+        case fourStoryPhotoGallery = "FourStoryPhotoGallery"
+        case twelveStory1AD1Wid = "TwelveStoriesOneAdOneWidget"
         case fourStoryTwoCol_FourStoryOneAdOneWidget = "4S-2C4S-1Ad-1Widget"
-        
-        case twelveStoriesOneAd12s = "twelve-stories-one-ad-12s"
+        case twelveStoriesOneAd12s = "TwelveStoriesOneAd"
         case vikatanTV = "vikatan-tv"
 
         case UNKNOWN = ""

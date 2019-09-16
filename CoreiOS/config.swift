@@ -34,6 +34,7 @@ public class Config:SafeJsonObject{
     public var story_attributes:[StoryAttributes] = []
     public var mins_between_refreshes:NSNumber?
     public var static_page_urls:[String] = []
+    public var copyright: String?
     override public func setValue(_ value: Any?, forKey key: String) {
         
         
