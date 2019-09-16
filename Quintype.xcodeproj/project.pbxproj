@@ -71,6 +71,7 @@
 		78F158946012D858EC782402 /* Pods_Quintype.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = DD0703E7655E97294F3513EA /* Pods_Quintype.framework */; };
 		93C00E8EB65EF0C51865E470 /* Pods_testAPp.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 2DC160886C4E4D4CE548EFE7 /* Pods_testAPp.framework */; };
 		E26F5B59A11BBC455E62B6C8 /* (null) in Frameworks */ = {isa = PBXBuildFile; };
+		E302B425232F714A00EB88E2 /* MenuGroupModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = E302B424232F714A00EB88E2 /* MenuGroupModel.swift */; };
 		E36F897F230EA3F0004CC63D /* ImageModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = E36F897E230EA3F0004CC63D /* ImageModel.swift */; };
 /* End PBXBuildFile section */
 
@@ -167,6 +168,7 @@
 		7C4E5A8DE2C8A93D9C520923 /* Pods-testAPp.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-testAPp.debug.xcconfig"; path = "Pods/Target Support Files/Pods-testAPp/Pods-testAPp.debug.xcconfig"; sourceTree = "<group>"; };
 		A5DBC2526F905A1864688FC4 /* Pods-testAPp.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-testAPp.release.xcconfig"; path = "Pods/Target Support Files/Pods-testAPp/Pods-testAPp.release.xcconfig"; sourceTree = "<group>"; };
 		DD0703E7655E97294F3513EA /* Pods_Quintype.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Pods_Quintype.framework; sourceTree = BUILT_PRODUCTS_DIR; };
+		E302B424232F714A00EB88E2 /* MenuGroupModel.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = MenuGroupModel.swift; sourceTree = "<group>"; };
 		E36F897E230EA3F0004CC63D /* ImageModel.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ImageModel.swift; sourceTree = "<group>"; };
 		ED453EA90A6CBAE52BFFCF49 /* Pods-Quintype.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-Quintype.debug.xcconfig"; path = "Pods/Target Support Files/Pods-Quintype/Pods-Quintype.debug.xcconfig"; sourceTree = "<group>"; };
 /* End PBXFileReference section */
@@ -264,6 +266,7 @@
 				5D71042C1F0F9CAA00EBBE93 /* CardMetadata.swift */,
 				5D71042D1F0F9CAA00EBBE93 /* Entity.swift */,
 				1DF7EF902073AC7B0001C0BB /* CollectionItem.swift */,
+				E302B424232F714A00EB88E2 /* MenuGroupModel.swift */,
 				1DF7EF942073AD960001C0BB /* CardStoryElement.swift */,
 				1DFC40362073AE1C00FD1268 /* GalleryImage.swift */,
 				1DF7EF922073ACA80001C0BB /* Engagement.swift */,
@@ -598,6 +601,7 @@
 				6134D6851E07F3B100D304CB /* AnalyticsOptions.swift in Sources */,
 				61E8C2441E8CF582006790F7 /* Downloader.swift in Sources */,
 				E36F897F230EA3F0004CC63D /* ImageModel.swift in Sources */,
+				E302B425232F714A00EB88E2 /* MenuGroupModel.swift in Sources */,
 				1D4C90B3209B15590007FC27 /* CollectionBulkManager.swift in Sources */,
 				615006681DD5C715000E20B3 /* http.swift in Sources */,
 				615006651DD5C54F000E20B3 /* Card.swift in Sources */,
