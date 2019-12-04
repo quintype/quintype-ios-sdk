@@ -17,7 +17,7 @@ Pod::Spec.new do |s|
   #
 
   s.name         = "Quintype"
-  s.version      = "4.0.2"
+  s.version      = "4.0.3"
   s.summary      = "/........................./"
 
   # This description is used to generate tags and improve search results.
@@ -29,7 +29,7 @@ Pod::Spec.new do |s|
 
   s.homepage     = "https://github.com/quintype/quintype-ios-sdk"
   # s.screenshots  = "www.example.com/screenshots_1.gif", "www.example.com/screenshots_2.gif"
-
+  s.swift_version = '4.0'
 
   # ―――  Spec License  ――――――――――――――――――――――――――――――――――――――――――――――――――――――――――― #
   #

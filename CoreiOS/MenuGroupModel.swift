@@ -1,6 +1,6 @@
 //
 //  MenuGroupModel.swift
-//  Vikatan
+//  ProthomAlo
 //
 //  Created by Sunil on 22/03/19.
 //  Copyright © 2019 Pavan Gopal. All rights reserved.

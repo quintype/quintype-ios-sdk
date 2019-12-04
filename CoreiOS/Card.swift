@@ -16,7 +16,7 @@ public class Card:SafeJsonObject  {
     public var content_version_id: String!
     public var version: NSNumber?
     public var story_elements: [CardStoryElement] = []
-    public var metadata:CardMetadata?
+    public var  metadata:CardMetadata?
     public var card_added_at: NSNumber?
     public var showind_added_at : Bool = false
     

@@ -18,23 +18,13 @@ open class CollectionItem:SafeJsonObject, NSCopying{
     open var type:String?
     open var collection:CollectionModel?
     open var story:Story?
-    open var items: [CollectionItem] = []
-    open var limit: Int = 5
+    open var limit: Int = 5 //Not Implemented yet in LayoutEngine
     public var associatedMetadata: AssociatedMetadata?
     public var metaData: ColectionMetaData?
     
     override open func setValue(_ value: Any?, forKey key: String) {
         
-        if key == "items" {
-            for itemDict in value as? [[String: AnyObject]] ?? [] {
-                do {
-                    let collectionItem = try ApiParser.parseCollectionItem(data: itemDict)
-                    self.items.append(collectionItem)
-                } catch {
-                    print(error)
-                }
-            }
-        } else if key == "associated_metadata" {
+        if key == "associated_metadata" {
             let associatedMetadata = AssociatedMetadata()
             
             if let valuesD = value as? [String:Any] {
@@ -42,7 +32,7 @@ open class CollectionItem:SafeJsonObject, NSCopying{
             }
             
             self.associatedMetadata = associatedMetadata
-            self.limit = associatedMetadata.getLimitFromMetaData()
+//            self.limit = associatedMetadata.getLimitFromMetaData()
             
         } else if key == "metadata" {
             metaData = ColectionMetaData()
@@ -89,21 +79,21 @@ public class AssociatedMetadata:SafeJsonObject {
     public var label: String?
     public var layout: String? {
         didSet {
-            let colLayout = CollectionLayout(rawValue: self.layout ?? "") ?? .UNKNOWN
+            let colLayout = CollectionLayout(rawValue: self.layout ?? "") ?? .unknown
             self.get_inner_collection = colLayout.shouldFetchInnerCollection
         }
     }
     public var coverstory: String?
     public var pagenumber:Int?
     public var show_arrows:Bool = false
-    public var slider_type_dots : Bool = true
+    public var slider_type_dots : Bool = false
     
-    public var show_author_name : Bool = true
+    public var show_author_name : Bool = false
     public var number_of_slider_stories_to_show : Int = 0
     public var number_of_collections_to_show : Int = 0
     public var number_of_slides_to_scroll : Int = 0
     public var show_section_tag : Bool = false
-    public var show_time_of_publish : Bool = false
+    public var show_time_of_publish : Bool = true
     public var set_scroll_speed : Int = 0
     
     public var show_collection_name : Bool = true
@@ -164,7 +154,6 @@ public class AssociatedMetadata:SafeJsonObject {
             
         }
     }
-    
     override open func setValue(_ value: Any?, forKey key: String) {
         if key == "label" {
             if let valueD = value as? [String] {
@@ -217,7 +206,7 @@ public class AssociatedMetadata:SafeJsonObject {
         
         return 0
     }
-    
+    /*
     public func getLimitFromMetaData() -> Int {
         
         let currentLayout = CollectionLayout(rawValue: layout ?? "")
@@ -257,7 +246,7 @@ public class AssociatedMetadata:SafeJsonObject {
             
             
         case .some(.magazineSubscriptionSliderNc),
-             .some(.UNKNOWN):
+             .some(.unknown):
             limit = 5
             return limit
         
@@ -268,52 +257,89 @@ public class AssociatedMetadata:SafeJsonObject {
             limit = number_of_collections_to_show + number_of_stories_to_show
             return limit
         
-       
-        
+        }
+    }
+    */
+}
+
+public enum CollectionLayout: String {
+    
+    // Half Featured Stories:-
+    case type4SHalfFeatured = "FourStoryHalfFeatured"
+    
+    // Stories with Widget and Poll:-
+    case type6S1Widget1Poll = "SixStories1WidgetWithPoll"
+    case type6S1AdTagSearch = "SixStories1AdWithTagSearch"
+    
+    // Stories displayed as Media Content:-
+    case type5VideoStories = "FiveVideoStories"
+    case type5OpinionStories = "FiveOpinionStories"
+    
+    // Stories displayed as default (gradient cards horizontal scroll):-
+    case type4SCards = "FourStoryCards"
+    
+    // Stories with Ad and Widget:-
+    case type14S3Ad1Widget = "FourteenStories3Ad1Widget"
+    
+    // Stories without Ad/Widget/Poll (1 Big and remaining imageListCard):-
+    case type4S = "FourStories"
+    case type9S = "NineStories"
+    
+    // Stories displayed as sliders:-
+    case typeSliderFocusedCard = "SliderFocusedCard"
+    case typePhotoStorySlider = "PhotoStoryWithSlider"
+    
+    // Collections and stories:-
+    case type4C12S = "FourCollection12Stories"
+    case type4C12S1Ad = "FourCollection12Stories1Ad"
+    case type3C15S1Ad1Poll = "ThreeCollection15Stories1AdWithPoll"
+    
+    case unknown
+    /*
+    case mainRowWithBundle12s5c1ad = "MainRow"
+    case sevenMediaStories7s = "seven-media-stories-7s"
+    case amoebaSliderNs = "amoeba-slider-ns"
+    case sliderOneStory = "SliderOneStory"
+    case sixteenStory4c = "SixteenStory4c"
+    case twentyStory4c = "TwentyStory4c"
+    case sliderFocusedCardNs = "SliderFocusedCard"
+    case fourStoryHalfFeatured4s = "FourStoryHalfFeatured"
+    case fourStory4s = "FourStory4s"
+    case invertedFourStoryHalfFeatured = "inverted-four-story-half-featured-4s"
+    case sevenStory7s = "SevenStory7s"
+    case gradientCardsFourStory4s = "gradient-cards-four-story-4s"
+    case magazineSubscriptionSliderNc = "magazine-subscription-slider-nc"
+    case oneCarouselTwoStoriesOneAdOneWidget7s = "OneCarouselTwoStoriesOneAdOneWidget"
+    case fiveStoryOneAd = "FiveStoryOneAd"
+    case sevenStories1Ad = "SevenStoriesOneAd"
+    case twoCollection4Story = "two-collection-four-story"
+    case ninteenStories1Ad = "NineteenStoriesOneAd"
+    case fiveStory1AD1Wid = "five-story-one-ad-one-widget"
+    case sixStort1Ad1Wid = "SixStoryOneAdOneWidget"
+    case threeStroySliderRound = "ThreeStoryAutoSlider"
+    case fourStoryPhotoGallery = "FourStoryPhotoGallery"
+    case twelveStory1AD1Wid = "TwelveStoriesOneAdOneWidget"
+    case fourStoryTwoCol_FourStoryOneAdOneWidget = "4S-2C4S-1Ad-1Widget"
+    case twelveStoriesOneAd12s = "TwelveStoriesOneAd"
+    case vikatanTV = "vikatan-tv"
+
+    case unknown = ""
+    */
+    var shouldFetchInnerCollection: Bool  {
+        switch self {
+//        case .sixteenStory4c, .fourStoryTwoCol_FourStoryOneAdOneWidget, .twoCollection4Story:
+//            return true
+        default:
+            return false
         }
     }
     
-    private enum CollectionLayout:String {
-        
-        case mainRowWithBundle12s5c1ad = "MainRow"
-        case sevenMediaStories7s = "seven-media-stories-7s"
-        case amoebaSliderNs = "amoeba-slider-ns"
-        case sliderOneStory = "SliderOneStory"
-        case sixteenStory4c = "SixteenStory4c"
-        case twentyStory4c = "TwentyStory4c"
-        case sliderFocusedCardNs = "SliderFocusedCard"
-        case fourStoryHalfFeatured4s = "FourStoryHalfFeatured"
-        case fourStory4s = "FourStory4s"
-        case invertedFourStoryHalfFeatured = "inverted-four-story-half-featured-4s"
-        case sevenStory7s = "SevenStory7s"
-        case gradientCardsFourStory4s = "gradient-cards-four-story-4s"
-        case magazineSubscriptionSliderNc = "magazine-subscription-slider-nc"
-        case oneCarouselTwoStoriesOneAdOneWidget7s = "OneCarouselTwoStoriesOneAdOneWidget"
-        case fiveStoryOneAd = "FiveStoryOneAd"
-        case sevenStories1Ad = "SevenStoriesOneAd"
-        case twoCollection4Story = "two-collection-four-story"
-        case ninteenStories1Ad = "NineteenStoriesOneAd"
-        case fiveStory1AD1Wid = "five-story-one-ad-one-widget"
-        case sixStort1Ad1Wid = "SixStoryOneAdOneWidget"
-        case threeStroySliderRound = "ThreeStoryAutoSlider"
-        case fourStoryPhotoGallery = "FourStoryPhotoGallery"
-        case twelveStory1AD1Wid = "TwelveStoriesOneAdOneWidget"
-        case fourStoryTwoCol_FourStoryOneAdOneWidget = "4S-2C4S-1Ad-1Widget"
-        case twelveStoriesOneAd12s = "TwelveStoriesOneAd"
-        case vikatanTV = "vikatan-tv"
+}
 
-        case UNKNOWN = ""
-        
-        var shouldFetchInnerCollection: Bool  {
-            switch self {
-            case .sixteenStory4c, .fourStoryTwoCol_FourStoryOneAdOneWidget, .twoCollection4Story:
-                return true
-            default:
-                return false
-            }
-        }
-        
-    }
+public enum CollectionType: String {
+    case bundle = "bundle"
+    case trending = "trending"
+    case breakingNews = "breaking-news"
 }
 
 

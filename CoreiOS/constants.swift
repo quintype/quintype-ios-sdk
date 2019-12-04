@@ -30,7 +30,7 @@ public struct Constants{
         static let getStories = "/api/v1/stories"
         static let configUrl = "/v1/mobile/config"
         static let search = "/api/v1/search"
-        static let advancedSearch = "/api/v1/advanced-search"
+        static let advancedSearch = "/v1/mobile/search"
         static let getStoryFromSlug = "/api/v1/stories-by-slug"
         static let breakingNews = "/api/v1/breaking-news"
         static let facebookLogin = "/api/login/facebook"
@@ -44,6 +44,7 @@ public struct Constants{
         static let getAuhtorUrl = "/api/author"
         static let getBulkUserEngagmentForPost = "/api/v1/bulk-request"
         static let menuGroups = "/v1/mobile/menu-groups?title=mobile-menu"
+        static let getStoriesFromTag = "/v1/mobile/tag"
         
         //Function that return string
         static func relatedStories(storyId:String) -> String {return getStories + "/" + storyId + "/related-stories"}

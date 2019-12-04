@@ -278,6 +278,7 @@ public class Analytics{
         }
     }
     
+    
     //MARK: - Find same card inside story's cards - 🌸
     private func cardForStoryElement(story: Story, storyElement: CardStoryElement) -> Card? {
         for card in story.cards {

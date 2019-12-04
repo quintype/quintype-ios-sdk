@@ -83,17 +83,15 @@ public class ApiService{
     public typealias json = ([String:AnyObject]?) ->()
     public var json: json?
     
-    //MARK: - Get stories -
-    public func getStories(options:storiesOption,fields: [String]?,offset: Int?,limit: Int?,storyGroup: String?,cache:cacheOption,returnDataType:returnType = returnType.object ,Success:@escaping ([Story]?)->(),json:json? = nil,Error:@escaping (String?)->()) {
+    //MARK: - Get stories from tagname
+    public func getStoriesFromTagname(options:storiesOption,fields: [String]?,offset: Int?,limit: Int?,cache:cacheOption,returnDataType:returnType = returnType.object ,Success:@escaping (CollectionModel?)->(),Error:@escaping (String?)->()) {
         
         let stringURLFields = fields?.joined(separator: ",")
         
         var param:[String:Any?] = [
-            
-            "fields":stringURLFields,
+            "story-fields":stringURLFields,
             "offset":offset,
             "limit":limit,
-            "story-group":storyGroup
         ]
         
         if let opt = options.value{
@@ -107,23 +105,14 @@ public class ApiService{
             }
         }
         
-        let url = baseUrl + Constants.urlConfig.getStories
+        let url = baseUrl + Constants.urlConfig.getStoriesFromTag
         
         api.call(method: "get", urlString: url, parameter: param as [String : AnyObject]?,cache:cache, Success: { (data) in
-            
-            
-            
-            ApiParser.StoriesParser(data: data , completion: { (storiesObject) in
-                
-                DispatchQueue.main.async { Success(storiesObject) }
-                
+            ApiParser.collectionParser(data: data, completion: { (collection, error) in
+                DispatchQueue.main.async {
+                    Success(collection)
+                }
             })
-            
-            if returnDataType == returnType.json{
-                
-                if let jsonData = data{ DispatchQueue.main.async { json!(jsonData) } }
-            }
-            
         }) { (error) in
             
             Error(error)
@@ -190,14 +179,13 @@ public class ApiService{
     }
     
     //MARK:- Search
-    public func search(searchBy:searchOption,sortType:String?=nil,fields: [String]?,offset:Int?,limit:Int?,cache:cacheOption,Success:@escaping (Search?)->(),Error:@escaping (String?)->()) {
+    public func search(searchBy:searchOption,sortType:String?=nil,fields: [String]?,offset:Int?,limit:Int?,cache:cacheOption,Success:@escaping (CollectionModel?)->(),Error:@escaping (String?)->()) {
         
         let stringURLFields = fields?.joined(separator: ",")
         var searchKey:String = ""
         
         var param:[String:Any?] = [
-            
-            "fields":stringURLFields,
+            "story-fields":stringURLFields,
             "offset":offset,
             "limit":limit
             ]
@@ -220,16 +208,14 @@ public class ApiService{
         let url = baseUrl + Constants.urlConfig.advancedSearch
         
         api.call(method: "get", urlString: url, parameter: param as [String : AnyObject]?,cache:cache, Success: { (data) in
-            
-            ApiParser.searchParser(data: data , completion: { (searchObject) in
-                
-                DispatchQueue.main.async { Success(searchObject) }
-                
-                
-            })
-            
+            do {
+                let collection = try ApiParser.parseCollection(data: data)
+                Success(collection)
+            }
+            catch{
+                Error(ParsingError.invalidCollectionItem.rawValue)
+            }
         }) { (error) in
-            
             Error(error)
             
         }
